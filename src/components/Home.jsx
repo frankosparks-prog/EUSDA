@@ -13,7 +13,7 @@ const Home = () => {
       </h1>
 
       <p className="text-lg md:text-2xl text-green-800 mb-10 max-w-2xl">
-        A place to be where hearts are healed, hope is restored, and lives are transformed by God's amazing love.
+        A place to be, where hearts are healed, hope is restored, and lives are transformed by God's amazing love.
       </p>
 
       {/* Buttons */}
