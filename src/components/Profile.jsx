@@ -46,10 +46,11 @@ function Profile() {
   ];
 
   return (
+    <>
     <div className="bg-gray-50 py-10 px-6 md:px-20 min-h-screen">
       {/* Church Leadership Section */}
       <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold text-blue-800 mb-6">
+        <h1 className="text-3xl md:text-5xl font-bold text-green-800 mb-6">
           Church Leadership
         </h1>
         <p className="text-gray-600 text-md md:text-lg mb-8">
@@ -68,7 +69,7 @@ function Profile() {
               alt={leader.name}
               className="w-full h-48 object-cover rounded-lg mb-4"
             />
-            <h2 className="text-xl font-bold text-blue-800 mb-2">{leader.name}</h2>
+            <h2 className="text-xl font-bold text-green-800 mb-2">{leader.name}</h2>
             <p className="text-gray-500 text-sm mb-2">{leader.role}</p>
             <p className="text-gray-600">{leader.description}</p>
           </div>
@@ -77,7 +78,7 @@ function Profile() {
 
       {/* Church Members Section */}
       <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold text-blue-800 mb-6">
+        <h1 className="text-3xl md:text-5xl font-bold text-green-800 mb-6">
           Church Members
         </h1>
         <p className="text-gray-600 text-md md:text-lg mb-8">
@@ -96,13 +97,14 @@ function Profile() {
               alt={member.name}
               className="w-full h-48 object-cover rounded-lg mb-4"
             />
-            <h2 className="text-xl font-bold text-blue-800 mb-2">{member.name}</h2>
+            <h2 className="text-xl font-bold text-green-800 mb-2">{member.name}</h2>
             <p className="text-gray-500 text-sm mb-2">{member.role}</p>
           </div>
         ))}
       </div>
-      <Footer />
     </div>
+    <Footer />
+   </>
   );
 }
 

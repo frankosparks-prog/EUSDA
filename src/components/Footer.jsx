@@ -21,10 +21,11 @@ const Footer = () => {
           <ul className="space-y-2 text-sm">
             <li><a href="/about" className="hover:underline hover:text-yellow-300">About</a></li>
             <li><a href="/events" className="hover:underline hover:text-yellow-300">Events</a></li>
-            <li><a href="/donate" className="hover:underline hover:text-yellow-300">Donate</a></li>
+            <li><a href="/donate" className="hover:underline hover:text-yellow-300">Donate || Contribute</a></li>
+            <li><a href="/departments" className="hover:underline hover:text-yellow-300">Departments</a></li>
+            <li><a href="/ministries" className="hover:underline hover:text-yellow-300">Ministries</a></li>
+            <li><a href="/announcements" className="hover:underline hover:text-yellow-300">Announcements</a></li>
             <li><a href="/gallery" className="hover:underline hover:text-yellow-300">Gallery</a></li>
-            <li><a href="/services" className="hover:underline hover:text-yellow-300">Services</a></li>
-            <li><a href="/jobs" className="hover:underline hover:text-yellow-300">Jobs</a></li>
             <li><a href="/contact" className="hover:underline hover:text-yellow-300">Contact</a></li>
           </ul>
         </div>
@@ -57,7 +58,7 @@ const Footer = () => {
 
       {/* Bottom copyright */}
       <div className="text-center text-xs mt-10 opacity-75">
-        © {new Date().getFullYear()} My Church Name. All rights reserved.
+        © {new Date().getFullYear()} EUSDA. All rights reserved.
       </div>
     </footer>
   );

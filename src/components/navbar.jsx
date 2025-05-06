@@ -27,14 +27,14 @@
 //         <div className="flex items-center gap-3">
 //           <img
 //             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvudYXVN9ver0VIbRz6D-AYmIDbR8xqaIHhw&s" // Replace with your logo URL
-//             alt="Institution Logo"
+//             alt="EUSDA Logo"
 //             className="w-14 h-14 object-cover rounded-full border-4 border-white shadow-md"
 //           />
 //         </div>
 
-//         {/* Institution Name Center */}
+//         {/* EUSDA Name Center */}
 //         <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl md:text-3xl font-extrabold text-white tracking-wide">
-//           My Institution
+//           My EUSDA
 //         </h1>
 
 //         {/* Right side: Profile + Menu */}
@@ -89,7 +89,7 @@
 // export default Navbar;
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Menu, X, User, Home, FileText, Calendar, Briefcase, Music, BookOpen, Mic } from 'lucide-react'; // Added Lucide icons for nav items
+import { Menu, X, User, Home, FileText, Calendar, Briefcase, Music, BookOpen, Mic, PenTool } from 'lucide-react'; // Added Lucide icons for nav items
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -102,6 +102,7 @@ const Navbar = () => {
     { path: '/announcements', label: 'Announcements', icon: <Calendar size={20} /> },
     { path: '/contributions', label: 'Contributions', icon: <Briefcase size={20} /> },
     { path: '/events', label: 'Events', icon: <Calendar size={20} /> },
+    { path: '/blog', label: 'Blog', icon: <PenTool size={20} /> },
   ];
 
   const toggleMenu = () => {
@@ -116,12 +117,12 @@ const Navbar = () => {
         <div className="flex items-center gap-3">
           <img
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwO8uDAe3N3IHiomKCDoFimUPW4-NvVu9d8A&s" // Replace with your logo URL
-            alt="Institution Logo"
+            alt="EUSDA Logo"
             className="w-14 h-14 object-cover rounded-full border-4 border-white shadow-md"
           />
         </div>
 
-        {/* Institution Name Center */}
+        {/* EUSDA Name Center */}
         <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl md:text-3xl font-extrabold text-white tracking-wide">
           EUSDA Church
         </h1>
@@ -130,7 +131,7 @@ const Navbar = () => {
         <div className="flex items-center gap-4 text-white z-20">
           {/* Profile Icon */}
           <div className="hover:text-yellow-300 cursor-pointer transition-all duration-300">
-            <NavLink to="/profile" className="flex items-center gap-2">
+            <NavLink to="/profiles" className="flex items-center gap-2">
               <User size={28} />
             </ NavLink>
           </div>
@@ -154,7 +155,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between p-6">
           <img
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwO8uDAe3N3IHiomKCDoFimUPW4-NvVu9d8A&s"
-            alt="Institution Logo"
+            alt="EUSDA Logo"
             className="w-12 h-12 object-cover rounded-full border-4 border-white"
           />
           <h1 className="absolute text-2xl md:text-3xl font-extrabold text-white ml-16">
