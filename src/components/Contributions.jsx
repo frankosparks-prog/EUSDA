@@ -55,7 +55,7 @@ function Contributions() {
 
   return (
     <>
-      <div className="bg-green-50 min-h-screen py-20 px-6  flex items-center justify-center mt-20 mb-[-12rem] md:mb-[-2rem]">
+      <div className="bg-green-50 min-h-screen py-20 px-6  flex items-center justify-center mt-[-5rem] md:mt-20 mb-[-12rem] md:mb-[-2rem]">
         <div
           className="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full"
           data-aos="fade-up"
