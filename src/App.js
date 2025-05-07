@@ -16,6 +16,7 @@ import Blog from './components/Blog';
 import ScrollToTop from './components/scrollTop';
 import DeptJoinForm from './components/DeptJoinForm';
 import MinistryJoinForm from './components/MinistryJoinForm';
+import EventDetails from './components/EventDetails';
 
 const App = () => {
   return (
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/blog" element={<Blog />} />
         <Route path="/departments/join" element={<DeptJoinForm />} />
         <Route path="/ministries/join/:ministryName" element={<MinistryJoinForm />} />
+        <Route path="/events/event-details" element={<EventDetails />} />
       </Routes>
     </div>
   );

@@ -1,37 +1,89 @@
-import React from "react";
+import React, { useState } from "react";
 import Footer from "./Footer";
+import { Mail, Phone, Clock, Facebook, Twitter } from "lucide-react";
 
 function Profile() {
-  // Fake Data for Church Leadership and Members
-  const leadership = [
+  const [selectedPerson, setSelectedPerson] = useState(null);
+  const handleOpenModal = (person) => setSelectedPerson(person);
+  const handleCloseModal = () => setSelectedPerson(null);
+
+  const pastors = [
     {
       name: "Pastor John Doe",
       role: "Senior Pastor",
       image: "https://picsum.photos/200/200?random=6",
       description:
         "Pastor John Doe is passionate about leading the congregation with love and faith, providing spiritual guidance and inspiration.",
+      email: "pastor.john@church.org",
+      phone: "+254 712 345 678",
+      officeHours: "Mon–Fri, 9am–4pm",
+      socials: {
+        facebook: "https://facebook.com/pastorjohn",
+        twitter: "https://twitter.com/pastorjohn",
+      },
     },
+    {
+      name: "Pastor Mary Wambui",
+      role: "Assistant Pastor",
+      image: "https://picsum.photos/200/200?random=13",
+      description:
+        "Pastor Mary supports church administration and oversees women's ministries with a heart for prayer and compassion.",
+      email: "mary.wambui@church.org",
+      phone: "+254 712 111 222",
+    },
+  ];
+
+  const elders = [
     {
       name: "Elder Jane Smith",
       role: "Church Elder",
       image: "https://picsum.photos/200/200?random=7",
       description:
         "Elder Jane Smith serves with a heart for community, supporting both members and leadership in every aspect of church life.",
+      email: "jane.smith@church.org",
+      phone: "+254 700 000 001",
     },
+    {
+      name: "Elder Peter Mwangi",
+      role: "Senior Elder",
+      image: "https://picsum.photos/200/200?random=14",
+      description:
+        "Elder Peter brings decades of spiritual wisdom and mentorship to the body of Christ.",
+      email: "peter.mwangi@church.org",
+    },
+  ];
+
+  const ministers = [
     {
       name: "Minister James Brown",
       role: "Youth Minister",
       image: "https://picsum.photos/200/200?random=8",
       description:
         "Minister James Brown is dedicated to guiding the youth in their spiritual growth and connecting them with opportunities to serve the church.",
+      email: "james.brown@church.org",
+      phone: "+254 700 000 002",
+      socials: {
+        twitter: "https://twitter.com/ministerjames",
+      },
+    },
+    {
+      name: "Minister Grace Muthoni",
+      role: "Prayer Minister",
+      image: "https://picsum.photos/200/200?random=12",
+      description:
+        "Grace Muthoni leads the prayer ministry with passion, interceding for the needs of the church and the community.",
+      email: "grace.muthoni@church.org",
+      phone: "+254 700 000 004",
     },
   ];
 
-  const churchMembers = [
+  const departmentHeads = [
     {
       name: "Anna White",
       role: "Worship Leader",
       image: "https://picsum.photos/200/200?random=9",
+      email: "anna.white@church.org",
+      phone: "+254 700 000 003",
     },
     {
       name: "David Black",
@@ -42,69 +94,179 @@ function Profile() {
       name: "Sarah Green",
       role: "Children's Ministry Leader",
       image: "https://picsum.photos/200/200?random=11",
+      email: "sarah.green@church.org",
     },
   ];
 
-  return (
-    <>
-    <div className="bg-gray-50 py-10 px-6 md:px-20 min-h-screen">
-      {/* Church Leadership Section */}
-      <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold text-green-800 mb-6">
-          Church Leadership
-        </h1>
-        <p className="text-gray-600 text-md md:text-lg mb-8">
-          Meet our dedicated leaders who guide and nurture the church community.
-        </p>
+  const Section = ({ title, description, people }) => (
+    <div className="mb-12">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl md:text-4xl font-bold text-green-800 mb-4">
+          {title}
+        </h2>
+        {description && (
+          <p className="text-gray-600 text-md md:text-lg">{description}</p>
+        )}
       </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
-        {leadership.map((leader, index) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        {people.map((person, index) => (
           <div
             key={index}
-            className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+            className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-center"
           >
             <img
-              src={leader.image}
-              alt={leader.name}
-              className="w-full h-48 object-cover rounded-lg mb-4"
+              src={person.image}
+              alt={person.name}
+              className="w-32 h-32 mx-auto object-cover rounded-full mb-4 border-4 border-green-200"
             />
-            <h2 className="text-xl font-bold text-green-800 mb-2">{leader.name}</h2>
-            <p className="text-gray-500 text-sm mb-2">{leader.role}</p>
-            <p className="text-gray-600">{leader.description}</p>
-          </div>
-        ))}
-      </div>
+            <h2 className="text-xl font-bold text-green-800 mb-2">
+              {person.name}
+            </h2>
+            <p className="text-gray-500 text-sm mb-2">{person.role}</p>
 
-      {/* Church Members Section */}
-      <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold text-green-800 mb-6">
-          Church Members
-        </h1>
-        <p className="text-gray-600 text-md md:text-lg mb-8">
-          Learn more about our active members who contribute to church life.
-        </p>
-      </div>
+            {/* ✅ Show email and phone for department heads */}
+            {title === "Heads of Departments & Ministries" && (
+              <div className="text-sm text-gray-700 space-y-1 mt-2">
+                {person.email && (
+                  <p className="flex items-center gap-2 justify-center">
+                    <Mail size={16} />
+                    {person.email}
+                  </p>
+                )}
+                {person.phone && (
+                  <p className="flex items-center gap-2 justify-center">
+                    <Phone size={16} />
+                    {person.phone}
+                  </p>
+                )}
+              </div>
+            )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-        {churchMembers.map((member, index) => (
-          <div
-            key={index}
-            className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
-          >
-            <img
-              src={member.image}
-              alt={member.name}
-              className="w-full h-48 object-cover rounded-lg mb-4"
-            />
-            <h2 className="text-xl font-bold text-green-800 mb-2">{member.name}</h2>
-            <p className="text-gray-500 text-sm mb-2">{member.role}</p>
+            {/* Show View Bio if there's a description */}
+            {person.description && (
+              <>
+                <p className="text-gray-600 truncate">{person.description}</p>
+                <button
+                  className="mt-3 text-sm text-green-700 underline"
+                  onClick={() => handleOpenModal(person)}
+                >
+                  View Bio
+                </button>
+              </>
+            )}
           </div>
         ))}
       </div>
     </div>
-    <Footer />
-   </>
+  );
+
+  return (
+    <>
+      <div className="bg-gray-50 py-10 px-6 md:px-20 min-h-screen mt-20 md:mt-32">
+        <Section
+          title="Pastors"
+          people={pastors}
+          description="Our spiritual leaders guiding the entire church."
+        />
+        <Section
+          title="Elders"
+          people={elders}
+          description="Providing wisdom, oversight, and support to the congregation."
+        />
+        <Section
+          title="Ministers"
+          people={ministers}
+          description="Serving in key roles across various ministries."
+        />
+        <Section
+          title="Heads of Departments & Ministries"
+          people={departmentHeads}
+          description="Leaders responsible for worship, volunteering, children, and more."
+        />
+      </div>
+
+      <Footer />
+
+      {selectedPerson && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 relative">
+            <button
+              onClick={handleCloseModal}
+              className="absolute top-1 right-2 text-gray-500 hover:text-red-500 text-lg font-bold"
+            >
+              &times;
+            </button>
+            <img
+              src={selectedPerson.image}
+              alt={selectedPerson.name}
+              className="w-32 h-32 mx-auto object-cover rounded-full mb-4 border-4 border-green-200"
+            />
+            <h2 className="text-xl font-bold text-green-800 mb-1 text-center">
+              {selectedPerson.name}
+            </h2>
+            <p className="text-gray-500 text-sm mb-3 text-center">
+              {selectedPerson.role}
+              {selectedPerson.role.toLowerCase().includes("senior") &&
+                " (Senior)"}
+            </p>
+
+            {selectedPerson.description && (
+              <p className="text-gray-700 mb-4 text-sm">
+                {selectedPerson.description}
+              </p>
+            )}
+
+            <div className="text-sm text-gray-700 space-y-1">
+              {selectedPerson.email && (
+                <p className="flex items-center gap-2">
+                  <Mail size={16} />
+                  <strong>Email:</strong> {selectedPerson.email}
+                </p>
+              )}
+              {selectedPerson.phone && (
+                <p className="flex items-center gap-2">
+                  <Phone size={16} />
+                  <strong>Phone:</strong> {selectedPerson.phone}
+                </p>
+              )}
+              {selectedPerson.officeHours && (
+                <p className="flex items-center gap-2">
+                  <Clock size={16} />
+                  <strong>Office Hours:</strong> {selectedPerson.officeHours}
+                </p>
+              )}
+            </div>
+
+            {selectedPerson.socials && (
+              <div className="flex gap-4 mt-4 justify-center">
+                {selectedPerson.socials.facebook && (
+                  <a
+                    href={selectedPerson.socials.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800"
+                    title="Facebook"
+                  >
+                    <Facebook />
+                  </a>
+                )}
+                {selectedPerson.socials.twitter && (
+                  <a
+                    href={selectedPerson.socials.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:text-blue-700"
+                    title="Twitter"
+                  >
+                    <Twitter />
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
