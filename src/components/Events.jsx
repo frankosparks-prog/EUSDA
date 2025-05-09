@@ -86,7 +86,7 @@ function Events() {
         {/* Toast popup */}
         {showToast && (
           <Toast
-            message="✅ Registered successfully!"
+            message="Registered successfully!"
             duration={3000}
             onClose={() => setShowToast(false)}
           />

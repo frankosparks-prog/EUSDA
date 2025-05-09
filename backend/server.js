@@ -12,10 +12,15 @@ const visitor = require("./routes/VisitorRoutes.js");
 const paymentSuccess = require("./routes/payment-success.js");
 const AdminAuth = require("./routes/AdminAuth.js");
 const Uploads = require("./routes/UploadRoute.js");
-const Products = require("./routes/ProductRoute.js");
 const mail = require("./routes/Email.js");
-
+const joinApplicationsRoute = require('./routes/MinistryJoinRoute.js');
+const joinDeptRoute = require('./routes/DeptJoinRoute.js'); 
+const announcementRoute = require('./routes/AnnouncementsRoute.js'); 
+const galleryRoute = require('./routes/GalleryRoute.js'); 
+const blogRoute = require('./routes/BlogRoutes.js');
+const leaderRoute = require('./routes/LeaderRoute.js');
 const errorHandler = require("./middleware/Errorhandler.js");
+
 dotenv.config();
 connectdb();
 
@@ -64,13 +69,21 @@ app.use((err, req, res, next) => {
   res.status(500).send({ success: false, message: err.message });
 });
 
+
+app.use('/api/joinMinistry', joinApplicationsRoute);
+app.use('/api/joinDepartment', joinDeptRoute); // Join Department route
+app.use('/api/announcements', announcementRoute); // Announcements route
+app.use("/api/gallery", galleryRoute);
+app.use("/api/upload", Uploads); // Image upload route
+app.use('/api/contact', mail); // Contact form route
+app.use("/api/blog", blogRoute); // Blog route
+app.use("/api/leader", leaderRoute)
+
+
 // Routes
 app.use("/api/admin", AdminAuth); // Admin Auth routes
 app.use("/api/visitors", visitor); // Only authenticated users can track visitors
 app.use("/api/payments", paymentSuccess); // Payment routes
-app.use("/api/upload", Uploads); // Image upload route
-app.use("/api/products", Products); // Product routes
-app.use('/api/contact', mail); // Contact form route
 
 // Graceful Shutdown
 process.on("SIGINT", () => {

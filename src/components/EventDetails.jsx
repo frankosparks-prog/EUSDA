@@ -60,8 +60,8 @@ const EventDetails = () => {
     setAttendees(prev => newStatus ? prev + 1 : Math.max(0, prev - 1));
 
     const toastMsg = newStatus
-      ? "✅ You’ve successfully registered!"
-      : "❌ You’ve unregistered.";
+      ? "You’ve successfully registered!"
+      : "You’ve unregistered.";
     setToast({ message: toastMsg, type: newStatus ? "success" : "error" });
 
     setTimeout(() => setToast(null), 3000);
