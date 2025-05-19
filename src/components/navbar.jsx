@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Menu, X, User, Home, FileText, Calendar, Briefcase, Music, BookOpen, Mic, PenTool } from 'lucide-react'; // Added Lucide icons for nav items
+import {
+  Menu,
+  X,
+  User,
+  Home,
+  FileText,
+  Calendar,
+  Briefcase,
+  BookOpen,
+  Mic,
+  PenTool,
+} from 'lucide-react';
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -16,102 +27,102 @@ const Navbar = () => {
     { path: '/blog', label: 'Blog', icon: <PenTool size={20} /> },
   ];
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
+  const toggleMenu = () => setMenuOpen((prev) => !prev);
 
   return (
-    <div className="shadow-md fixed top-0 w-full z-20">
+    <div className="fixed top-0 w-full z-20 shadow-md">
       {/* Top Header */}
-      <div className="bg-gradient-to-r from-green-500 to-green-700 py-4 px-6 flex items-center justify-between rounded-b-2xl shadow-lg relative">
-        {/* Logo Left */}
+      <div className="relative flex items-center justify-between py-4 px-6 bg-gradient-to-r from-green-500 to-green-700 rounded-b-2xl shadow-lg">
+        {/* Logo */}
         <div className="flex items-center gap-3">
           <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwO8uDAe3N3IHiomKCDoFimUPW4-NvVu9d8A&s" // Replace with your logo URL
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwO8uDAe3N3IHiomKCDoFimUPW4-NvVu9d8A&s"
             alt="EUSDA Logo"
             className="w-14 h-14 object-cover rounded-full border-4 border-white shadow-md"
           />
         </div>
 
-        {/* EUSDA Name Center */}
+        {/* Centered Title */}
         <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl md:text-3xl font-extrabold text-white tracking-wide">
           EUSDA Church
         </h1>
 
-        {/* Right side: Profile + Menu */}
+        {/* Right Side: Profile & Menu Toggle */}
         <div className="flex items-center gap-4 text-white z-20">
-          {/* Profile Icon */}
-          <div className="hover:text-yellow-300 cursor-pointer transition-all duration-300">
-            <NavLink to="/profiles" className="flex items-center gap-2">
-              <User size={28} />
-            </ NavLink>
-          </div>
+          <NavLink
+            to="/profiles"
+            className="flex items-center gap-2 hover:text-yellow-300 transition duration-300 cursor-pointer"
+          >
+            <User size={28} />
+          </NavLink>
 
-          {/* Sandwich Menu (only visible on small screens) */}
-          <div
-            className="hover:text-yellow-300 cursor-pointer transition-all duration-300 md:hidden"
+          {/* Hamburger / Close Menu Icon */}
+          <button
             onClick={toggleMenu}
+            className="md:hidden hover:text-yellow-300 transition duration-300 cursor-pointer"
+            aria-label="Toggle menu"
           >
             {menuOpen ? <X size={32} /> : <Menu size={32} />}
-          </div>
+          </button>
         </div>
       </div>
 
-      {/* Side Navigation Links (appears from the left on small screens) */}
+      {/* Mobile Side Navigation */}
       <nav
-        className={`fixed top-0 left-0 w-64 h-full bg-green-700 text-white z-30 transform ${
+        className={`fixed top-0 left-0 w-64 h-full bg-green-700 text-white z-30 transform transition-transform duration-500 ease-in-out md:hidden ${
           menuOpen ? 'translate-x-0' : '-translate-x-full'
-        } transition-all duration-500 ease-in-out md:hidden`} // Ensure only visible on small screens
+        }`}
       >
-        <div className="flex items-center justify-between p-6">
+        <div className="flex items-center p-6 justify-start gap-4">
           <img
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwO8uDAe3N3IHiomKCDoFimUPW4-NvVu9d8A&s"
             alt="EUSDA Logo"
             className="w-12 h-12 object-cover rounded-full border-4 border-white"
           />
-          <h1 className="absolute text-2xl md:text-3xl font-extrabold text-white ml-16">
-            EUSDA
-          </h1>
+          <h1 className="text-2xl font-extrabold text-white">EUSDA</h1>
         </div>
 
-        {/* Show individual links when the menu is open (instead of list) */}
-        {menuOpen && (
-          <>
-            {navItems.map((item) => (
-              <div key={item.path} className="flex items-center gap-4 py-4 px-6">
-                <NavLink
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `flex items-center gap-4 text-lg font-semibold py-2 px-4 rounded-lg transition-all duration-300
-                    ${isActive ? 'bg-green-600' : 'hover:bg-green-600 hover:text-white'}`}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {item.icon}
-                  {item.label}
-                </NavLink>
-              </div>
-            ))}
-          </>
-        )}
+        {/* Navigation Links */}
+        <div className="flex flex-col">
+          {navItems.map(({ path, label, icon }) => (
+            <NavLink
+              key={path}
+              to={path}
+              onClick={() => setMenuOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-4 py-4 px-6 text-lg font-semibold rounded-lg transition duration-300
+                 ${
+                   isActive
+                     ? 'bg-green-600'
+                     : 'hover:bg-green-600 hover:text-white'
+                 }`
+              }
+            >
+              {icon}
+              {label}
+            </NavLink>
+          ))}
+        </div>
       </nav>
 
-      {/* Main Navigation: Only show on larger screens */}
-      <nav
-        className="hidden md:flex md:items-center md:justify-center bg-green-50 transition-all duration-500 ease-in-out"
-      >
-        <ul className="flex flex-row items-center gap-4 py-4 px-6">
-          {navItems.map((item) => (
-            <li key={item.path}>
+      {/* Desktop Navigation */}
+      <nav className="hidden md:flex justify-center bg-green-50">
+        <ul className="flex items-center gap-4 py-4 px-6">
+          {navItems.map(({ path, label }) => (
+            <li key={path}>
               <NavLink
-                to={item.path}
-                className={({ isActive }) =>
-                  `relative text-lg font-semibold px-5 py-2 rounded-full transition-all duration-300
-                   ${isActive ? 'bg-green-600 text-white shadow-lg' : 'bg-white text-green-600 hover:bg-green-200 hover:text-green-800'}
-                   border border-green-400`
-                }
+                to={path}
                 onClick={() => setMenuOpen(false)}
+                className={({ isActive }) =>
+                  `relative text-lg font-semibold px-5 py-2 rounded-full border border-green-400 transition duration-300
+                   ${
+                     isActive
+                       ? 'bg-green-600 text-white shadow-lg'
+                       : 'bg-white text-green-600 hover:bg-green-200 hover:text-green-800'
+                   }`
+                }
               >
-                {item.label}
+                {label}
               </NavLink>
             </li>
           ))}
