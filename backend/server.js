@@ -19,6 +19,7 @@ const announcementRoute = require('./routes/AnnouncementsRoute.js');
 const galleryRoute = require('./routes/GalleryRoute.js'); 
 const blogRoute = require('./routes/BlogRoutes.js');
 const leaderRoute = require('./routes/LeaderRoute.js');
+const eventRoute = require('./routes/EventRoutes.js');
 const errorHandler = require("./middleware/Errorhandler.js");
 
 dotenv.config();
@@ -31,7 +32,7 @@ app.set('trust proxy', 1);
 const allowedOrigins = [
   "http://localhost:3000", // For development
   "http://localhost:3001",
-  "http://192.168.103.20:3000", // For local network access
+  "http://192.168.101.234:3000", // For local network access
 ];
 
 app.use(cors({
@@ -43,7 +44,7 @@ app.use(cors({
       callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', '*'],
   credentials: true, // Allow cookies or credentials if necessary
 }));
@@ -77,7 +78,8 @@ app.use("/api/gallery", galleryRoute);
 app.use("/api/upload", Uploads); // Image upload route
 app.use('/api/contact', mail); // Contact form route
 app.use("/api/blog", blogRoute); // Blog route
-app.use("/api/leader", leaderRoute)
+app.use("/api/leader", leaderRoute);
+app.use("/api/events", eventRoute); // Error handling middleware
 
 
 // Routes
