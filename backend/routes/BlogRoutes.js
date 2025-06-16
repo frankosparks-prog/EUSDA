@@ -6,13 +6,13 @@ const parser = require("../middleware/cloudinaryUpload");
 // CREATE a blog post with image
 router.post("/", parser.single("image"), async (req, res) => {
   try {
-    const { title, content, author } = req.body;
+    const { role, quote, name } = req.body;
     const imageUrl = req.file?.path || ""; // Cloudinary URL
 
     const blog = new Blog({
-      title,
-      content,
-      author,
+      role,
+      quote,
+      name,
       image: imageUrl,
     });
 
@@ -47,16 +47,27 @@ router.get("/:id", async (req, res) => {
 });
 
 // UPDATE a blog post
-router.put("/:id", async (req, res) => {
+router.put("/:id", parser.single("image"), async (req, res) => {
   try {
-    const updated = await Blog.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const { name, role, quote } = req.body;
+    const imageUrl = req.file?.path;
+
+    const updatedFields = { name, role, quote };
+    if (imageUrl) updatedFields.image = imageUrl;
+
+    const updated = await Blog.findByIdAndUpdate(
+      req.params.id,
+      updatedFields,
+      { new: true }
+    );
+
     res.status(200).json(updated);
   } catch (err) {
+    console.error("Update error:", err.message);
     res.status(400).json({ error: err.message });
   }
 });
+
 
 // DELETE a blog post
 router.delete("/:id", async (req, res) => {

@@ -240,7 +240,7 @@ function MinistryJoinForm() {
         </div>
       </section>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

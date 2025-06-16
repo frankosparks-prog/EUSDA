@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Menu, X, User, Home, FileText, Calendar, Briefcase, Music, BookOpen, Mic, PenTool } from 'lucide-react'; // Added Lucide icons for nav items
+import { Menu, X, User, Home, FileText, Calendar, Briefcase, BookOpen, Mic, PenTool } from 'lucide-react'; // Added Lucide icons for nav items
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);

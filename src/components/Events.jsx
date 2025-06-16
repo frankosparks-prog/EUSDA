@@ -340,7 +340,7 @@ export default function Events() {
         </p>
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

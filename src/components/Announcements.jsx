@@ -217,7 +217,7 @@ function Announcements() {
           </div>
         </div>
       </section>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

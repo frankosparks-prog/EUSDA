@@ -64,7 +64,7 @@ function Ministries() {
           </div>
         </div>
       </section>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

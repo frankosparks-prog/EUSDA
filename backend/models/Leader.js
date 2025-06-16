@@ -15,6 +15,7 @@ const leaderSchema = new mongoose.Schema({
   socials: {
     facebook: { type: String, match: /https?:\/\/.+/ },
     twitter: { type: String, match: /https?:\/\/.+/ },
+    whatsapp: { type: String, match: /https?:\/\/.+/ },
   },
 });
 

@@ -148,7 +148,7 @@ function Contributions() {
           </form>
         </div>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

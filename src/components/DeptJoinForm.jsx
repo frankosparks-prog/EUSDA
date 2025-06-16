@@ -309,7 +309,7 @@ function DeptJoinForm() {
         </div>
       </section>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

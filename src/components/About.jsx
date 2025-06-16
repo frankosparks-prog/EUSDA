@@ -87,7 +87,7 @@ const About = () => {
         </a>
       </section>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

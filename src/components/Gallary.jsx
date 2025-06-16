@@ -220,7 +220,7 @@ function Gallary() {
           </div>
         )}
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

@@ -44,10 +44,19 @@ router.post("/", parser.single("image"), async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
-
 // PUT (update) a leader (with optional new image)
 router.put("/:id", parser.single("image"), async (req, res) => {
   try {
+    // Safely parse socials if it's a JSON string
+    let parsedSocials = req.body.socials;
+    if (typeof parsedSocials === "string") {
+      try {
+        parsedSocials = JSON.parse(parsedSocials);
+      } catch (err) {
+        return res.status(400).json({ message: "Invalid format for socials" });
+      }
+    }
+
     const updateData = {
       name: req.body.name,
       role: req.body.role,
@@ -55,7 +64,7 @@ router.put("/:id", parser.single("image"), async (req, res) => {
       email: req.body.email,
       phone: req.body.phone,
       category: req.body.category,
-      socials: req.body.socials,
+      socials: parsedSocials,
     };
 
     if (req.file) {
@@ -67,10 +76,13 @@ router.put("/:id", parser.single("image"), async (req, res) => {
       runValidators: true,
     });
 
-    if (!updatedLeader) return res.status(404).json({ message: "Leader not found" });
+    if (!updatedLeader) {
+      return res.status(404).json({ message: "Leader not found" });
+    }
 
     res.json(updatedLeader);
   } catch (err) {
+    console.error("Update error:", err);
     res.status(400).json({ message: err.message });
   }
 });

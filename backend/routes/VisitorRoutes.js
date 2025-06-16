@@ -86,4 +86,28 @@ router.get("/visitor-count", async (req, res) => {
   }
 });
 
+router.get("/weekly-stats", async (req, res) => {
+  try {
+    // Get the latest 7 records sorted by date (descending), then reverse to chronological
+    const weeklyData = await Visitor.find({})
+      .sort({ date: -1 })
+      .limit(7)
+      .lean();
+
+    // Format for recharts: { name: "Mon", visitors: 120 }
+    const formatted = weeklyData
+      .map(({ day, visitorCount }) => ({
+        name: day.slice(0, 3), // e.g., "Mon", "Tue"
+        visitors: visitorCount,
+      }))
+      .reverse(); // To show from Mon to Sun (or recent 7 days)
+
+    res.json(formatted);
+  } catch (error) {
+    console.error("Error fetching weekly stats:", error);
+    res.status(500).json({ message: "Failed to get weekly data" });
+  }
+});
+
+
 module.exports = router;

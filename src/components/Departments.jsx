@@ -275,7 +275,7 @@ function Departments() {
           Get Involved
         </a>
       </section>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

@@ -272,11 +272,17 @@
 
 // export default Profile;
 
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Footer from "./Footer";
-import { Mail, Phone, Clock, Facebook, Twitter } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  Clock,
+  Facebook,
+  Twitter,
+  MessageCircleMore,
+} from "lucide-react";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
@@ -388,6 +394,13 @@ function Profile() {
     </div>
   );
 
+  const formatPhoneNumber = (number) => {
+    if (number.startsWith("0")) {
+      return `+254${number.slice(1)}`;
+    }
+    return number; // already in correct format
+  };
+
   return (
     <>
       <div className="bg-gray-50 py-10 px-6 md:px-20 min-h-screen mt-20 md:mt-32">
@@ -412,8 +425,8 @@ function Profile() {
           description="Leaders responsible for worship, volunteering, children, and more."
         />
       </div>
-
-      <Footer />
+      {/* 
+      <Footer /> */}
 
       {selectedPerson && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
@@ -446,16 +459,27 @@ function Profile() {
               {selectedPerson.email && (
                 <p className="flex items-center gap-2">
                   <Mail size={16} />
-                  <strong>Email:</strong> {selectedPerson.email}
+                  <strong>Email:</strong>{" "}
+                  <a
+                    href={`mailto:${selectedPerson.email}`}
+                    className="hover:underline"
+                  >
+                    {selectedPerson.email}
+                  </a>
                 </p>
               )}
               {selectedPerson.phone && (
                 <p className="flex items-center gap-2">
                   <Phone size={16} />
-                  <strong>Phone:</strong> {selectedPerson.phone}
+                  <strong>Phone:</strong>{" "}
+                  <a
+                    href={`tel:${formatPhoneNumber(selectedPerson.phone)}`}
+                    className="hover:underline"
+                  >
+                    {selectedPerson.phone}
+                  </a>
                 </p>
               )}
-              
             </div>
 
             {selectedPerson.socials && (
@@ -476,10 +500,21 @@ function Profile() {
                     href={selectedPerson.socials.twitter}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-500 hover:text-blue-700"
+                    className="text-grey-500 hover:text-grey-700"
                     title="Twitter"
                   >
                     <Twitter />
+                  </a>
+                )}
+                {selectedPerson.socials.whatsapp && (
+                  <a
+                    href={selectedPerson.socials.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-green-500 hover:text-green-700"
+                    title="Whatsapp"
+                  >
+                    <MessageCircleMore />
                   </a>
                 )}
               </div>
