@@ -10,6 +10,7 @@ const gallerySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    title: { type: String, default: "" }, 
   },
   { timestamps: true }
 );

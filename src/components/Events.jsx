@@ -303,7 +303,7 @@ export default function Events() {
 
                   {/* meta */}
                   <div className="grid sm:grid-cols-2 gap-4 text-sm text-gray-700 mb-6">
-                    <Meta icon={CalendarDays} label={`${ev.date} (${ev.day})`} />
+                    <Meta icon={CalendarDays} label={`${new Date(ev.date).toLocaleDateString()} (${ev.day})`} /> 
                     <Meta icon={Clock}        label={ev.time} />
                     <Meta icon={MapPin}       label={ev.venue} />
                     <Meta icon={Mic}          label={ev.speaker} />

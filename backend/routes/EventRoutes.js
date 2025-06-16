@@ -60,12 +60,50 @@ router.post("/", parser.single("image"), async (req, res) => {
   }
 });
 
-// PUT update event
-router.put("/:id", async (req, res) => {
+router.put("/:id", parser.single("image"), async (req, res) => {
   try {
-    const updated = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const {
+      title,
+      date,
+      day,
+      time,
+      speaker,
+      venue,
+      description,
+      longDescription,
+    } = req.body;
+
+    // Prepare update object
+    const updates = {
+      title,
+      date,
+      day,
+      time,
+      speaker,
+      venue,
+      description,
+      longDescription,
+    };
+
+    // If a new image was uploaded, include it in the update
+    if (req.file) {
+      updates.image = req.file.path;
+    }
+
+    // Update the event in the database
+    const updated = await Event.findByIdAndUpdate(req.params.id, updates, {
+      new: true, // return the updated document
+    });
+
+    // Handle case when event is not found
+    if (!updated) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    // Respond with updated event
     res.json(updated);
   } catch (err) {
+    console.error("Event update error:", err);
     res.status(400).json({ error: err.message });
   }
 });

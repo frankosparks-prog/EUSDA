@@ -2,7 +2,7 @@ import React from 'react'
 
 function ManageContributions() {
   return (
-    <div>ManageContributions</div>
+    <div className='font-bold flex items-center justify-center text-3xl'>Coming soon...</div>
   )
 }
 

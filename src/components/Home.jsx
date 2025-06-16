@@ -1,16 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Footer from './Footer';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
+const SERVER_URL = process.env.REACT_APP_SERVER_URL; 
+
 const Home = () => {
+  const [galleryImages, setGalleryImages] = useState([]);
   useEffect(() => {
     AOS.init({
       duration: 1000,
       // once: true, // only animate once
       // offset: 100, // trigger point from top
     });
+    const fetchGallery = async () => {
+      try {
+        const res = await fetch(`${SERVER_URL}/api/gallery/latest`);
+        const data = await res.json();
+        setGalleryImages(data);
+      } catch (err) {
+        console.error("Failed to load gallery images:", err);
+      }
+    };
+
+    fetchGallery();
   }, []);
 
   return (
@@ -79,7 +93,7 @@ const Home = () => {
       </section>
 
       {/* Gallery Preview */}
-      <section className="bg-white py-16 px-6" data-aos="fade-up">
+      {/* <section className="bg-white py-16 px-6" data-aos="fade-up">
         <h2 className="text-3xl font-bold text-green-800 text-center mb-10">Church Moments</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto">
           <img src="https://picsum.photos/400/250?random=4" alt="Gallery 1" className="rounded-lg shadow-md" data-aos="zoom-in" />
@@ -89,6 +103,30 @@ const Home = () => {
         </div>
         <div className="text-center mt-6">
           <Link to="/gallery" className="text-green-700 underline font-medium hover:text-green-900">View Full Gallery →</Link>
+        </div>
+      </section> */}
+      <section className="bg-white py-16 px-6" data-aos="fade-up">
+        <h2 className="text-3xl font-bold text-green-800 text-center mb-10">Church Moments</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto">
+          {galleryImages.length > 0 ? (
+            galleryImages.map((img, index) => (
+              <img
+                key={img._id || index}
+                src={img.url}
+                alt={img.caption || `Gallery ${index + 1}`}
+                className="rounded-lg shadow-md"
+                data-aos="zoom-in"
+                data-aos-delay={index * 100}
+              />
+            ))
+          ) : (
+            <p className="text-gray-600 col-span-4 text-center">No gallery images found.</p>
+          )}
+        </div>
+        <div className="text-center mt-6">
+          <Link to="/gallery" className="text-green-700 underline font-medium hover:text-green-900">
+            View Full Gallery →
+          </Link>
         </div>
       </section>
 
