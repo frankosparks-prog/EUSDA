@@ -155,7 +155,27 @@ function Gallary() {
           Church Moments Gallery ✨
         </h2>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        {/* Gallery Grid in pinInterest style */}
+        <div className="columns-2 sm:columns-3 md:columns-4 gap-4 space-y-4">
+          {images.map((img, idx) => (
+            <div
+              key={img._id}
+              className="break-inside-avoid overflow-hidden rounded-lg cursor-pointer shadow-md hover:shadow-xl transition duration-300"
+              onClick={() => {
+                setSelectedImage(img.url);
+                setCurrentIndex(idx);
+              }}
+            >
+              <img
+                src={img.url}
+                alt={`Gallery ${idx}`}
+                className="w-full object-cover transition duration-300 hover:scale-105"
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {images.map((img, idx) => (
             <div
               key={img._id}
@@ -172,7 +192,7 @@ function Gallary() {
               />
             </div>
           ))}
-        </div>
+        </div> */}
 
         {/* Modal */}
         {selectedImage && (

@@ -107,14 +107,15 @@ const Home = () => {
       </section> */}
       <section className="bg-white py-16 px-6" data-aos="fade-up">
         <h2 className="text-3xl font-bold text-green-800 text-center mb-10">Church Moments</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto">
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {galleryImages.length > 0 ? (
             galleryImages.map((img, index) => (
               <img
                 key={img._id || index}
                 src={img.url}
                 alt={img.caption || `Gallery ${index + 1}`}
-                className="rounded-lg shadow-md"
+                className="rounded-lg shadow-md w-full h-48 object-cover transform hover:scale-105 transition duration-300"
                 data-aos="zoom-in"
                 data-aos-delay={index * 100}
               />
