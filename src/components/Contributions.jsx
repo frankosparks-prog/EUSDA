@@ -4,7 +4,7 @@ import "aos/dist/aos.css";
 import axios from "axios";
 import Toast from "./Toast";
 import SuccessModal from "./SuccessModal";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle} from "lucide-react";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
@@ -79,7 +79,7 @@ function Contributions() {
           setIsPolling(true);
 
           let attempts = 0;
-          const maxAttempts = 7;
+          const maxAttempts = 10;
 
           // Start polling
           const intervalId = setInterval(async () => {
@@ -236,13 +236,17 @@ function Contributions() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition ${loading ? "opacity-50 cursor-not-allowed bg-green-700" : ""}`}
+              className={`w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition ${
+                loading ? "opacity-50 cursor-not-allowed bg-green-700" : ""
+              }`}
             >
-              {loading ? "Submitting request..." :
-              ` ${formData.paymentMethod === "mpesa"
-                ? "Send via M-Pesa"
-                : "Proceed to Card Payment"} `
-              }
+              {loading
+                ? "Submitting request..."
+                : ` ${
+                    formData.paymentMethod === "mpesa"
+                      ? "Send via M-Pesa"
+                      : "Proceed to Card Payment"
+                  } `}
             </button>
           </form>
           {isPolling && (
