@@ -16,6 +16,7 @@ function Contributions() {
     paymentMethod: "mpesa",
   });
   const [toast, setToast] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [isPolling, setIsPolling] = useState(false);
   const [transaction, setTransaction] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -33,6 +34,8 @@ function Contributions() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setToast(null); // clear any previous toast
 
     const { phone, amount, purpose, paymentMethod } = formData;
 
@@ -76,7 +79,7 @@ function Contributions() {
           setIsPolling(true);
 
           let attempts = 0;
-          const maxAttempts = 10;
+          const maxAttempts = 7;
 
           // Start polling
           const intervalId = setInterval(async () => {
@@ -112,6 +115,9 @@ function Contributions() {
                 type: "error",
               });
               setIsPolling(false);
+              console.error("Polling error:", err);
+            } finally {
+              setLoading(false);
             }
           }, 4000); // poll every 4s
         } else {
@@ -122,6 +128,8 @@ function Contributions() {
         }
       } else if (paymentMethod === "card") {
         setToast({ message: "Card payment coming soon...", type: "info" });
+        setLoading(false);
+        return;
       }
 
       // Reset form
@@ -134,6 +142,7 @@ function Contributions() {
     } catch (err) {
       console.error("Payment error:", err);
       setToast({ message: "An error occurred during payment.", type: "error" });
+      setLoading(false);
     }
   };
   return (
@@ -226,11 +235,14 @@ function Contributions() {
             {/* Submit */}
             <button
               type="submit"
-              className="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition"
+              disabled={loading}
+              className={`w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition ${loading ? "opacity-50 cursor-not-allowed bg-green-700" : ""}`}
             >
-              {formData.paymentMethod === "mpesa"
+              {loading ? "Submitting request..." :
+              ` ${formData.paymentMethod === "mpesa"
                 ? "Send via M-Pesa"
-                : "Proceed to Card Payment"}
+                : "Proceed to Card Payment"} `
+              }
             </button>
           </form>
           {isPolling && (
