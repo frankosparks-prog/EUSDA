@@ -20,6 +20,7 @@ const galleryRoute = require('./routes/GalleryRoute.js');
 const blogRoute = require('./routes/BlogRoutes.js');
 const leaderRoute = require('./routes/LeaderRoute.js');
 const eventRoute = require('./routes/EventRoutes.js');
+const mpesaRoutes = require('./routes/mpesaRoute.js')
 const errorHandler = require("./middleware/Errorhandler.js");
 
 dotenv.config();
@@ -86,6 +87,7 @@ app.use("/api/events", eventRoute); // Error handling middleware
 app.use("/api/admin", AdminAuth); // Admin Auth routes
 app.use("/api/visitors", visitor); // Only authenticated users can track visitors
 app.use("/api/payments", paymentSuccess); // Payment routes
+app.use("/api/mpesa", mpesaRoutes); // M-Pesa routes
 
 // Graceful Shutdown
 process.on("SIGINT", () => {

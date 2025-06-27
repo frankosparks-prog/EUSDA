@@ -179,8 +179,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
 import { CalendarDays, Clock, MapPin, Mic } from "lucide-react";
-import Footer      from "./Footer";
-import Toast       from "./Toast";
+import Toast from "./Toast";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;   // e.g. http://localhost:3002

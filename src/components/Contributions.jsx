@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import Footer from "./Footer";
+import axios from "axios";
+import Toast from "./Toast";
+import SuccessModal from "./SuccessModal";
+import { LoaderCircle } from "lucide-react";
+
+const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
 function Contributions() {
   const [formData, setFormData] = useState({
@@ -10,6 +15,10 @@ function Contributions() {
     amount: "",
     paymentMethod: "mpesa",
   });
+  const [toast, setToast] = useState(null);
+  const [isPolling, setIsPolling] = useState(false);
+  const [transaction, setTransaction] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     AOS.init({ duration: 1000 });
@@ -22,39 +31,117 @@ function Contributions() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.purpose || !formData.amount) {
-      alert("Please fill in all required fields");
+    const { phone, amount, purpose, paymentMethod } = formData;
+
+    if (paymentMethod === "mpesa" && !phone.match(/^0(7|1)\d{8}$/)) {
+      setToast({ message: "Invalid phone number format.", type: "error" });
       return;
     }
 
-    if (formData.paymentMethod === "mpesa" && !formData.phone) {
-      alert("Please enter your M-Pesa phone number");
+    if (!purpose || !amount) {
+      setToast({
+        message: "Please fill in all required fields.",
+        type: "warning",
+      });
       return;
     }
 
-    if (formData.paymentMethod === "mpesa") {
-      alert(
-        `STK Push Initiated:\nPhone: ${formData.phone}\nPurpose: ${formData.purpose}\nAmount: KES ${formData.amount}`
-      );
-    } else if (formData.paymentMethod === "card") {
-      alert(
-        `Redirecting to card payment:\nPurpose: ${formData.purpose}\nAmount: KES ${formData.amount}`
-      );
+    if (paymentMethod === "mpesa" && !phone) {
+      setToast({
+        message: "Phone number is required for M-Pesa payments.",
+        type: "warning",
+      });
+      return;
     }
 
-    setFormData({
-      phone: "",
-      purpose: "",
-      amount: "",
-      paymentMethod: "mpesa",
-    });
+    const formattedPhone = "254" + phone.slice(1); // convert 07.. to 2547..
+    try {
+      if (paymentMethod === "mpesa") {
+        const res = await axios.post(`${SERVER_URL}/api/mpesa/pay`, {
+          phone: formattedPhone,
+          amount,
+          purpose,
+        });
+
+        if (res.data.message === "STK Push sent") {
+          const checkoutID = res.data.checkoutRequestID;
+
+          setToast({
+            message: "Payment initiated. Awaiting confirmation...",
+            type: "info",
+          });
+          setIsPolling(true);
+
+          let attempts = 0;
+          const maxAttempts = 10;
+
+          // Start polling
+          const intervalId = setInterval(async () => {
+            attempts++;
+            if (attempts > maxAttempts) {
+              clearInterval(intervalId);
+              setToast({
+                message:
+                  "Payment timed out. Please try again or check your M-Pesa app.",
+                type: "error",
+              });
+              setIsPolling(false);
+              return;
+            }
+
+            try {
+              const txnRes = await axios.get(
+                `${SERVER_URL}/api/mpesa/transactions/${checkoutID}`
+              );
+              const txn = txnRes.data;
+
+              if (txn.status !== "Pending") {
+                clearInterval(intervalId);
+                setTransaction(txn);
+                setShowModal(true);
+                setToast(null); // clear the toast
+                setIsPolling(false);
+              }
+            } catch (err) {
+              clearInterval(intervalId);
+              setToast({
+                message: "Error checking payment status.",
+                type: "error",
+              });
+              setIsPolling(false);
+            }
+          }, 4000); // poll every 4s
+        } else {
+          setToast({
+            message: res.data.message || "Payment initiation failed.",
+            type: "error",
+          });
+        }
+      } else if (paymentMethod === "card") {
+        setToast({ message: "Card payment coming soon...", type: "info" });
+      }
+
+      // Reset form
+      setFormData({
+        phone: "",
+        purpose: "",
+        amount: "",
+        paymentMethod: "mpesa",
+      });
+    } catch (err) {
+      console.error("Payment error:", err);
+      setToast({ message: "An error occurred during payment.", type: "error" });
+    }
   };
-
   return (
     <>
+      {toast && (
+        <Toast {...toast} duration={4000} onClose={() => setToast(null)} />
+      )}
+
       <div className="bg-green-50 min-h-screen py-20 px-6  flex items-center justify-center mt-[-5rem] md:mt-20 mb-[-12rem] md:mb-[-2rem]">
         <div
           className="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full"
@@ -146,9 +233,25 @@ function Contributions() {
                 : "Proceed to Card Payment"}
             </button>
           </form>
+          {isPolling && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex flex-col items-center justify-center rounded-lg">
+              <LoaderCircle className="animate-spin-slow text-white w-10 h-10 mb-4" />
+              <p className="text-white text-sm">
+                Awaiting M-Pesa confirmation...
+              </p>
+            </div>
+          )}
         </div>
       </div>
-      {/* <Footer /> */}
+      {showModal && transaction && (
+        <SuccessModal
+          transaction={transaction}
+          onClose={() => {
+            setShowModal(false);
+            setTransaction(null);
+          }}
+        />
+      )}
     </>
   );
 }
