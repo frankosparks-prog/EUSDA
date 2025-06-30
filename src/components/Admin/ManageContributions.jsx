@@ -22,12 +22,14 @@ import {
   Legend,
   Cell,
 } from "recharts";
+import LiveContributions from "./LiveContributions";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
 function ManageContributions() {
   const [graph, setGraph] = useState(false);
   const [graphData, setGraphData] = useState([]);
+  const [live, setLive] = useState(false);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -310,16 +312,31 @@ function ManageContributions() {
           ))}
         </div>
       )}
-      {/* Toggle Graph */}
-      <div className="text-center mb-4 mt-4">
-        <button
-          onClick={() => setGraph(!graph)}
-          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-3 rounded-full shadow inline-flex items-center gap-2 transition"
-        >
-          <PlusCircle className="w-5 h-5" />
-          {graph ? "Close" : "Open graph"}
-          {graph ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-        </button>
+
+      <div className="flex justify-center items-center gap-4 mt-6">
+        {/* Toggle Graph */}
+        <div className="text-center mb-4 mt-4">
+          <button
+            onClick={() => setGraph(!graph)}
+            className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-3 rounded-full shadow inline-flex items-center gap-2 transition"
+          >
+            <PlusCircle className="w-5 h-5" />
+            {graph ? "Close" : "Open graph"}
+            {graph ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+          </button>
+        </div>
+
+        {/* Toggle Live */}
+        <div className="text-center mb-4 mt-4">
+          <button
+            onClick={() => setLive(!live)}
+            className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-3 rounded-full shadow inline-flex items-center gap-2 transition"
+          >
+            <PlusCircle className="w-5 h-5" />
+            {live ? "Close" : "Open live"}
+            {live ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+          </button>
+        </div>
       </div>
 
       {/* Bar Chart */}
@@ -350,11 +367,7 @@ function ManageContributions() {
                 />
 
                 <Legend />
-                <Bar
-                  dataKey="contributions"
-                  fill="green"
-                  radius={[8, 8, 0, 0]}
-                >
+                <Bar dataKey="contributions" fill="green" radius={[8, 8, 0, 0]}>
                   {graphData.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
@@ -364,6 +377,15 @@ function ManageContributions() {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+      {/* Live Contributions */}
+      {live && (
+        <div className="mt-10 bg-white p-6 rounded-2xl shadow-lg">
+          <LiveContributions />
+          <div className="flex justify-center items-center h-48">
+            <Loader className="animate-spin" size={40} />
           </div>
         </div>
       )}
