@@ -4,7 +4,10 @@ import "aos/dist/aos.css";
 import axios from "axios";
 import Toast from "./Toast";
 import SuccessModal from "./SuccessModal";
-import { LoaderCircle} from "lucide-react";
+import { LoaderCircle } from "lucide-react";
+import io from "socket.io-client";
+
+const socket = io(process.env.REACT_APP_SERVER_URL);
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
@@ -107,6 +110,12 @@ function Contributions() {
                 setShowModal(true);
                 setToast(null); // clear the toast
                 setIsPolling(false);
+
+                // Emit live update to socket server
+                socket.emit("new-contribution", {
+                  amount: Number(amount),
+                  purpose,
+                });
               }
             } catch (err) {
               clearInterval(intervalId);
