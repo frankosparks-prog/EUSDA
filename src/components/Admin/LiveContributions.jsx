@@ -60,7 +60,7 @@ const LiveContributions = () => {
       className="p-6 bg-white rounded-xl shadow-lg text-center max-w-2xl mx-auto"
       ref={containerRef}
     >
-      {/* 🔧 Editable Title */}
+      {/* Editable Title */}
       <div className="mb-4">
         {editingTitle ? (
           <input
@@ -82,7 +82,7 @@ const LiveContributions = () => {
         )}
       </div>
 
-      {/* 🎯 Set Goal */}
+      {/*  Set Goal */}
       <div className="mb-3">
         <label className="text-sm text-gray-600 mr-2">Set Goal:</label>
         <input
@@ -93,7 +93,7 @@ const LiveContributions = () => {
         />
       </div>
 
-      {/* 💸 Circular Progress */}
+      {/*  Circular Progress */}
       <div className="flex justify-center items-center mb-6">
         <div className="relative w-40 h-40">
           <svg className="absolute top-0 left-0 w-full h-full">
@@ -128,7 +128,7 @@ const LiveContributions = () => {
         </div>
       </div>
 
-      {/* 🧰 Buttons */}
+      {/*  Buttons */}
       <div className="flex justify-center gap-4 mb-4 flex-wrap">
         <button
           onClick={resetContributions}
