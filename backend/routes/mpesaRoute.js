@@ -2,6 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const router = express.Router();
 const Transaction = require("../models/Transacton");
+const Total = require("../models/Total");
 
 const {
   DARAJA_CONSUMER_KEY,
@@ -121,11 +122,16 @@ router.post("/callback", async (req, res) => {
       const amount = parseFloat(
         callbackData.Body.stkCallback.CallbackMetadata?.Item?.find(i => i.Name === "Amount")?.Value || 0
       );
-
+      const sanitizedPurpose = (purpose || "Unknown").trim();
       const purpose =
         callbackData.Body.stkCallback.CallbackMetadata?.Item?.find(i => i.Name === "AccountReference")?.Value || "Unknown";
-
-      io.emit("new-contribution", { amount, purpose });
+        // saving to database
+      await Total.findOneAndUpdate(
+        { purpose },
+        { $inc: { total: amount } },
+        { upsert: true, new: true }
+      );
+      io.emit("new-contribution", { amount, purpose: sanitizedPurpose });
     }
     res.status(200).json({ message: "Callback received and transaction updated" });
   } catch (err) {

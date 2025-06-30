@@ -120,6 +120,7 @@ const dotenv = require("dotenv");
 const http = require("http");
 const socketio = require("socket.io");
 const connectdb = require("./config/db");
+const Total = require("./models/Total");
 
 dotenv.config();
 connectdb();
@@ -184,15 +185,26 @@ app.use("/api/payments", require('./routes/payment-success'));
 app.use("/api/mpesa", require('./routes/mpesaRoute')); // <-- Ensure this uses `req.app.get("io")`
 
 // SOCKET.IO
-let liveTotal = 0;
+// let liveTotal = 0;
 
-io.on("connection", (socket) => {
+
+io.on("connection", async (socket) => {
   console.log("💡 New client connected");
 
-  socket.emit("initial-total", liveTotal);
+  try {
+    const totals = await Total.find({});
+    const initialData = {};
+    for (const t of totals) {
+      initialData[t.purpose] = t.total;
+    }
+    socket.emit("initial-total", initialData);
+  } catch (err) {
+    console.error("Error loading initial totals:", err.message);
+    socket.emit("initial-total", {}); // fallback
+  }
 
-  socket.on("reset-total", () => {
-    liveTotal = 0;
+  socket.on("reset-total", async () => {
+    await Total.deleteMany({});
     io.emit("reset-done");
   });
 
@@ -200,6 +212,7 @@ io.on("connection", (socket) => {
     console.log("Client disconnected");
   });
 });
+
 
 // Graceful Shutdown
 process.on("SIGINT", () => {
