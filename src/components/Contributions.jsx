@@ -7,7 +7,9 @@ import SuccessModal from "./SuccessModal";
 import { LoaderCircle } from "lucide-react";
 import io from "socket.io-client";
 
-const socket = io(process.env.REACT_APP_SERVER_URL);
+const socket = io(process.env.REACT_APP_SERVER_URL, {
+  transports: ["websocket"],
+});
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 

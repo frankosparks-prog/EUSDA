@@ -9,7 +9,10 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const socket = io(process.env.REACT_APP_SERVER_URL);
+const socket = io(process.env.REACT_APP_SERVER_URL, {
+  transports: ["websocket"],
+});
+
 const milestoneSound = new Audio("/milestone.mp3");
 
 const LiveContributions = () => {
@@ -207,7 +210,6 @@ const LiveContributions = () => {
               fill="none"
               stroke="#ccc"
               strokeWidth="15"
-              transform="rotate(-90 70 70)"
             />
 
             <circle
