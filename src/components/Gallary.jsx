@@ -115,6 +115,7 @@
 import React, { useEffect, useState } from "react";
 import Footer from "./Footer";
 import axios from "axios";
+import CircularProgress from "@mui/material/CircularProgress"; // Importing Material-UI CircularProgress
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
@@ -122,6 +123,8 @@ function Gallary() {
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Fetch gallery images from backend
   useEffect(() => {
@@ -131,6 +134,9 @@ function Gallary() {
         setImages(res.data.data);
       } catch (error) {
         console.error("Error fetching images:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false); // Turn off the loading spinner
       }
     };
     fetchImages();
@@ -150,10 +156,24 @@ function Gallary() {
 
   return (
     <>
-      <div className="py-16 px-4 md:px-16 bg-gray-50 min-h-screen mt-20 md:mt-32 mb-[-2rem]">
+      <div className="py-16 px-4 md:px-16 bg-gray-50 min-h-screen mt-20 md:mt-24 mb-[-2rem]">
         <h2 className="text-4xl font-bold text-center text-green-700 mb-10">
           Church Moments Gallery ✨
         </h2>
+
+        {/* Displaying Loading with CircularProgress */}
+        {loading && (
+          <div className="flex justify-center items-center py-10">
+            <CircularProgress color="success" size={60} />
+          </div>
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <p className="text-center text-red-600 font-semibold bg-red-100 p-4 rounded-lg shadow-md mt-6">
+            Error: {error}
+          </p>
+        )}
 
         {/* Gallery Grid in pinInterest style */}
         <div className="columns-2 sm:columns-3 md:columns-4 gap-4 space-y-4">

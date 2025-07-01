@@ -70,24 +70,25 @@
 
 // export default Blog;
 
-
 import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import Footer from "./Footer";
+import CircularProgress from "@mui/material/CircularProgress"; // Importing Material-UI CircularProgress
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
 function Blog() {
   const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     AOS.init({ duration: 1000 });
 
     // Fetch blog posts from backend
-    fetch(`${SERVER_URL}/api/blog`) 
+    fetch(`${SERVER_URL}/api/blog`)
       .then((res) => res.json())
       .then((data) => setBlogs(data))
+      .then(() => setLoading(false)) // Turn off the loading spinner
       .catch((err) => console.error("Failed to fetch blogs", err));
   }, []);
 
@@ -100,10 +101,18 @@ function Blog() {
         >
           Blog & Reflections
         </h2>
+        {/* Displaying Loading with CircularProgress */}
+        {loading && (
+          <div className="flex justify-center items-center py-10">
+            <CircularProgress color="success" size={60} />
+          </div>
+        )}
 
         <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
           {blogs.length === 0 ? (
-            <p className="text-center col-span-3 text-gray-500 text-center text-gray-500 font-semibold text-lg bg-gray-100 p-4 rounded-lg shadow-md mt-6">No blog posts yet.</p>
+            <p className="text-center col-span-3 text-gray-500 text-center text-gray-500 font-semibold text-lg bg-gray-100 p-4 rounded-lg shadow-md mt-6">
+              No blog posts found yet.
+            </p>
           ) : (
             blogs.map((blog, index) => (
               <div
@@ -117,7 +126,9 @@ function Blog() {
                   alt={blog.name}
                   className="w-full h-48 object-cover rounded mb-4"
                 />
-                <h3 className="text-xl font-bold text-green-700 mb-2">{blog.name}</h3>
+                <h3 className="text-xl font-bold text-green-700 mb-2">
+                  {blog.name}
+                </h3>
                 <p className="text-gray-600 text-sm mb-4">By {blog.role}</p>
                 <p className="text-gray-700 line-clamp-4">{blog.quote}</p>
               </div>

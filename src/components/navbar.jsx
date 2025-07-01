@@ -34,8 +34,8 @@ const Navbar = () => {
         </div>
 
         {/* EUSDA Name Center */}
-        <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl md:text-3xl font-extrabold text-white tracking-wide">
-          EUSDA Church
+        <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl md:text-3xl font-extrabold text-white tracking-wide text-center">
+          Egerton University SDA Church
         </h1>
 
         {/* Right side: Profile + Menu */}

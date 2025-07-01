@@ -84,7 +84,7 @@ function Contributions() {
           setIsPolling(true);
 
           let attempts = 0;
-          const maxAttempts = 10;
+          const maxAttempts = 15; // max 15 attempts (1 minute)
 
           // Start polling
           const intervalId = setInterval(async () => {

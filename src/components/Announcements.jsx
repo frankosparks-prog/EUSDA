@@ -115,7 +115,6 @@
 import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import Footer from "./Footer";
 import CircularProgress from "@mui/material/CircularProgress"; // Importing Material-UI CircularProgress
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
