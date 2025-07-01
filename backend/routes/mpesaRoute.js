@@ -88,108 +88,109 @@ router.post("/pay", async (req, res) => {
 });
 
 // Step 3: Callback from Safaricom
-router.post("/callback", async (req, res) => {
-  console.log("Callback received:", JSON.stringify(req.body, null, 2));
-  const callbackData = req.body;
-  const io = req.app.get("io");
-
-  try {
-    const { stkCallback } = callbackData.Body;
-    const { CheckoutRequestID, ResultCode, ResultDesc } = stkCallback;
-
-    const metadata = stkCallback.CallbackMetadata?.Item || [];
-    const getItem = (name) => metadata.find((i) => i.Name === name)?.Value;
-
-    const amount = parseFloat(getItem("Amount") || 0);
-    const mpesaReceiptNumber = getItem("MpesaReceiptNumber") || null;
-    const accountRefFromCallback = getItem("AccountReference"); // Might be undefined
-
-    let status = ResultCode === 0 ? "Success" : "Failed";
-
-    // Find the original transaction to retrieve purpose if not in metadata
-    const existingTransaction = await Transaction.findOne({ checkoutRequestID: CheckoutRequestID });
-    const purpose = (accountRefFromCallback || existingTransaction?.purpose || "Unknown").trim();
-
-    // Update transaction
-    await Transaction.findOneAndUpdate(
-      { checkoutRequestID: CheckoutRequestID },
-      {
-        status,
-        mpesaReceiptNumber,
-        resultDesc: ResultDesc,
-        updatedAt: new Date(),
-      }
-    );
-
-    // Update Totals collection and emit via socket
-    if (status === "Success") {
-      await Total.findOneAndUpdate(
-        { purpose },
-        { $inc: { total: amount } },
-        { upsert: true, new: true }
-      );
-
-      io.emit("new-contribution", { amount, purpose });
-    }
-
-    res.status(200).json({ message: "Callback received and transaction updated" });
-  } catch (err) {
-    console.error("Callback error:", err);
-    res.status(500).json({ error: "Failed to handle callback" });
-  }
-});
-// Step 3: Callback from Safaricom
 // router.post("/callback", async (req, res) => {
 //   console.log("Callback received:", JSON.stringify(req.body, null, 2));
 //   const callbackData = req.body;
-//   const io = req.app.get("io"); // ✅ This is the correct way
+//   const io = req.app.get("io");
 
 //   try {
-//     const { CheckoutRequestID } = callbackData.Body.stkCallback;
-//     const resultCode = callbackData.Body.stkCallback.ResultCode;
-//     const resultDesc = callbackData.Body.stkCallback.ResultDesc;
-//     const mpesaReceiptNumber = callbackData.Body.stkCallback.CallbackMetadata?.Item?.find(i => i.Name === "MpesaReceiptNumber")?.Value || null;
+//     const { stkCallback } = callbackData.Body;
+//     const { CheckoutRequestID, ResultCode, ResultDesc } = stkCallback;
 
-//     let status = "Pending";
-//     if (resultCode === 0) {
-//       status = "Success";
-//     } else {
-//       status = "Failed";
-//     }
+//     const metadata = stkCallback.CallbackMetadata?.Item || [];
+//     const getItem = (name) => metadata.find((i) => i.Name === name)?.Value;
 
+//     const amount = parseFloat(getItem("Amount") || 0);
+//     const mpesaReceiptNumber = getItem("MpesaReceiptNumber") || null;
+//     const accountRefFromCallback = getItem("AccountReference"); // Might be undefined
+
+//     let status = ResultCode === 0 ? "Success" : "Failed";
+
+//     // Find the original transaction to retrieve purpose if not in metadata
+//     const existingTransaction = await Transaction.findOne({ checkoutRequestID: CheckoutRequestID });
+//     const purpose = (accountRefFromCallback || existingTransaction?.purpose || "Unknown").trim();
+
+//     // Update transaction
 //     await Transaction.findOneAndUpdate(
 //       { checkoutRequestID: CheckoutRequestID },
 //       {
 //         status,
 //         mpesaReceiptNumber,
-//         resultDesc,
+//         resultDesc: ResultDesc,
 //         updatedAt: new Date(),
 //       }
 //     );
 
-//     // ✅ Only emit if successful
+//     // Update Totals collection and emit via socket
 //     if (status === "Success") {
-//       const amount = parseFloat(
-//         callbackData.Body.stkCallback.CallbackMetadata?.Item?.find(i => i.Name === "Amount")?.Value || 0
-//       );
-//       const sanitizedPurpose = (purpose || "Unknown").trim();
-//       const purpose =
-//         callbackData.Body.stkCallback.CallbackMetadata?.Item?.find(i => i.Name === "AccountReference")?.Value || "Unknown";
-//         // saving to database
 //       await Total.findOneAndUpdate(
 //         { purpose },
 //         { $inc: { total: amount } },
 //         { upsert: true, new: true }
 //       );
-//       io.emit("new-contribution", { amount, purpose: sanitizedPurpose });
+
+//       io.emit("new-contribution", { amount, purpose });
 //     }
+
 //     res.status(200).json({ message: "Callback received and transaction updated" });
 //   } catch (err) {
 //     console.error("Callback error:", err);
 //     res.status(500).json({ error: "Failed to handle callback" });
 //   }
- 
 // });
+
+// Step 3: Callback from Safaricom
+router.post("/callback", async (req, res) => {
+  console.log("Callback received:", JSON.stringify(req.body, null, 2));
+  const callbackData = req.body;
+  const io = req.app.get("io"); // ✅ This is the correct way
+
+  try {
+    const { CheckoutRequestID } = callbackData.Body.stkCallback;
+    const resultCode = callbackData.Body.stkCallback.ResultCode;
+    const resultDesc = callbackData.Body.stkCallback.ResultDesc;
+    const mpesaReceiptNumber = callbackData.Body.stkCallback.CallbackMetadata?.Item?.find(i => i.Name === "MpesaReceiptNumber")?.Value || null;
+
+    let status = "Pending";
+    if (resultCode === 0) {
+      status = "Success";
+    } else {
+      status = "Failed";
+    }
+
+    await Transaction.findOneAndUpdate(
+      { checkoutRequestID: CheckoutRequestID },
+      {
+        status,
+        mpesaReceiptNumber,
+        resultDesc,
+        updatedAt: new Date(),
+      }
+    );
+
+    // ✅ Only emit if successful
+    if (status === "Success") {
+      const amount = parseFloat(
+        callbackData.Body.stkCallback.CallbackMetadata?.Item?.find(i => i.Name === "Amount")?.Value || 0
+      );
+      const sanitizedPurpose = (purpose || "Unknown").trim();
+      const purpose =
+        callbackData.Body.stkCallback.CallbackMetadata?.Item?.find(i => i.Name === "AccountReference")?.Value || "Unknown";
+        // saving to database
+      await Total.findOneAndUpdate(
+        { purpose },
+        { $inc: { total: amount } },
+        { upsert: true, new: true }
+      );
+      io.emit("new-contribution", { amount, purpose: sanitizedPurpose });
+    }
+    res.status(200).json({ message: "Callback received and transaction updated" });
+  } catch (err) {
+    console.error("Callback error:", err);
+    res.status(500).json({ error: "Failed to handle callback" });
+  }
+ 
+});
 
 
 // GET: All transactions (admin)
