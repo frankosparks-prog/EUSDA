@@ -27,9 +27,9 @@ const Navbar = () => {
         {/* Logo Left */}
         <div className="flex items-center gap-3">
           <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwO8uDAe3N3IHiomKCDoFimUPW4-NvVu9d8A&s" // Replace with your logo URL
+            src="./eusda-logo.png" // Replace with your logo URL
             alt="EUSDA Logo"
-            className="w-14 h-14 object-cover rounded-full border-4 border-white shadow-md"
+            className="w-14 h-14 object-cover rounded-full border-2 border-white shadow-md"
           />
         </div>
 
