@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import {
   Download,
@@ -44,9 +44,49 @@ function ManageContributions() {
     fetchContributions();
   }, []);
 
-  useEffect(() => {
-    filterData();
-  }, [status, purpose, data]);
+const filterData = useCallback(() => {
+  let result = [...data];
+
+  if (status !== "All")
+    result = result.filter((item) => item.status === status);
+  if (purpose !== "All")
+    result = result.filter((item) => item.purpose === purpose);
+
+  if (startDate) {
+    const from = new Date(startDate);
+    result = result.filter((item) => new Date(item.createdAt) >= from);
+  }
+
+  if (endDate) {
+    const to = new Date(endDate);
+    result = result.filter((item) => new Date(item.createdAt) <= to);
+  }
+
+  setFiltered(result);
+  setCurrentPage(1);
+
+  const graphMap = {};
+  result.forEach((item) => {
+    if (item.status === "Success") {
+      const key = item.purpose || "Unknown";
+      graphMap[key] = (graphMap[key] || 0) + item.amount;
+    }
+  });
+
+  const graphResult = Object.entries(graphMap).map(([purpose, total]) => ({
+    name: purpose,
+    contributions: total,
+  }));
+
+  setGraphData(graphResult);
+}, [status, purpose, data, startDate, endDate]);
+
+useEffect(() => {
+  filterData();
+}, [filterData]);
+  // useEffect(() => {
+  //   filterData();
+  // }, [status, purpose, data]);
 
   const fetchContributions = async () => {
     setLoading(true);
@@ -60,46 +100,46 @@ function ManageContributions() {
     }
   };
 
-  const filterData = () => {
-    let result = [...data];
+  // const filterData = () => {
+  //   let result = [...data];
 
-    if (status !== "All")
-      result = result.filter((item) => item.status === status);
-    if (purpose !== "All")
-      result = result.filter((item) => item.purpose === purpose);
+  //   if (status !== "All")
+  //     result = result.filter((item) => item.status === status);
+  //   if (purpose !== "All")
+  //     result = result.filter((item) => item.purpose === purpose);
 
-    if (startDate) {
-      const from = new Date(startDate);
-      result = result.filter((item) => new Date(item.createdAt) >= from);
-    }
+  //   if (startDate) {
+  //     const from = new Date(startDate);
+  //     result = result.filter((item) => new Date(item.createdAt) >= from);
+  //   }
 
-    if (endDate) {
-      const to = new Date(endDate);
-      result = result.filter((item) => new Date(item.createdAt) <= to);
-    }
+  //   if (endDate) {
+  //     const to = new Date(endDate);
+  //     result = result.filter((item) => new Date(item.createdAt) <= to);
+  //   }
 
-    setFiltered(result);
-    setCurrentPage(1);
+  //   setFiltered(result);
+  //   setCurrentPage(1);
 
-    const graphMap = {};
+  //   const graphMap = {};
 
-    result.forEach((item) => {
-      if (item.status === "Success") {
-        const key = item.purpose || "Unknown";
-        if (!graphMap[key]) {
-          graphMap[key] = 0;
-        }
-        graphMap[key] += item.amount;
-      }
-    });
+  //   result.forEach((item) => {
+  //     if (item.status === "Success") {
+  //       const key = item.purpose || "Unknown";
+  //       if (!graphMap[key]) {
+  //         graphMap[key] = 0;
+  //       }
+  //       graphMap[key] += item.amount;
+  //     }
+  //   });
 
-    const graphResult = Object.entries(graphMap).map(([purpose, total]) => ({
-      name: purpose,
-      contributions: total,
-    }));
+  //   const graphResult = Object.entries(graphMap).map(([purpose, total]) => ({
+  //     name: purpose,
+  //     contributions: total,
+  //   }));
 
-    setGraphData(graphResult);
-  };
+  //   setGraphData(graphResult);
+  // };
 
   const exportCSV = () => {
     const header = ["Phone", "Amount", "Purpose", "Status", "Date"];

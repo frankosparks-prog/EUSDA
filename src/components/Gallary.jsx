@@ -113,7 +113,6 @@
 // export default Gallary;
 
 import React, { useEffect, useState } from "react";
-import Footer from "./Footer";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress"; // Importing Material-UI CircularProgress
 

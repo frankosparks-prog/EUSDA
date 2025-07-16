@@ -4,11 +4,9 @@ import {
   Trash2,
   CalendarDays,
   MapPin,
-  ImageIcon,
   Users,
   Clock4,
   User,
-  FileText,
 } from "lucide-react";
 import Toast from "../Toast";
 

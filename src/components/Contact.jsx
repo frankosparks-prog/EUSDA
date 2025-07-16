@@ -107,7 +107,6 @@
 import React, { useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import { Phone, Mail } from "lucide-react";
-import Footer from "./Footer";
 import Toast from "./Toast"; // make sure this path matches your actual file
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
@@ -130,7 +129,7 @@ function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, subject, message } = formData;
+    const { name, email, message } = formData;
 
     if (!name || !email || !message) {
       setToast({ type: "warning", message: "Please fill all required fields." });

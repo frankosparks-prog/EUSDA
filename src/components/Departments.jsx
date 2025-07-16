@@ -27,11 +27,8 @@ import {
   HandCoins,
   Handshake,
   UserCheck,
-  User,
   UserPlus,
-  UserCircle,
 } from "lucide-react";
-import Footer from "./Footer";
 
 function Departments() {
   const [showAll, setShowAll] = useState(false);

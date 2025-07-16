@@ -5,7 +5,6 @@ import {
   MailCheck,
   BookOpenText,
   MessageCircle,
-  Package,
   GalleryThumbnails,
   CreditCard,
   Calendar,

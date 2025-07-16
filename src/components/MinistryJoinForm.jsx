@@ -89,7 +89,6 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import Footer from "./Footer";
 import Toast from "./Toast"; // Make sure path is correct
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
