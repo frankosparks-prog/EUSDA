@@ -142,6 +142,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
   "http://192.168.101.234:3000",
+  "https://eusda-1.onrender.com", // Added Render production URL 
 ];
 
 app.use(cors({
