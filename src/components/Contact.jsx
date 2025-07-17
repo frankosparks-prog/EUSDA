@@ -132,12 +132,15 @@ function Contact() {
     const { name, email, message } = formData;
 
     if (!name || !email || !message) {
-      setToast({ type: "warning", message: "Please fill all required fields." });
+      setToast({
+        type: "warning",
+        message: "Please fill all required fields.",
+      });
       return;
     }
 
     try {
-      const res = await fetch(`${ SERVER_URL}/api/send-mail`, {
+      const res = await fetch(`${SERVER_URL}/api/send-mail`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -148,7 +151,10 @@ function Contact() {
         setToast({ type: "success", message: data.success || "Message sent!" });
         setFormData({ name: "", email: "", subject: "", message: "" });
       } else {
-        setToast({ type: "error", message: data.error || "Failed to send message." });
+        setToast({
+          type: "error",
+          message: data.error || "Failed to send message.",
+        });
       }
     } catch (err) {
       setToast({ type: "error", message: "Server error. Please try again." });
@@ -169,7 +175,9 @@ function Contact() {
         {/* Header */}
         <div className="flex justify-center items-center text-4xl font-bold text-center text-green-700 mb-10 gap-4">
           <h2>Contact Us</h2>
-          <span><Phone className="text-green-600" /></span>
+          <span>
+            <Phone className="text-green-600" />
+          </span>
         </div>
 
         {/* Grid */}
@@ -231,11 +239,18 @@ function Contact() {
             <div className="mt-6 space-y-3">
               <div className="flex items-center gap-3 text-gray-700">
                 <Phone className="text-green-600" />
-                <a href="tel:+254712345678" className="hover:text-green-500">+254 712 345 678</a>
+                <a href="tel:+254712345678" className="hover:text-green-500">
+                  +254 712 345 678
+                </a>
               </div>
               <div className="flex items-center gap-3 text-gray-700">
                 <Mail className="text-green-600" />
-                <a href="mailto:info@yourchurch.org" className="hover:text-green-500">info@yourchurch.org</a>
+                <a
+                  href="mailto:info@yourchurch.org"
+                  className="hover:text-green-500"
+                >
+                  info@yourchurch.org
+                </a>
               </div>
             </div>
           </div>
@@ -243,9 +258,10 @@ function Contact() {
           {/* Google Maps */}
           <div className="bg-gray-50 p-6 rounded-lg shadow-lg">
             <h3 className="text-2xl font-semibold mb-4">Our Location</h3>
+
             <iframe
               title="Our Location"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3975.926065417317!2d36.82194657487547!3d-1.2920653356417284!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10d528fd4b3f%3A0x2d5b7289277e474e!2sNairobi!5e0!3m2!1sen!2ske!4v1683208748496!5m2!1sen!2ske"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5669.633017743352!2d35.92524872639778!3d-0.3652322451711406!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1829874425da9613%3A0x8c73e0f9df3cef0c!2sB1%20CLASS%20EGERTON%20UNIVERSITY!5e0!3m2!1sen!2ske!4v1752762239981!5m2!1sen!2ske"
               width="100%"
               height="100%"
               style={{ border: 0 }}
