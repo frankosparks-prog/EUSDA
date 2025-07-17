@@ -179,7 +179,7 @@ const Home = () => {
   return (
     <div className="cont md:mt-32 mt-16">
       {/* Hero Section with Slider */}
-      <div className="relative min-h-screen w-full overflow-hidden mt-8 text-white">
+      <div className="relative w-full overflow-hidden mt-8 text-white">
         {/* Background Image */}
         {galleryImages.length > 0 && (
           <img
