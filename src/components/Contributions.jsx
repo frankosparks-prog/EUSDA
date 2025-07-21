@@ -6,6 +6,7 @@ import Toast from "./Toast";
 import SuccessModal from "./SuccessModal";
 import { LoaderCircle } from "lucide-react";
 import io from "socket.io-client";
+import PledgeModal from "./PledgeModal";
 
 const socket = io(process.env.REACT_APP_SERVER_URL, {
   transports: ["websocket"],
@@ -20,11 +21,13 @@ function Contributions() {
     amount: "",
     paymentMethod: "mpesa",
   });
+  const [customPurpose, setCustomPurpose] = useState("");
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isPolling, setIsPolling] = useState(false);
   const [transaction, setTransaction] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showPledgeModal, setShowPledgeModal] = useState(false);
 
   useEffect(() => {
     AOS.init({ duration: 1000 });
@@ -43,6 +46,8 @@ function Contributions() {
     setToast(null); // clear any previous toast
 
     const { phone, amount, purpose, paymentMethod } = formData;
+const finalPurpose =
+  formData.purpose === "Other" ? customPurpose : formData.purpose;
 
     if (paymentMethod === "mpesa" && !phone.match(/^0(7|1)\d{8}$/)) {
       setToast({ message: "Invalid phone number format.", type: "error" });
@@ -71,7 +76,7 @@ function Contributions() {
         const res = await axios.post(`${SERVER_URL}/api/mpesa/pay`, {
           phone: formattedPhone,
           amount,
-          purpose,
+          purpose: finalPurpose,
         });
 
         if (res.data.message === "STK Push sent") {
@@ -150,11 +155,29 @@ function Contributions() {
         amount: "",
         paymentMethod: "mpesa",
       });
+      setCustomPurpose(""); 
     } catch (err) {
       console.error("Payment error:", err);
       setToast({ message: "An error occurred during payment.", type: "error" });
       setLoading(false);
     }
+
+
+    if (!finalPurpose || !amount) {
+      setToast({
+        message: "Please fill in all required fields.",
+        type: "warning",
+      });
+      setLoading(false);
+      return;
+    }
+  };
+  const handlePledgeSubmit = (data) => {
+    console.log('Pledge submitted:', data);
+    setToast({
+      type: "success",
+      message: "Pledge submitted successfully!",
+    });
   };
   return (
     <>
@@ -162,7 +185,7 @@ function Contributions() {
         <Toast {...toast} duration={4000} onClose={() => setToast(null)} />
       )}
 
-      <div className="bg-green-50 min-h-screen py-20 px-6  flex items-center justify-center mt-[-5rem] md:mt-20 mb-[-12rem] md:mb-[-2rem]">
+      <div className="bg-green-50 min-h-screen py-20 px-6  flex items-center justify-center md:mt-24">
         <div
           className="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full"
           data-aos="fade-up"
@@ -224,7 +247,19 @@ function Contributions() {
                 <option value="Thanksgiving">Thanksgiving</option>
                 <option value="Building Fund">CDC</option>
                 <option value="Special Giving">Special Giving</option>
+                <option value="Other">Other</option>
               </select>
+
+              {formData.purpose === "Other" && (
+                <input
+                  type="text"
+                  placeholder="Please specify"
+                  value={customPurpose}
+                  onChange={(e) => setCustomPurpose(e.target.value)}
+                  className="mt-2 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300"
+                  required
+                />
+              )}
             </div>
 
             {/* Amount */}
@@ -279,6 +314,21 @@ function Contributions() {
           }}
         />
       )}
+      <div className="text-center bg-green-50 py-8 mt-[-6rem] md:mt-[-4rem] mb-[-3rem] md:mb-[-2rem]">
+      <button
+        onClick={() => setShowPledgeModal(true)}
+        className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-6 rounded-full shadow-lg transition duration-300"
+      >
+        Make a Pledge
+      </button>
+
+      <PledgeModal
+        isOpen={showPledgeModal}
+        onClose={() => setShowPledgeModal(false)}
+        onSubmit={handlePledgeSubmit}
+        setToast={setToast}
+      />
+    </div>
     </>
   );
 }

@@ -44,46 +44,46 @@ function ManageContributions() {
     fetchContributions();
   }, []);
 
-const filterData = useCallback(() => {
-  let result = [...data];
+  const filterData = useCallback(() => {
+    let result = [...data];
 
-  if (status !== "All")
-    result = result.filter((item) => item.status === status);
-  if (purpose !== "All")
-    result = result.filter((item) => item.purpose === purpose);
+    if (status !== "All")
+      result = result.filter((item) => item.status === status);
+    if (purpose !== "All")
+      result = result.filter((item) => item.purpose === purpose);
 
-  if (startDate) {
-    const from = new Date(startDate);
-    result = result.filter((item) => new Date(item.createdAt) >= from);
-  }
-
-  if (endDate) {
-    const to = new Date(endDate);
-    result = result.filter((item) => new Date(item.createdAt) <= to);
-  }
-
-  setFiltered(result);
-  setCurrentPage(1);
-
-  const graphMap = {};
-  result.forEach((item) => {
-    if (item.status === "Success") {
-      const key = item.purpose || "Unknown";
-      graphMap[key] = (graphMap[key] || 0) + item.amount;
+    if (startDate) {
+      const from = new Date(startDate);
+      result = result.filter((item) => new Date(item.createdAt) >= from);
     }
-  });
 
-  const graphResult = Object.entries(graphMap).map(([purpose, total]) => ({
-    name: purpose,
-    contributions: total,
-  }));
+    if (endDate) {
+      const to = new Date(endDate);
+      result = result.filter((item) => new Date(item.createdAt) <= to);
+    }
 
-  setGraphData(graphResult);
-}, [status, purpose, data, startDate, endDate]);
+    setFiltered(result);
+    setCurrentPage(1);
 
-useEffect(() => {
-  filterData();
-}, [filterData]);
+    const graphMap = {};
+    result.forEach((item) => {
+      if (item.status === "Success") {
+        const key = item.purpose || "Unknown";
+        graphMap[key] = (graphMap[key] || 0) + item.amount;
+      }
+    });
+
+    const graphResult = Object.entries(graphMap).map(([purpose, total]) => ({
+      name: purpose,
+      contributions: total,
+    }));
+
+    setGraphData(graphResult);
+  }, [status, purpose, data, startDate, endDate]);
+
+  useEffect(() => {
+    filterData();
+  }, [filterData]);
   // useEffect(() => {
   //   filterData();
   // }, [status, purpose, data]);
@@ -233,12 +233,27 @@ useEffect(() => {
           className="px-4 py-2 border rounded-md text-sm"
         >
           <option value="All">All Purposes</option>
+          {[...new Set(data.map((item) => item.purpose))] // unique purposes
+            .sort()
+            .map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+        </select>
+
+        {/* <select
+          value={purpose}
+          onChange={(e) => setPurpose(e.target.value)}
+          className="px-4 py-2 border rounded-md text-sm"
+        >
+          <option value="All">All Purposes</option>
           <option value="Tithe">Tithe</option>
           <option value="Offering">Offering</option>
           <option value="Thanksgiving">Thanksgiving</option>
           <option value="Building Fund">CDC</option>
           <option value="Special Giving">Special Giving</option>
-        </select>
+        </select> */}
         <input
           type="date"
           value={startDate}

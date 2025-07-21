@@ -20,15 +20,10 @@ const transactionSchema = new mongoose.Schema(
     checkoutRequestID: String, // <-- ADD THIS LINE
     purpose: {
       type: String,
-      enum: [
-        "Tithe",
-        "Offering",
-        "Thanksgiving",
-        "Building Fund",
-        "Special Giving",
-      ],
       required: true,
-    },
+      trim: true,
+},
+
   },
   { timestamps: true }
 );

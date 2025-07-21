@@ -10,6 +10,7 @@ import {
   Calendar,
   Mic,
   BookOpen,
+  ShoppingBag,
   LogOut,
   Menu,
   X,
@@ -30,14 +31,16 @@ const AdminDashboard = () => {
       {/* ──────────────────  Sidebar  ────────────────── */}
       <aside
         className={`bg-gray-800 border-r border-gray-700 fixed md:relative z-20 top-0 h-full w-64 p-5 transition-transform duration-300
-        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
+        ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
       >
         {/* Logo + Close (mobile) */}
         <div className="flex items-center justify-between mb-10 mt-6 md:mt-0">
           <div className="flex items-center gap-3">
             <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwO8uDAe3N3IHiomKCDoFimUPW4-NvVu9d8A&s" // Replace with your logo URL
-              alt="Beadworks logo"
+              src="./eusda-logo.png"
+              alt="Eusda logo"
               className="w-9 h-9 rounded-full border-2 border-green-500 object-cover"
             />
             <h2 className="text-2xl font-extrabold text-green-400">EUSDA</h2>
@@ -110,7 +113,7 @@ const AdminDashboard = () => {
                 Announcements
               </NavLink>
             </li>
- <li>
+            <li>
               <NavLink
                 to="events"
                 className={({ isActive }) =>
@@ -136,7 +139,19 @@ const AdminDashboard = () => {
                 Contributions
               </NavLink>
             </li>
-
+            <li>
+              <NavLink
+                to="pledges"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 text-lg font-medium transition-colors duration-200 ${
+                    isActive ? "text-green-400" : "hover:text-green-400"
+                  }`
+                }
+              >
+                <ShoppingBag className="w-5 h-5" />
+                Pledges
+              </NavLink>
+            </li>
             <li>
               <NavLink
                 to="gallery"
@@ -147,10 +162,10 @@ const AdminDashboard = () => {
                 }
               >
                 <GalleryThumbnails className="w-5 h-5" />
-               Gallery
+                Gallery
               </NavLink>
             </li>
-<li>
+            <li>
               <NavLink
                 to="dept-members"
                 className={({ isActive }) =>

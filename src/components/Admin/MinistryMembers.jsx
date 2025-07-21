@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Loader } from "lucide-react";
+import { Loader, FileDown } from "lucide-react";
+import { CSVLink } from "react-csv";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
@@ -34,7 +35,9 @@ function MinistryMembers() {
   }, []);
 
   const handleDelete = async (id) => {
-    const confirm = window.confirm("Are you sure you want to delete this entry?");
+    const confirm = window.confirm(
+      "Are you sure you want to delete this entry?"
+    );
     if (!confirm) return;
 
     try {
@@ -48,16 +51,39 @@ function MinistryMembers() {
 
   // Filtered members based on search + ministry filter
   const filteredMembers = members.filter((member) => {
-    const matchesName = member.fullName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesMinistry = selectedMinistry ? member.ministry === selectedMinistry : true;
+    const matchesName = member.fullName
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesMinistry = selectedMinistry
+      ? member.ministry === selectedMinistry
+      : true;
     return matchesName && matchesMinistry;
   });
 
+  const csvHeaders = [
+    { label: "Full Name", key: "fullName" },
+    { label: "Email", key: "email" },
+    { label: "Phone", key: "phoneNumber" },
+    { label: "Ministry", key: "ministry" },
+  ];
+
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-center text-green-700 mb-6">
-        🙋‍♀️ Ministry Members
-      </h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <h1 className="text-3xl font-bold text-green-700">
+          🙋‍♂️ Ministry Members
+        </h1>
+
+        <CSVLink
+          headers={csvHeaders}
+          data={filteredMembers}
+          filename="eusda_ministry_members.csv"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+        >
+          <FileDown size={18} />
+          Export CSV
+        </CSVLink>
+      </div>
 
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <input
@@ -89,7 +115,9 @@ function MinistryMembers() {
       ) : error ? (
         <p className="text-center text-red-500">{error}</p>
       ) : filteredMembers.length === 0 ? (
-        <p className="text-center text-gray-600">No matching ministry members found.</p>
+        <p className="text-center text-gray-600">
+          No matching ministry members found.
+        </p>
       ) : (
         <div className="overflow-x-auto shadow-md rounded-lg">
           <table className="min-w-full bg-white border border-gray-200">

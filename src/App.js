@@ -77,6 +77,8 @@ import ManageBlogs from "./components/Admin/ManageBlogs";
 import ManageLeaders from "./components/Admin/ManageLeaders";
 import ManageGallery from "./components/Admin/ManageGallery";
 import UsersDetails from "./components/Admin/UserDetails";
+import ManagePledges from "./components/Admin/ManagePledges";
+import PresentationView from "./components/Admin/PresentationView";
 
 // 👇 create a wrapper component to manage layout
 function AppLayout() {
@@ -135,6 +137,7 @@ function AppRoutes() {
         <Route path="ministry-members" element={<MinistryMembers />} />
         <Route path="announcements" element={<ManageAnnouncements />} />
         <Route path="contributions" element={<ManageContributions />} />
+        <Route path="pledges" element={<ManagePledges />} />
         <Route path="events" element={<ManageEvents />} />
         <Route path="blog" element={<ManageBlogs />} />
         <Route path="leaders" element={<ManageLeaders />} />

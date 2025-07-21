@@ -34,9 +34,10 @@ const Navbar = () => {
         </div>
 
         {/* EUSDA Name Center */}
-        <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl md:text-3xl font-extrabold text-white tracking-wide text-center">
+        <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl md:text-3xl font-extrabold text-white tracking-wide text-center md:block hidden ">
           Egerton University SDA Church
         </h1>
+        <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl md:text-3xl font-extrabold text-white tracking-wide text-center md:hidden sm:inline font-serif">EUSDA Church</h1>
 
         {/* Right side: Profile + Menu */}
         <div className="flex items-center gap-4 text-white z-20">
@@ -65,7 +66,7 @@ const Navbar = () => {
       >
         <div className="flex items-center justify-between p-6">
           <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwO8uDAe3N3IHiomKCDoFimUPW4-NvVu9d8A&s"
+            src="./eusda-logo-white.png"
             alt="EUSDA Logo"
             className="w-12 h-12 object-cover rounded-full border-4 border-white"
           />

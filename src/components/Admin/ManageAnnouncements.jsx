@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Toast from "../Toast";
-import { Pencil, Trash2 } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  ChevronUp,
+  Loader,
+  ChevronDown,
+  PlusCircle,
+} from "lucide-react";
+import PresentationView from "./PresentationView";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
@@ -11,6 +19,7 @@ function ManageAnnouncements() {
   const [editingId, setEditingId] = useState(null);
   const [toast, setToast] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [presentationView, setPresentationView] = useState(false);
   const itemsPerPage = 5;
 
   const fetchAnnouncements = async () => {
@@ -70,7 +79,9 @@ function ManageAnnouncements() {
           onClose={() => setToast(null)}
         />
       )}
-      <h2 className="text-3xl font-bold mb-4 text-green-800">Manage Announcements</h2>
+      <h2 className="text-3xl font-bold mb-4 text-green-800">
+        Manage Announcements
+      </h2>
 
       <form
         onSubmit={handleSubmit}
@@ -173,6 +184,24 @@ function ManageAnnouncements() {
           </button>
         ))}
       </div>
+      {/* Toggle Presentation */}
+      <div className="text-center mb-4 mt-4">
+        <button
+          onClick={() => setPresentationView(!presentationView)}
+          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-3 rounded-full shadow inline-flex items-center gap-2 transition"
+        >
+          <PlusCircle className="w-5 h-5" />
+          {presentationView ? "Close" : "Open Presentation 🎥"}
+          {presentationView ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+        </button>
+      </div>
+       {/* Present announcements */}
+      {presentationView && (
+        <div className="mt-10 bg-white p-6 rounded-2xl shadow-lg">
+          <PresentationView />
+          
+        </div>
+      )}
     </div>
   );
 }

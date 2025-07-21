@@ -184,6 +184,7 @@ app.use("/api/events", require('./routes/EventRoutes'));
 app.use("/api/admin", require('./routes/AdminAuth'));
 app.use("/api/visitors", require('./routes/VisitorRoutes'));
 app.use("/api/payments", require('./routes/payment-success'));
+app.use("/api/pledges", require('./routes/PledgeRoute')); // Pledge routes
 app.use("/api/mpesa", require('./routes/mpesaRoute')); // <-- Ensure this uses `req.app.get("io")`
 app.use("/api/subscribe", require('./routes/SubscriptionRoutes')); // Subscription routes
 
