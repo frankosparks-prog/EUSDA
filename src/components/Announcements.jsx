@@ -312,7 +312,7 @@ function Announcements() {
             placeholder="Search announcements..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full sm:w-2/3 px-4 py-2 border border-green-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full sm:w-2/3 px-4 py-2 border border-green-300  rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
           />
           {filteredAnnouncements.length > 0 && (
             <button

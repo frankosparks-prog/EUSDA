@@ -79,6 +79,9 @@ import ManageGallery from "./components/Admin/ManageGallery";
 import UsersDetails from "./components/Admin/UserDetails";
 import ManagePledges from "./components/Admin/ManagePledges";
 import PresentationView from "./components/Admin/PresentationView";
+import HeavenlyVoyagers from "./components/HeavenlyVoyagers";
+import CalvaryMinisters from "./components/CalvaryMinisters";
+import RevelationOfLove from "./components/RevelationOfLove";
 
 // 👇 create a wrapper component to manage layout
 function AppLayout() {
@@ -119,6 +122,9 @@ function AppRoutes() {
         <Route path="/blog" element={<Blog />} />
         <Route path="/departments/join" element={<DeptJoinForm />} />
         <Route path="/ministries/join/:ministryName" element={<MinistryJoinForm />} />
+        <Route path="/ministries/revelation-of-love" element={<RevelationOfLove />} />
+        <Route path="/ministries/heavenly-voyagers" element={<HeavenlyVoyagers />} />
+        <Route path="/ministries/calvary-ministers" element={<CalvaryMinisters />} />
         <Route path="/events/event-details" element={<EventDetails />} />
 
       {/* Admin routes */}
