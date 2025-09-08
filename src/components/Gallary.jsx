@@ -155,7 +155,7 @@ function Gallary() {
 
   return (
     <>
-      <div className="py-16 px-4 md:px-16 bg-gray-50 min-h-screen mt-20 md:mt-24 mb-[-2rem]">
+      <div className="py-16 px-4 md:px-16 bg-gray-50 min-h-screen mt-12 md:mt-24 mb-[-2rem]">
         <h2 className="text-4xl font-bold text-center text-green-700 mb-10">
           Church Moments Gallery ✨
         </h2>

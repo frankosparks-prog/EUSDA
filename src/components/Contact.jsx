@@ -171,7 +171,7 @@ function Contact() {
         />
       )}
 
-      <div className="pt-24 md:pt-32 pb-10 px-4 md:px-16 bg-white min-h-screen mt-12">
+      <div className="pt-24 md:pt-32 pb-10 px-4 md:px-16 bg-white min-h-screen md:mt-12 mt-2">
         {/* Header */}
         <div className="flex justify-center items-center text-4xl font-bold text-center text-green-700 mb-10 gap-4">
           <h2>Contact Us</h2>

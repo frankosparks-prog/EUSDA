@@ -315,12 +315,12 @@ const finalPurpose =
         />
       )}
       <div className="text-center bg-green-50 py-8 mt-[-6rem] md:mt-[-4rem] mb-[-3rem] md:mb-[-2rem]">
-      <button
+      {/* <button
         onClick={() => setShowPledgeModal(true)}
         className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-6 rounded-full shadow-lg transition duration-300"
       >
         Make a Pledge
-      </button>
+      </button> */}
 
       <PledgeModal
         isOpen={showPledgeModal}

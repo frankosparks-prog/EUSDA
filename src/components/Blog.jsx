@@ -94,7 +94,7 @@ function Blog() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 py-20 px-6 mt-20 mb-[-2rem]">
+      <div className="min-h-screen bg-gray-50 py-20 px-6 md:mt-20 mt-8 mb-[-2rem]">
         <h2
           className="text-4xl font-bold text-center text-green-800 mb-12"
           data-aos="fade-down"
