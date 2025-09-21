@@ -1,16 +1,65 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
-import {
-  Target,
-  Cross,
-  History,
-  ListChecks,
-  ArrowLeft,
-} from "lucide-react";
+import { Target, Cross, History, ListChecks, ArrowLeft } from "lucide-react";
 
 function RevelationOfLove() {
   return (
     <div className="p-8 max-w-6xl mx-auto py-20 px-6 md:mt-20 mt-8">
+      {/* ✅ SEO Meta Tags */}
+      <Helmet>
+        <title>Revelation of Love Ministry | EUSDA Egerton</title>
+        <meta
+          name="description"
+          content="Revelation of Love Ministry (formerly Silent Ministers) at Egerton University. Dedicated to uplifting Christ, loving one another, evangelism, health reform, and music ministry."
+        />
+        <meta
+          name="keywords"
+          content="Revelation of Love Ministry, Silent Ministers Ministry, Egerton University SDA, EUSDA, gospel ministry, health reform, music ministry, Bible study, evangelism Kenya"
+        />
+        <meta property="og:title" content="Revelation of Love Ministry | EUSDA" />
+        <meta
+          property="og:description"
+          content="Christ-centered ministry at Egerton University focused on evangelism, health reform, Bible study, and music ministry."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://eusda.co.ke/ministries/revelation-of-love" />
+        <meta property="og:site_name" content="EUSDA Egerton" />
+        <meta
+          property="og:image"
+          content="https://eusda.co.ke/eusda-logo.png"
+        />
+        <link
+          rel="canonical"
+          href="https://eusda.co.ke/ministries/revelation-of-love"
+        />
+
+        {/* ✅ Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Revelation of Love Ministry",
+            alternateName: "Silent Ministers Ministry",
+            url: "https://eusda.co.ke/ministries/revelation-of-love",
+            logo: "https://eusda.co.ke/eusda-logo.png",
+            description:
+              "A Christ-centered ministry uplifting Jesus, proclaiming the everlasting Gospel, and promoting health reform, Bible study, and music ministry.",
+            foundingDate: "2002",
+            parentOrganization: {
+              "@type": "Organization",
+              name: "Egerton University SDA Church (EUSDA)",
+            },
+            areaServed: "Kenya",
+            sameAs: [
+              "https://facebook.com/eusdaegerton",
+              "https://twitter.com/eusdaegerton",
+              "https://instagram.com/eusdaegerton",
+            ],
+          })}
+        </script>
+      </Helmet>
+
       {/* Title */}
       <div className="text-center mb-12">
         <h1 className="text-5xl font-extrabold text-green-800 mb-4">

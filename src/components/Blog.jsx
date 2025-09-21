@@ -1,79 +1,8 @@
-// import React, { useEffect } from "react";
-// import AOS from "aos";
-// import "aos/dist/aos.css";
-// import Footer from "./Footer";
-
-// function Blog() {
-//   useEffect(() => {
-//     AOS.init({ duration: 1000 });
-//   }, []);
-
-//   const testimonials = [
-//     {
-//       name: "Grace Mwangi",
-//       role: "Student Leader",
-//       quote:
-//         "EUSDA has been a spiritual home for me. I’ve grown in faith, found amazing friendships, and experienced true fellowship.",
-//       image: "https://picsum.photos/400/250?random=4",
-//     },
-//     {
-//       name: "Daniel Otieno",
-//       role: "Youth Evangelist",
-//       quote:
-//         "Joining the EUSDA choir gave me a purpose on campus. It’s more than singing—it’s ministry.",
-//       image: "https://picsum.photos/400/250?random=5",
-//     },
-//     {
-//       name: "Lucy Wanjiku",
-//       role: "Alumni & Mentor",
-//       quote:
-//         "Even after graduation, EUSDA remains close to my heart. The values I learned still guide me today.",
-//       image: "https://picsum.photos/400/250?random=8",
-//     },
-//   ];
-
-//   return (
-//     <>
-//       <div className="min-h-screen bg-gray-50 py-20 px-6 mt-20 mb-[-2rem]">
-//         <h2
-//           className="text-4xl font-bold text-center text-green-800 mb-12"
-//           data-aos="fade-down"
-//         >
-//           What Our Members Say
-//         </h2>
-
-//         <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
-//           {testimonials.map((t, index) => (
-//             <div
-//               key={index}
-//               className="bg-white p-6 rounded-lg shadow-lg text-center"
-//               data-aos="fade-up"
-//               data-aos-delay={index * 100}
-//             >
-//               <img
-//                 src={t.image}
-//                 alt={t.name}
-//                 className="w-24 h-24 mx-auto rounded-full mb-4 object-cover"
-//               />
-//               <p className="italic text-gray-700 mb-4">"{t.quote}"</p>
-//               <h3 className="text-lg font-semibold text-green-700">{t.name}</h3>
-//               <p className="text-sm text-gray-500">{t.role}</p>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-
-//       <Footer />
-//     </>
-//   );
-// }
-
-// export default Blog;
-
 import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import CircularProgress from "@mui/material/CircularProgress"; // Importing Material-UI CircularProgress
+import CircularProgress from "@mui/material/CircularProgress";
+import { Helmet } from "react-helmet-async";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
@@ -84,40 +13,92 @@ function Blog() {
   useEffect(() => {
     AOS.init({ duration: 1000 });
 
-    // Fetch blog posts from backend
     fetch(`${SERVER_URL}/api/blog`)
       .then((res) => res.json())
       .then((data) => setBlogs(data))
-      .then(() => setLoading(false)) // Turn off the loading spinner
-      .catch((err) => console.error("Failed to fetch blogs", err));
+      .catch((err) => console.error("Failed to fetch blogs", err))
+      .finally(() => setLoading(false));
   }, []);
+
+  // Generate structured data (JSON-LD) for SEO
+  const blogSchema = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    headline: "EUSDA Blog & Reflections",
+    description:
+      "Read inspiring blog posts and reflections from EUSDA Church community.",
+    url: "https://eusda.co.ke/blog",
+    author: {
+      "@type": "Organization",
+      name: "EUSDA Church",
+    },
+    blogPost: blogs.map((blog) => ({
+      "@type": "BlogPosting",
+      headline: blog.name,
+      image: blog.image,
+      author: {
+        "@type": "Person",
+        name: blog.role || "Contributor",
+      },
+      datePublished: blog.createdAt || new Date().toISOString(),
+      description: blog.quote,
+      url: `https://eusda.co.ke/blog/${blog._id}`,
+    })),
+  };
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 py-20 px-6 md:mt-20 mt-8 mb-[-2rem]">
+      {/* SEO Meta Tags */}
+      <Helmet>
+        <title>EUSDA Blog & Reflections | Egerton University SDA Church</title>
+        <meta
+          name="description"
+          content="Explore inspiring blogs, devotionals, and reflections from the EUSDA Church community."
+        />
+        <meta
+          name="keywords"
+          content="EUSDA blog, church reflections, SDA devotionals, Egerton University SDA"
+        />
+        <meta property="og:title" content="EUSDA Blog & Reflections" />
+        <meta
+          property="og:description"
+          content="Discover powerful reflections, devotionals, and messages from our church community."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://eusda.co.ke/blog" />
+        <meta property="og:image" content="/eusda-logo.png" />
+        <script type="application/ld+json">
+          {JSON.stringify(blogSchema)}
+        </script>
+      </Helmet>
+
+      {/* Blog Page */}
+      <div className="min-h-screen bg-gray-50 py-20 px-6 md:mt-20 mt-8">
         <h2
           className="text-4xl font-bold text-center text-green-800 mb-12"
           data-aos="fade-down"
         >
           Blog & Reflections
         </h2>
-        {/* Displaying Loading with CircularProgress */}
+
+        {/* Loader */}
         {loading && (
           <div className="flex justify-center items-center py-10">
             <CircularProgress color="success" size={60} />
           </div>
         )}
 
+        {/* Blog Cards */}
         <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
-          {blogs.length === 0 ? (
-            <p className="text-center col-span-3 text-gray-500 text-center text-gray-500 font-semibold text-lg bg-gray-100 p-4 rounded-lg shadow-md mt-6">
+          {!loading && blogs.length === 0 ? (
+            <p className="col-span-3 text-gray-500 font-semibold text-lg bg-gray-100 p-4 rounded-lg shadow-md text-center">
               No blog posts found yet.
             </p>
           ) : (
             blogs.map((blog, index) => (
               <div
                 key={blog._id}
-                className="bg-white p-6 rounded-lg shadow-lg text-center"
+                className="bg-white p-6 rounded-lg shadow-lg text-center hover:shadow-xl transition duration-300"
                 data-aos="fade-up"
                 data-aos-delay={index * 100}
               >
@@ -136,8 +117,6 @@ function Blog() {
           )}
         </div>
       </div>
-
-      {/* <Footer /> */}
     </>
   );
 }

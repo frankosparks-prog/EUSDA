@@ -8,10 +8,74 @@ import {
   ListChecks,
   ArrowLeft,
 } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 function CalvaryMinisters() {
   return (
     <div className="p-8 max-w-6xl mx-auto py-20 px-6 md:mt-20 mt-8">
+      {/* SEO */}
+      <Helmet>
+        {/* Basic SEO */}
+        <title>Calvary Ministers | EUSDA</title>
+        <meta
+          name="description"
+          content="Learn about Calvary Ministers at Egerton University Seventh-day Adventist Church — building strong spiritual leaders through fellowship, reformation, and gospel-centered service."
+        />
+        <meta
+          name="keywords"
+          content="Calvary Ministers, EUSDA, Egerton University SDA Church, Mission, Vision, Ministry, Fellowship, Gospel Outreach"
+        />
+        <meta name="author" content="Egerton University SDA Church" />
+        <link rel="canonical" href="https://eusda.co.ke/ministries/calvary-ministers" />
+
+        {/* Open Graph (Facebook, LinkedIn) */}
+        <meta property="og:title" content="Calvary Ministers | EUSDA" />
+        <meta
+          property="og:description"
+          content="Discover Calvary Ministers: a supporting ministry at Egerton University SDA Church focused on reformation, Bible study, and gospel-centered service."
+        />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:url"
+          content="https://eusda.co.ke/ministries/calvary-ministers"
+        />
+        <meta
+          property="og:image"
+          content="https://eusda.co.ke/eusda-logo.png"
+        />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Calvary Ministers | EUSDA" />
+        <meta
+          name="twitter:description"
+          content="Building strong spiritual leaders through fellowship, reformation, and gospel-centered service."
+        />
+        <meta
+          name="twitter:image"
+          content="https://eusda.co.ke/eusda-logo.png"
+        />
+
+        {/* Structured Data (Schema.org) */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Calvary Ministers - Egerton University SDA Church",
+            url: "https://eusda.co.ke/ministries/calvary-ministers",
+            logo: "https://eusda.co.ke/eusda-logo.png",
+            description:
+              "Calvary Ministers builds strong spiritual leaders through fellowship, reformation, and gospel-centered service.",
+            foundingDate: "2024",
+            memberOf: {
+              "@type": "Organization",
+              name: "Egerton University SDA Church",
+            },
+            areaServed: "Kenya",
+          })}
+        </script>
+      </Helmet>
+
       {/* Title */}
       <div className="text-center mb-12">
         <h1 className="text-5xl font-extrabold text-yellow-700 mb-4">

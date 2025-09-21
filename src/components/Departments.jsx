@@ -29,6 +29,7 @@ import {
   UserCheck,
   UserPlus,
 } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 function Departments() {
   const [showAll, setShowAll] = useState(false);
@@ -197,6 +198,74 @@ function Departments() {
 
   return (
     <div className="departments-page mt-16">
+      {/* ✅ SEO Helmet */}
+      <Helmet>
+        <title>EUSDA Departments | Egerton University SDA Church</title>
+        <meta
+          name="description"
+          content="Explore the various EUSDA departments at Egerton University SDA Church. Discover opportunities for ministry, leadership, outreach, and service."
+        />
+        <meta
+          name="keywords"
+          content="EUSDA, Egerton University SDA, SDA Church, Church Departments, Ministry, Volunteer, Outreach, Egerton"
+        />
+        <meta name="author" content="Egerton University SDA" />
+
+        {/* Open Graph (Facebook & LinkedIn) */}
+        <meta
+          property="og:title"
+          content="EUSDA Departments | Egerton University SDA"
+        />
+        <meta
+          property="og:description"
+          content="Join and serve in EUSDA departments. From leadership, outreach, to health ministry—there’s a place for you in our family."
+        />
+        <meta
+          property="og:image"
+          content="https://eusda.co.ke/eusda-logo.png"
+        />
+        <meta property="og:url" content="https://eusda.co.ke/departments" />
+        <meta property="og:type" content="website" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="EUSDA Departments | Egerton University SDA"
+        />
+        <meta
+          name="twitter:description"
+          content="Discover opportunities for ministry and service at EUSDA departments, Egerton University SDA Church."
+        />
+        <meta
+          name="twitter:image"
+          content="https://eusda.co.ke/eusda-logo.png"
+        />
+
+        {/* Canonical URL */}
+        <link rel="canonical" href="https://eusda.co.ke/departments" />
+
+        {/* Structured Data (JSON-LD) for SEO */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Egerton University SDA",
+            url: "https://eusda.co.ke/departments",
+            logo: "https://eusda.co.ke/eusda-logo.png",
+            sameAs: [
+              "https://facebook.com/eusda",
+              "https://twitter.com/eusda",
+              "https://instagram.com/eusda",
+            ],
+            department: departments.map((dept) => ({
+              "@type": "Organization",
+              name: dept.title,
+              description: dept.description,
+            })),
+          })}
+        </script>
+      </Helmet>
       {/* Hero Section */}
       <section
         className="relative h-[60vh] flex items-center justify-center text-white text-center"

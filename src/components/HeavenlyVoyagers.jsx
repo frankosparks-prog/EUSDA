@@ -5,15 +5,93 @@ import {
   Cross,
   History,
   Globe,
-  BookOpen,
-  HeartHandshake,
   ListChecks,
   ArrowLeft,
 } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 function HeavenlyVoyagers() {
   return (
     <div className="p-8 max-w-6xl mx-auto py-20 px-6 md:mt-20 mt-8">
+      {/* SEO */}
+      <Helmet>
+        {/* Basic SEO */}
+        <title>Heavenly Voyagers Ministry | EUSDA</title>
+        <meta
+          name="description"
+          content="Discover Heavenly Voyagers Ministry at Egerton University SDA Church — dedicated to gospel outreach, missions, Bible studies, and service through faith-driven programs."
+        />
+        <meta
+          name="keywords"
+          content="Heavenly Voyagers, EUSDA, Egerton University SDA Church, Missions, Ministry, Evangelism, Bible Study, Medical Missionary"
+        />
+        <meta name="author" content="Egerton University SDA Church" />
+        <link
+          rel="canonical"
+          href="https://eusda.co.ke/ministries/heavenly-voyagers"
+        />
+
+        {/* Open Graph (Facebook, LinkedIn) */}
+        <meta property="og:title" content="Heavenly Voyagers Ministry | EUSDA" />
+        <meta
+          property="og:description"
+          content="Heavenly Voyagers is a ministry at Egerton University SDA Church focused on spreading the gospel, missions, Bible study, and service to humanity."
+        />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:url"
+          content="https://eusda.co.ke/ministries/heavenly-voyagers"
+        />
+        <meta
+          property="og:image"
+          content="https://eusda.co.ke/eusda-logo.png"
+        />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Heavenly Voyagers Ministry | EUSDA" />
+        <meta
+          name="twitter:description"
+          content="A faith-driven ministry dedicated to missions, evangelism, Bible studies, and charity at Egerton University SDA Church."
+        />
+        <meta
+          name="twitter:image"
+          content="https://eusda.co.ke/eusda-logo.png"
+        />
+
+        {/* Structured Data (Schema.org) */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Heavenly Voyagers Ministry - Egerton University SDA Church",
+            url: "https://eusda.co.ke/ministries/heavenly-voyagers",
+            logo: "https://eusda.co.ke/eusda-logo.png",
+            description:
+              "Heavenly Voyagers Ministry is dedicated to spreading the gospel through evangelism, missions, Bible studies, music ministry, and medical missionary training.",
+            foundingDate: "2014",
+            areaServed: "Kenya",
+            memberOf: {
+              "@type": "Organization",
+              name: "Egerton University SDA Church",
+            },
+            hasOfferCatalog: {
+              "@type": "OfferCatalog",
+              name: "Heavenly Voyagers Programs",
+              itemListElement: [
+                { "@type": "Offer", name: "Bible Studies" },
+                { "@type": "Offer", name: "Medical Missionary Training" },
+                { "@type": "Offer", name: "Voice of Prophecy Sessions" },
+                { "@type": "Offer", name: "Prayer Sessions" },
+                { "@type": "Offer", name: "Choir & Music Ministry" },
+                { "@type": "Offer", name: "Charity Visitations" },
+                { "@type": "Offer", name: "Annual December Missions" },
+              ],
+            },
+          })}
+        </script>
+      </Helmet>
+
       {/* Title */}
       <div className="text-center mb-12">
         <h1 className="text-5xl font-extrabold text-purple-900 mb-4">

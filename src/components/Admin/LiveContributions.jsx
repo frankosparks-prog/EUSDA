@@ -29,6 +29,7 @@ const LiveContributions = () => {
     "Thanksgiving",
     "Offering",
     "Tithe",
+    "Other",
   ]);
   const [availablePurposes, setAvailablePurposes] = useState([
     "Building Fund",
@@ -36,6 +37,7 @@ const LiveContributions = () => {
     "Thanksgiving",
     "Offering",
     "Tithe",
+    "Other",
   ]);
 
   const containerRef = useRef(null);

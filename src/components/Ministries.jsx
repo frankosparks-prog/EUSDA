@@ -10,28 +10,29 @@ function Ministries() {
   }, []);
 
   const ministries = [
-    {
-      title: "Revelation of Love Ministry",
-      short: "Empowering the next generation to lead with faith and purpose.",
-      full: "This ministry is dedicated to nurturing spiritual growth among the youth and young adults. Through mentorship programs, interactive Bible studies, music sessions, and outreach events, we cultivate leadership, responsibility, and bold faith in the next generation.",
-      delay: 0,
-      color: "green",
-    },
-    {
-      title: "Heavenly Voyagers",
-      short: "A sisterhood rooted in love, support, and spiritual growth.",
-      full: "Heavenly Voyagers offers a nurturing space for women of all ages to grow spiritually and emotionally. We hold monthly sisterhood gatherings, prayer breakfasts, counseling support, and host empowerment seminars — all centered around building Christ-like character and community.",
-      delay: 100,
-      color: "purple",
-    },
-    {
-      title: "Calvary Ministers",
-      short: "Building strong spiritual leaders through fellowship and service.",
-      full: "This ministry grooms and supports those called to spiritual leadership — whether in teaching, prayer, evangelism, or service. With regular leadership workshops, discipleship groups, and mission outreaches, we raise dependable stewards of the Gospel.",
-      delay: 200,
-      color: "yellow",
-    },
-  ];
+  {
+    title: "Revelation of Love Ministry",
+    short: "Uplifting Christ, loving one another, and proclaiming the everlasting Gospel.",
+    full: "The Revelation of Love Ministers, originally Silent Ministers Ministry (founded in 2002), are dedicated to uplifting Christ, promoting reforms, and proclaiming the three angels’ message through evangelism, health reform, music ministry, and Bible study.",
+    delay: 0,
+    color: "green",
+  },
+  {
+    title: "Heavenly Voyagers",
+    short: "Spreading the Gospel through missions, discipleship, and service.",
+    full: "Founded in 2014 and revived in 2015, Heavenly Voyagers has grown into Student and Associate chapters, carrying out evangelistic campaigns, medical missionary work, Bible study, choir training, and annual December missions across Kenya.",
+    delay: 100,
+    color: "purple",
+  },
+  {
+    title: "Calvary Ministers",
+    short: "Training faithful leaders through fellowship, reformation, and outreach.",
+    full: "Calvary Ministers began in 2024 as a Bible study group and became a full supporting ministry in 2025. With programs in medical missionary training, Voice of Prophecy, and gospel outreach, they nurture dependable stewards of the Three Angels’ Message.",
+    delay: 200,
+    color: "yellow",
+  },
+];
+
 
   const getButtonClasses = (color) => {
     switch (color) {
