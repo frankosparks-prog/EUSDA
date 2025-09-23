@@ -126,7 +126,7 @@ function Gallary() {
             >
               <img
                 src={img.url}
-                alt={`Church gallery photo ${idx + 1}`}
+                alt={`Church gallery pic ${idx + 1}`}
                 className="w-full object-cover transition duration-300 hover:scale-105"
                 loading="lazy" // ✅ Better performance
               />
@@ -158,7 +158,7 @@ function Gallary() {
               {/* Display Image */}
               <img
                 src={images[currentIndex]?.url}
-                alt="Enlarged church gallery photo"
+                alt="Enlarged church gallery pic"
                 className="w-full h-auto rounded-lg shadow-lg transition-all duration-500 scale-105"
               />
 

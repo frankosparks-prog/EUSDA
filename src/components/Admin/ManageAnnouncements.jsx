@@ -5,7 +5,6 @@ import {
   Pencil,
   Trash2,
   ChevronUp,
-  Loader,
   ChevronDown,
   PlusCircle,
 } from "lucide-react";

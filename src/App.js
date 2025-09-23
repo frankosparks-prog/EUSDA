@@ -78,7 +78,6 @@ import ManageLeaders from "./components/Admin/ManageLeaders";
 import ManageGallery from "./components/Admin/ManageGallery";
 import UsersDetails from "./components/Admin/UserDetails";
 import ManagePledges from "./components/Admin/ManagePledges";
-import PresentationView from "./components/Admin/PresentationView";
 import HeavenlyVoyagers from "./components/HeavenlyVoyagers";
 import CalvaryMinisters from "./components/CalvaryMinisters";
 import RevelationOfLove from "./components/RevelationOfLove";
