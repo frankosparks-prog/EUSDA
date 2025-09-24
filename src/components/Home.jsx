@@ -105,9 +105,10 @@ const Home = () => {
               addressCountry: "Kenya",
             },
             sameAs: [
-              "https://www.facebook.com/EUSDA",
-              "https://twitter.com/EUSDA",
-              "https://instagram.com/EUSDA",
+              "https://www.facebook.com/eusdaofficial",
+              "https://x.com/egertonunisda",
+              "https://whatsapp.com/channel/0029VbBZptUGOj9pt3EoVt38",
+              "https://vm.tiktok.com/ZMABWehGC/",
             ],
           })}
         </script>

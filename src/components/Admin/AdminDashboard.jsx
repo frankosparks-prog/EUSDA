@@ -39,7 +39,7 @@ const AdminDashboard = () => {
         <div className="flex items-center justify-between mb-10 mt-6 md:mt-0">
           <div className="flex items-center gap-3">
             <img
-              src="./eusda-logo.png"
+              src="../../eusda-logo.png"
               alt="Eusda logo"
               className="w-9 h-9 rounded-full border-2 border-green-500 object-cover"
             />

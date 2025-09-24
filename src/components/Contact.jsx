@@ -102,8 +102,8 @@ function Contact() {
             name: "Egerton University SDA Church (EUSDA)",
             image: "https://eusda.co.ke/eusda-logo.png",
             url: "https://eusda.co.ke",
-            telephone: "+254712345678",
-            email: "info@yourchurch.org",
+            telephone: "+254740925164",
+            email: "eusdachurch@gmail.com",
             address: {
               "@type": "PostalAddress",
               streetAddress: "B1 Class, Egerton University",
@@ -185,7 +185,7 @@ function Contact() {
 
             {/* WhatsApp */}
             <a
-              href="https://wa.me/254712345678"
+              href="https://wa.me/254740925164"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center mt-4 bg-green-500 text-white py-3 rounded-md hover:bg-green-600 transition"
@@ -198,17 +198,17 @@ function Contact() {
             <div className="mt-6 space-y-3">
               <div className="flex items-center gap-3 text-gray-700">
                 <Phone className="text-green-600" />
-                <a href="tel:+254712345678" className="hover:text-green-500">
-                  +254 712 345 678
+                <a href="tel:+254740925164" className="hover:text-green-500">
+                  +254 740 925 164
                 </a>
               </div>
               <div className="flex items-center gap-3 text-gray-700">
                 <Mail className="text-green-600" />
                 <a
-                  href="mailto:info@yourchurch.org"
+                  href="mailto:eusdachurch@gmail.com"
                   className="hover:text-green-500"
                 >
-                  info@yourchurch.org
+                  eusdachurch@gmail.com
                 </a>
               </div>
             </div>

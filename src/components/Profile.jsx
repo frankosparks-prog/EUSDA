@@ -132,7 +132,7 @@ function Profile() {
           name="keywords"
           content="Church Leadership, Pastors, Elders, Ministers, Church Leaders, Eusda Kenya"
         />
-        <link rel="canonical" href="https://eusda.co.ke/leadership" />
+        <link rel="canonical" href="https://eusda.co.ke/profiles" />
 
         {/* Open Graph */}
         <meta property="og:title" content="Church Leadership | Eusda Kenya" />
@@ -145,7 +145,7 @@ function Profile() {
           content="https://eusda.co.ke/eusda-logo.png"
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://eusda.co.ke/leadership" />
+        <meta property="og:url" content="https://eusda.co.ke/profiles" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
