@@ -27,8 +27,13 @@ const Navbar = () => {
         {/* Logo Left */}
         <div className="flex items-center gap-3">
           <img
-            src="./eusda-logo.png" // Replace with your logo URL
+            src={process.env.PUBLIC_URL + '/eusda-logo.png'} // Use PUBLIC_URL so path works on subpaths
             alt="EUSDA Logo"
+            onError={(e) => {
+              // Fallback to hosted image if local asset can't be resolved
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = 'https://eusda.co.ke/eusda-logo.png';
+            }}
             className="w-14 h-14 object-cover rounded-full border-2 border-white shadow-md"
           />
         </div>
@@ -66,8 +71,12 @@ const Navbar = () => {
       >
         <div className="flex items-center justify-between p-6">
           <img
-            src="./eusda-logo-white.png"
+            src={process.env.PUBLIC_URL + '/eusda-logo-white.png'}
             alt="EUSDA Logo"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = 'https://eusda.co.ke/eusda-logo-white.png';
+            }}
             className="w-12 h-12 object-cover rounded-full border-4 border-white"
           />
           <h1 className="absolute text-2xl md:text-3xl font-extrabold text-white ml-16">
