@@ -81,6 +81,7 @@ import ManagePledges from "./components/Admin/ManagePledges";
 import HeavenlyVoyagers from "./components/HeavenlyVoyagers";
 import CalvaryMinisters from "./components/CalvaryMinisters";
 import RevelationOfLove from "./components/RevelationOfLove";
+import Subscribed from "./components/Admin/Subscribed";
 
 // 👇 create a wrapper component to manage layout
 function AppLayout() {
@@ -147,6 +148,7 @@ function AppRoutes() {
         <Route path="blog" element={<ManageBlogs />} />
         <Route path="leaders" element={<ManageLeaders />} />
         <Route path="gallery" element={<ManageGallery />} />
+        <Route path="subscribed" element={<Subscribed />} />
         <Route path="*" element={<Navigate to="visitors" replace />} />
       </Route>
     </Routes>

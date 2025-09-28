@@ -35,7 +35,7 @@ function Contact() {
     }
 
     try {
-      const res = await fetch(`${SERVER_URL}/api/send-mail`, {
+      const res = await fetch(`${SERVER_URL}/api/contact/send-mail`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

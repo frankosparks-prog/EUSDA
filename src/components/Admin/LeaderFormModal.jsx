@@ -19,7 +19,7 @@ const initialState = {
   image: null,
 };
 
-const categories = ["Pastor", "Elder", "Minister", "Department Head"];
+const categories = ["Pastor", "Elder", "Minister", "DepartmentHead"];
 
 const LeaderFormModal = ({ existing, onClose, onSuccess, setToast }) => {
   const [formData, setFormData] = useState(initialState);

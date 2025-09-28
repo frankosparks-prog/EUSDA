@@ -71,7 +71,19 @@ const AdminDashboard = () => {
                 Visitor Details
               </NavLink>
             </li>
-
+            <li>
+              <NavLink
+                to="subscribed"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 text-lg font-medium transition-colors duration-200 ${
+                    isActive ? "text-green-400" : "hover:text-green-400"
+                  }`
+                }
+              >
+                <MailCheck className="w-5 h-5" />
+                Subscribed
+              </NavLink>
+            </li>
             <li>
               <NavLink
                 to="leaders"
