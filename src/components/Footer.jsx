@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Facebook, Mail } from "lucide-react"; // Removed Twitter & Instagram
 import Toast from "./Toast";
 import axios from "axios";
-import { FaWhatsapp } from "react-icons/fa";
+import { FaWhatsapp, FaYoutube } from "react-icons/fa";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
@@ -145,6 +145,12 @@ const Footer = () => {
               className="hover:text-white transition"
             >
               <FaWhatsapp className="w-5 h-5" />
+            </a>
+            <a
+              href="https://www.youtube.com/@eusdachurch"
+              className="hover:text-white transition"
+            >
+              <FaYoutube className="w-5 h-5" />
             </a>
           </div>
 

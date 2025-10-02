@@ -6,16 +6,16 @@ const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
 const initialState = {
   name: "",
-  role: "",
-  email: "",
-  phone: "",
-  description: "",
+  // role: "",
+  // email: "",
+  // phone: "",
+  // description: "",
   category: "",
-  socials: {
-    facebook: "",
-    twitter: "",
-    whatsapp: "",
-  },
+  // socials: {
+  //   facebook: "",
+  //   twitter: "",
+  //   whatsapp: "",
+  // },
   image: null,
 };
 
@@ -124,14 +124,14 @@ const LeaderFormModal = ({ existing, onClose, onSuccess, setToast }) => {
           className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
         />
 
-        <input
+        {/* <input
           type="text"
           name="role"
           value={formData.role}
           onChange={handleChange}
           placeholder="Role"
           className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
-        />
+        /> */}
 
         <select
           name="category"
@@ -145,7 +145,7 @@ const LeaderFormModal = ({ existing, onClose, onSuccess, setToast }) => {
           ))}
         </select>
 
-        <input
+        {/* <input
           type="email"
           name="email"
           value={formData.email || ""}
@@ -197,7 +197,7 @@ const LeaderFormModal = ({ existing, onClose, onSuccess, setToast }) => {
             placeholder="Whatsapp Link"
             className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
           />
-        </div>
+        </div> */}
 
         <input type="file" accept="image/*" onChange={handleFileChange} />
         {previewImage && (

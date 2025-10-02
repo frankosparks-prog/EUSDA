@@ -82,6 +82,7 @@ import HeavenlyVoyagers from "./components/HeavenlyVoyagers";
 import CalvaryMinisters from "./components/CalvaryMinisters";
 import RevelationOfLove from "./components/RevelationOfLove";
 import Subscribed from "./components/Admin/Subscribed";
+import NotFound from "./components/NotFound";
 
 // 👇 create a wrapper component to manage layout
 function AppLayout() {
@@ -126,6 +127,7 @@ function AppRoutes() {
         <Route path="/ministries/heavenly-voyagers" element={<HeavenlyVoyagers />} />
         <Route path="/ministries/calvary-ministers" element={<CalvaryMinisters />} />
         <Route path="/events/event-details" element={<EventDetails />} />
+        <Route path="*" element={<NotFound />} />
 
       {/* Admin routes */}
       <Route path="/admin" element={<AdminLogin />} />

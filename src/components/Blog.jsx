@@ -9,6 +9,7 @@ const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 function Blog() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedBlog, setSelectedBlog] = useState(null); // 👈 for modal
 
   useEffect(() => {
     AOS.init({ duration: 1000 });
@@ -98,9 +99,10 @@ function Blog() {
             blogs.map((blog, index) => (
               <div
                 key={blog._id}
-                className="bg-white p-6 rounded-lg shadow-lg text-center hover:shadow-xl transition duration-300"
+                className="bg-white p-6 rounded-lg shadow-lg text-center hover:shadow-xl transition duration-300 cursor-pointer"
                 data-aos="fade-up"
                 data-aos-delay={index * 100}
+                onClick={() => setSelectedBlog(blog)} // 👈 open modal
               >
                 <img
                   src={blog.image}
@@ -112,11 +114,46 @@ function Blog() {
                 </h3>
                 <p className="text-gray-600 text-sm mb-4">By {blog.role}</p>
                 <p className="text-gray-700 line-clamp-4">{blog.quote}</p>
+                <p className="text-green-600 mt-2 font-medium">Read More →</p>
               </div>
             ))
           )}
         </div>
       </div>
+
+      {/* Blog Modal */}
+      {selectedBlog && (
+        <div
+          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+          onClick={() => setSelectedBlog(null)} // 👈 close on outside click
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl max-w-2xl w-full relative p-6 max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()} // 👈 stop bubbling so modal itself is clickable
+          >
+            {/* Close Button */}
+            <button
+              className="absolute top-1 right-1 text-gray-500 hover:text-red-500 text-2xl"
+              onClick={() => setSelectedBlog(null)}
+            >
+              &times;
+            </button>
+
+            <img
+              src={selectedBlog.image}
+              alt={selectedBlog.name}
+              className="w-full max-h-96 object-contain rounded mb-4 bg-gray-100 rounded-3xl shadow-lg"
+            />
+            <h3 className="text-2xl font-bold text-green-700 mb-2">
+              {selectedBlog.name}
+            </h3>
+            <p className="text-gray-600 text-sm mb-4">By {selectedBlog.role}</p>
+            <p className="text-gray-700 whitespace-pre-line leading-relaxed">
+              {selectedBlog.quote}
+            </p>
+          </div>
+        </div>
+      )}
     </>
   );
 }
