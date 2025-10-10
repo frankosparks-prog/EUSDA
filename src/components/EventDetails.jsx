@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";   // ✅ SEO library
-import Footer from "./Footer";
+// import Footer from "./Footer";
 import Toast from "./Toast";
 import {
   CalendarDays, MapPin, Users, TimerReset, Info, ArrowLeft
@@ -229,7 +229,7 @@ export default function EventDetails() {
         )}
       </section>
 
-      <Footer/>
+      {/* <Footer/> */}
     </div>
   );
 }

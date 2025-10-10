@@ -6,7 +6,7 @@ const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
 const initialState = {
   name: "",
-  // role: "",
+  role: "",
   // email: "",
   // phone: "",
   // description: "",
@@ -124,14 +124,14 @@ const LeaderFormModal = ({ existing, onClose, onSuccess, setToast }) => {
           className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
         />
 
-        {/* <input
+        <input
           type="text"
           name="role"
           value={formData.role}
           onChange={handleChange}
           placeholder="Role"
           className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
-        /> */}
+        />
 
         <select
           name="category"
