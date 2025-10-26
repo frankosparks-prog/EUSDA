@@ -46,8 +46,8 @@ function Contributions() {
     setToast(null); // clear any previous toast
 
     const { phone, amount, purpose, paymentMethod } = formData;
-const finalPurpose =
-  formData.purpose === "Other" ? customPurpose : formData.purpose;
+    const finalPurpose =
+      formData.purpose === "Other" ? customPurpose : formData.purpose;
 
     if (paymentMethod === "mpesa" && !phone.match(/^0(7|1)\d{8}$/)) {
       setToast({ message: "Invalid phone number format.", type: "error" });
@@ -72,82 +72,87 @@ const finalPurpose =
 
     const formattedPhone = "254" + phone.slice(1); // convert 07.. to 2547..
     try {
+      // if (paymentMethod === "mpesa") {
+      //   const res = await axios.post(`${SERVER_URL}/api/mpesa/pay`, {
+      //     phone: formattedPhone,
+      //     amount,
+      //     purpose: finalPurpose,
+      //   });
+
+      //   if (res.data.message === "STK Push sent") {
+      //     const checkoutID = res.data.checkoutRequestID;
+
+      //     setToast({
+      //       message: "Payment initiated. Awaiting confirmation...",
+      //       type: "info",
+      //     });
+      //     setIsPolling(true);
+
+      //     let attempts = 0;
+      //     const maxAttempts = 15; // max 15 attempts (1 minute)
+
+      //     // Start polling
+      //     const intervalId = setInterval(async () => {
+      //       attempts++;
+      //       if (attempts > maxAttempts) {
+      //         clearInterval(intervalId);
+      //         setToast({
+      //           message:
+      //             "Payment timed out. Please try again or check your M-Pesa app.",
+      //           type: "error",
+      //         });
+      //         setIsPolling(false);
+      //         return;
+      //       }
+
+      //       try {
+      //         const txnRes = await axios.get(
+      //           `${SERVER_URL}/api/mpesa/transactions/${checkoutID}`
+      //         );
+      //         const txn = txnRes.data;
+
+      //         if (txn.status !== "Pending") {
+      //           clearInterval(intervalId);
+      //           setTransaction(txn);
+      //           setShowModal(true);
+      //           setToast(null); // clear the toast
+      //           setIsPolling(false);
+
+      //           // Emit live update to socket server
+      //           socket.emit("new-contribution", {
+      //             amount: Number(amount),
+      //             purpose,
+      //           });
+      //         }
+      //       } catch (err) {
+      //         clearInterval(intervalId);
+      //         setToast({
+      //           message: "Error checking payment status.",
+      //           type: "error",
+      //         });
+      //         setIsPolling(false);
+      //         console.error("Polling error:", err);
+      //       } finally {
+      //         setLoading(false);
+      //       }
+      //     }, 4000); // poll every 4s
+      //   } else {
+      //     setToast({
+      //       message: res.data.message || "Payment initiation failed.",
+      //       type: "error",
+      //     });
+      //   }
+      // }
+
       if (paymentMethod === "mpesa") {
-        const res = await axios.post(`${SERVER_URL}/api/mpesa/pay`, {
-          phone: formattedPhone,
-          amount,
-          purpose: finalPurpose,
-        });
-
-        if (res.data.message === "STK Push sent") {
-          const checkoutID = res.data.checkoutRequestID;
-
-          setToast({
-            message: "Payment initiated. Awaiting confirmation...",
-            type: "info",
-          });
-          setIsPolling(true);
-
-          let attempts = 0;
-          const maxAttempts = 15; // max 15 attempts (1 minute)
-
-          // Start polling
-          const intervalId = setInterval(async () => {
-            attempts++;
-            if (attempts > maxAttempts) {
-              clearInterval(intervalId);
-              setToast({
-                message:
-                  "Payment timed out. Please try again or check your M-Pesa app.",
-                type: "error",
-              });
-              setIsPolling(false);
-              return;
-            }
-
-            try {
-              const txnRes = await axios.get(
-                `${SERVER_URL}/api/mpesa/transactions/${checkoutID}`
-              );
-              const txn = txnRes.data;
-
-              if (txn.status !== "Pending") {
-                clearInterval(intervalId);
-                setTransaction(txn);
-                setShowModal(true);
-                setToast(null); // clear the toast
-                setIsPolling(false);
-
-                // Emit live update to socket server
-                socket.emit("new-contribution", {
-                  amount: Number(amount),
-                  purpose,
-                });
-              }
-            } catch (err) {
-              clearInterval(intervalId);
-              setToast({
-                message: "Error checking payment status.",
-                type: "error",
-              });
-              setIsPolling(false);
-              console.error("Polling error:", err);
-            } finally {
-              setLoading(false);
-            }
-          }, 4000); // poll every 4s
-        } else {
-          setToast({
-            message: res.data.message || "Payment initiation failed.",
-            type: "error",
-          });
-        }
+        setToast({ message: "Mpesa payment coming soon...", type: "info" });
+        setLoading(false);
+        return;
       } else if (paymentMethod === "card") {
         setToast({ message: "Card payment coming soon...", type: "info" });
         setLoading(false);
         return;
       }
-
       // Reset form
       setFormData({
         phone: "",
@@ -155,13 +160,12 @@ const finalPurpose =
         amount: "",
         paymentMethod: "mpesa",
       });
-      setCustomPurpose(""); 
+      setCustomPurpose("");
     } catch (err) {
       console.error("Payment error:", err);
       setToast({ message: "An error occurred during payment.", type: "error" });
       setLoading(false);
     }
-
 
     if (!finalPurpose || !amount) {
       setToast({
@@ -173,7 +177,7 @@ const finalPurpose =
     }
   };
   const handlePledgeSubmit = (data) => {
-    console.log('Pledge submitted:', data);
+    console.log("Pledge submitted:", data);
     setToast({
       type: "success",
       message: "Pledge submitted successfully!",
@@ -315,20 +319,20 @@ const finalPurpose =
         />
       )}
       <div className="text-center bg-green-50 py-8 mt-[-6rem] md:mt-[-4rem] mb-[-3rem] md:mb-[-2rem]">
-      {/* <button
+        {/* <button
         onClick={() => setShowPledgeModal(true)}
         className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-6 rounded-full shadow-lg transition duration-300"
       >
         Make a Pledge
       </button> */}
 
-      <PledgeModal
-        isOpen={showPledgeModal}
-        onClose={() => setShowPledgeModal(false)}
-        onSubmit={handlePledgeSubmit}
-        setToast={setToast}
-      />
-    </div>
+        <PledgeModal
+          isOpen={showPledgeModal}
+          onClose={() => setShowPledgeModal(false)}
+          onSubmit={handlePledgeSubmit}
+          setToast={setToast}
+        />
+      </div>
     </>
   );
 }
