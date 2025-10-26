@@ -118,18 +118,26 @@ function Gallary() {
           {images.map((img, idx) => (
             <div
               key={img._id}
-              className="break-inside-avoid overflow-hidden rounded-lg cursor-pointer shadow-md hover:shadow-xl transition duration-300"
+              className="relative break-inside-avoid overflow-hidden rounded-lg cursor-pointer shadow-md hover:shadow-xl transition duration-300 group"
               onClick={() => {
                 setSelectedImage(img.url);
                 setCurrentIndex(idx);
               }}
             >
+              {/* Image */}
               <img
                 src={img.url}
                 alt={`Church gallery pic ${idx + 1}`}
-                className="w-full object-cover transition duration-300 hover:scale-105"
-                loading="lazy" // ✅ Better performance
+                className="w-full object-cover transition duration-300 group-hover:scale-105"
+                loading="lazy"
               />
+
+              {/* Title Overlay */}
+              {img.title && (
+                <div className="absolute bottom-1 left-2 text-sm text-white bg-black/50 px-2 py-0.5 rounded">
+                  <p className="truncate font-medium">{img.title}</p>
+                </div>
+              )}
             </div>
           ))}
         </div>

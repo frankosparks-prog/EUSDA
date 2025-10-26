@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import axios from "axios";
+// import axios from "axios";
 import Toast from "./Toast";
 import SuccessModal from "./SuccessModal";
-import { LoaderCircle } from "lucide-react";
-import io from "socket.io-client";
+// import { LoaderCircle } from "lucide-react";
+// import io from "socket.io-client";
 import PledgeModal from "./PledgeModal";
 
-const socket = io(process.env.REACT_APP_SERVER_URL, {
-  transports: ["websocket"],
-});
+// const socket = io(process.env.REACT_APP_SERVER_URL, {
+//   transports: ["websocket"],
+// });
 
-const SERVER_URL = process.env.REACT_APP_SERVER_URL;
+// const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
 function Contributions() {
   const [formData, setFormData] = useState({
@@ -24,7 +24,7 @@ function Contributions() {
   const [customPurpose, setCustomPurpose] = useState("");
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [isPolling, setIsPolling] = useState(false);
+  // const [isPolling, setIsPolling] = useState(false);
   const [transaction, setTransaction] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showPledgeModal, setShowPledgeModal] = useState(false);
@@ -70,7 +70,7 @@ function Contributions() {
       return;
     }
 
-    const formattedPhone = "254" + phone.slice(1); // convert 07.. to 2547..
+    // const formattedPhone = "254" + phone.slice(1); // convert 07.. to 2547..
     try {
       // if (paymentMethod === "mpesa") {
       //   const res = await axios.post(`${SERVER_URL}/api/mpesa/pay`, {
@@ -299,14 +299,14 @@ function Contributions() {
                   } `}
             </button>
           </form>
-          {isPolling && (
+          {/* {isPolling && (
             <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex flex-col items-center justify-center rounded-lg">
               <LoaderCircle className="animate-spin-slow text-white w-10 h-10 mb-4" />
               <p className="text-white text-sm">
                 Awaiting M-Pesa confirmation...
               </p>
             </div>
-          )}
+          )} */}
         </div>
       </div>
       {showModal && transaction && (
