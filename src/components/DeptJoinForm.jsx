@@ -1,9 +1,39 @@
 import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import Toast from "./Toast"; // Reuse Toast component
+import { User, Mail, Phone, Briefcase, Send, Loader2, ChevronDown } from "lucide-react";
+import Toast from "./Toast";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
+
+// Extracted data for cleaner code and easier updates
+const DEPARTMENTS = [
+  "Secretary’s Office",
+  "Class Sabbath School",
+  "Treasury Department",
+  "Deaconry Department",
+  "Audit Department",
+  "Sabbath School Department",
+  "Personal Ministry",
+  "Children Ministry",
+  "Public Campus Ministries",
+  "Interest Coordination",
+  "Church Development Committee",
+  "Stewardship Department",
+  "Social, Health & Temperance Department",
+  "Publishing Department",
+  "Music Department",
+  "Transport & Public Address Department",
+  "Communication & Publicity Department",
+  "Prayer and Fellowship Department",
+  "Master Guide Department",
+  "Medical Missionary Department",
+  "Voice of Prophecy Department",
+  "Charity Department",
+  "Adventist Muslim Relations Department",
+  "ALO & AMO Department",
+  "EUSDA Chaplaincy Office",
+];
 
 function DeptJoinForm() {
   const [formData, setFormData] = useState({
@@ -14,10 +44,10 @@ function DeptJoinForm() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState(null); // Toast handler
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    AOS.init({ duration: 1000 });
+    AOS.init({ duration: 800, once: true });
   }, []);
 
   const handleChange = (e) => {
@@ -75,150 +105,138 @@ function DeptJoinForm() {
         />
       )}
 
-      <section className="bg-white py-20 px-6 mt-20" data-aos="fade-up">
-        <div className="max-w-3xl mx-auto bg-green-50 rounded-2xl shadow-lg p-10">
-          <h2 className="text-3xl font-bold text-green-800 mb-4 text-center">
-            Join a Department
-          </h2>
-          <p className="text-center text-gray-700 mb-10">
-            Fill out the form below to express your interest in serving with us.
-            We'd love to have you on board!
-          </p>
+      <section className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-2 md:py-16">
+        <div 
+          className="bg-white w-full max-w-5xl rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row"
+          data-aos="fade-up"
+        >
+          {/* Decorative Sidebar (Visible on Desktop) */}
+          <div className="md:w-5/12 bg-green-900 text-white p-10 flex flex-col justify-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-green-800 to-green-950 opacity-100"></div>
+            {/* Pattern Overlay */}
+            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(#ffffff 1px, transparent 1px)", backgroundSize: "20px 20px" }}></div>
+            
+            <div className="relative z-10">
+              <h3 className="text-3xl font-bold mb-6">Serve With Us</h3>
+              <p className="text-green-100 text-lg leading-relaxed mb-8">
+                "For even the Son of Man came not to be served but to serve, and to give his life as a ransom for many."
+              </p>
+              <div className="w-12 h-1 bg-green-400 rounded-full"></div>
+              <p className="mt-4 text-sm text-green-300 font-medium tracking-wide">
+                MARK 10:45
+              </p>
+            </div>
+          </div>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
-              </label>
-              <input
-                type="text"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-                placeholder="John Doe"
-                required
-              />
+          {/* Form Section */}
+          <div className="md:w-7/12 p-8 md:p-12">
+            <div className="text-left mb-8">
+              <h2 className="text-2xl font-bold text-gray-800">Department Sign Up</h2>
+              <p className="text-gray-600 mt-2">
+                Fill in your details below to join a ministry.
+              </p>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-                placeholder="you@example.com"
-                required
-              />
-            </div>
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              {/* Full Name */}
+              <div className="relative">
+                <label className="text-sm font-semibold text-gray-700 mb-1 block">Full Name</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
+                    placeholder="John Doe"
+                    required
+                  />
+                </div>
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-                placeholder="+254 712 345 678"
-                required
-              />
-            </div>
+              {/* Email & Phone Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="relative">
+                  <label className="text-sm font-semibold text-gray-700 mb-1 block">Email Address</label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
+                      placeholder="you@example.com"
+                      required
+                    />
+                  </div>
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Select Department
-              </label>
-              <select
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-                required
-              >
-                <option value="">-- Choose a Department --</option>
-                <option value="Secretary’s Office">Secretary’s Office</option>
-                <option value="Class Sabbath School">
-                  Class Sabbath School
-                </option>
-                <option value="Treasury Department">Treasury Department</option>
-                <option value="Deaconry Department">Deaconry Department</option>
-                <option value="Audit Department">Audit Department</option>
-                <option value="Sabbath School Department">
-                  Sabbath School Department
-                </option>
-                <option value="Personal Ministry">Personal Ministry</option>
-                <option value="Children Ministry">Children Ministry</option>
-                <option value="Public Campus Ministries">
-                  Public Campus Ministries
-                </option>
-                <option value="Interest Coordination">
-                  Interest Coordination
-                </option>
-                <option value="Church Development Committee">
-                  Church Development Committee
-                </option>
-                <option value="Stewardship Department">
-                  Stewardship Department
-                </option>
-                <option value="Social, Health & Temperance Department">
-                  Social, Health & Temperance Department
-                </option>
-                <option value="Publishing Department">
-                  Publishing Department
-                </option>
-                <option value="Music Department">Music Department</option>
-                <option value="Transport & Public Address Department">
-                  Transport & Public Address Department
-                </option>
-                <option value="Communication & Publicity Department">
-                  Communication & Publicity Department
-                </option>
-                <option value="Prayer and Fellowship Department">
-                  Prayer and Fellowship Department
-                </option>
-                <option value="Master Guide Department">
-                  Master Guide Department
-                </option>
-                <option value="Medical Missionary Department">
-                  Medical Missionary Department
-                </option>
-                <option value="Voice of Prophecy Department">
-                  Voice of Prophecy Department
-                </option>
-                <option value="Charity Department">Charity Department</option>
-                <option value="Adventist Muslim Relations Department">
-                  Adventist Muslim Relations Department
-                </option>
-                <option value="ALO & AMO Department">
-                  ALO & AMO Department
-                </option>
-                <option value="EUSDA Chaplaincy Office">
-                  EUSDA Chaplaincy Office
-                </option>
-              </select>
-            </div>
+                <div className="relative">
+                  <label className="text-sm font-semibold text-gray-700 mb-1 block">Phone Number</label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                    <input
+                      type="tel"
+                      name="phoneNumber"
+                      value={formData.phoneNumber}
+                      onChange={handleChange}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
+                      placeholder="0712 345 678"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
 
-            <div className="text-center pt-6">
-              <button
-                type="submit"
-                className="bg-green-700 hover:bg-green-800 text-white py-3 px-8 rounded-full font-medium shadow-md transition duration-300"
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : "Submit Interest"}
-              </button>
-            </div>
-          </form>
+              {/* Department Select */}
+              <div className="relative">
+                <label className="text-sm font-semibold text-gray-700 mb-1 block">Select Department</label>
+                <div className="relative">
+                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <select
+                    name="department"
+                    value={formData.department}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white appearance-none cursor-pointer"
+                    required
+                  >
+                    <option value="">-- Choose a Ministry --</option>
+                    {DEPARTMENTS.map((dept, index) => (
+                      <option key={index} value={dept}>
+                        {dept}
+                      </option>
+                    ))}
+                  </select>
+                  {/* Custom Arrow Icon */}
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold py-3.5 px-6 rounded-lg shadow-lg hover:shadow-green-900/20 transform transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="animate-spin" size={20} />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      Submit Interest <Send size={18} />
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </section>
-
-      {/* <Footer /> */}
     </>
   );
 }

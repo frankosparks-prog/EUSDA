@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Facebook, Mail } from "lucide-react"; // Removed Twitter & Instagram
+import { Facebook, Mail, MapPin, ChevronRight, Heart } from "lucide-react";
 import Toast from "./Toast";
 import axios from "axios";
 import { FaWhatsapp, FaYoutube } from "react-icons/fa";
@@ -57,8 +57,20 @@ const Footer = () => {
     }
   };
 
+  const socialLinks = [
+    { icon: Facebook, href: "https://www.facebook.com/eusdaofficial" },
+    { icon: XIcon, href: "https://x.com/egertonunisda" },
+    { icon: TikTokIcon, href: "https://vm.tiktok.com/ZMABWehGC/" },
+    { icon: FaYoutube, href: "https://www.youtube.com/@eusdachurch" },
+    { icon: FaWhatsapp, href: "https://whatsapp.com/channel/0029VbBZptUGOj9pt3EoVt38" },
+    { icon: Mail, href: "mailto:eusdachurch@gmail.com" },
+  ];
+
   return (
-    <footer className="bg-neutral-900 text-white py-12 px-6 rounded-t-3xl shadow-inner mt-9">
+    <footer className="bg-gray-950 text-white pt-16 pb-8 rounded-t-[3rem] mt-12 relative overflow-hidden">
+      {/* Decorative Gradient Blob */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-24 bg-yellow-500/10 blur-[100px] pointer-events-none"></div>
+
       {toast && (
         <Toast
           type={toast.type}
@@ -67,130 +79,127 @@ const Footer = () => {
         />
       )}
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
-        {/* About Us */}
-        <div>
-          <h2 className="text-2xl font-bold text-yellow-400 mb-4">About Us</h2>
-          <p className="text-sm leading-relaxed text-gray-300">
-            We are a community bound by faith, hope, and love. Join us in
-            worship, outreach, and service as we walk together in Christ’s
-            light.
-          </p>
-        </div>
-
-        {/* Quick Links */}
-        <div>
-          <h2 className="text-2xl font-bold text-yellow-400 mb-4">Quick Links</h2>
-          <ul className="space-y-2 text-sm text-gray-300">
-            {[
-              { label: "About", path: "/about" },
-              { label: "Events", path: "/events" },
-              { label: "Donate || Contribute", path: "/contributions" },
-              { label: "Departments", path: "/departments" },
-              { label: "Ministries", path: "/ministries" },
-              { label: "Announcements", path: "/announcements" },
-              { label: "Gallery", path: "/gallery" },
-              { label: "Contact Us", path: "/contact" },
-            ].map((link, i) => (
-              <li key={i}>
-                <a
-                  href={link.path}
-                  className="hover:text-yellow-300 hover:underline transition"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Connect & Newsletter */}
-        <div>
-          <h2 className="text-2xl font-bold text-yellow-400 mb-4">
-            Connect with Us
-          </h2>
-          <div className="flex gap-4 mb-4 text-yellow-300">
-            <a
-              href="https://www.facebook.com/eusdaofficial"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition"
-            >
-              <Facebook className="w-5 h-5" />
-            </a>
-            <a
-              href="https://x.com/egertonunisda"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition"
-            >
-              <XIcon className="w-5 h-5" />
-            </a>
-            <a
-              href="https://vm.tiktok.com/ZMABWehGC/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition"
-            >
-              <TikTokIcon className="w-5 h-5" />
-            </a>
-            <a
-              href="mailto:eusdachurch@gmail.com"
-              className="hover:text-white transition"
-            >
-              <Mail className="w-5 h-5" />
-            </a>
-            <a
-              href="https://whatsapp.com/channel/0029VbBZptUGOj9pt3EoVt38"
-              className="hover:text-white transition"
-            >
-              <FaWhatsapp className="w-5 h-5" />
-            </a>
-            <a
-              href="https://www.youtube.com/@eusdachurch"
-              className="hover:text-white transition"
-            >
-              <FaYoutube className="w-5 h-5" />
-            </a>
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+          
+          {/* 1. About Us */}
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+              EUSDA <span className="text-yellow-500">Church</span>
+            </h2>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              We are a community bound by faith, hope, and love. Join us in
+              worship, outreach, and service as we walk together in Christ’s
+              light.
+            </p>
+            <div className="flex items-start gap-3 text-gray-400 text-sm">
+                <MapPin className="w-5 h-5 text-yellow-500 shrink-0" />
+                <span>Egerton University, Njoro<br/>Kenya</span>
+            </div>
           </div>
 
-          <p className="text-xs italic text-gray-400 mb-4">
-            “For where two or three gather in my name, there am I with them.” —
-            Matthew 18:20
-          </p>
+          {/* 2. Quick Links */}
+          <div>
+            <h3 className="text-lg font-bold text-white mb-6 border-b border-gray-800 pb-2 inline-block">Quick Links</h3>
+            <ul className="space-y-3">
+              {[
+                { label: "About Us", path: "/about" },
+                { label: "Our Ministries", path: "/ministries" },
+                { label: "Events Calendar", path: "/events" },
+                { label: "Gallery", path: "/gallery" },
+                { label: "BS Registration", path: "/bible-study" },
+              ].map((link, i) => (
+                <li key={i}>
+                  <a
+                    href={link.path}
+                    className="group flex items-center text-gray-400 hover:text-yellow-400 transition-colors text-sm"
+                  >
+                    <ChevronRight className="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-          {/* Newsletter */}
-          <h3 className="text-lg font-semibold mb-2 text-yellow-400">
-            EUSDA Community
-          </h3>
-          <p className="text-sm text-gray-300 mb-3">
-            Stay informed on our latest events & programs.
-          </p>
-          <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
-            <input
-              type="email"
-              value={email}
-              required
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Your email address"
-              className="px-3 py-2 rounded bg-gray-100 text-black placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            />
-            <button
-              type="submit"
-              className="bg-yellow-400 hover:bg-yellow-500 text-black py-2 rounded font-semibold transition"
-              disabled={loading}
-            >
-              {loading ? "Submitting..." : "Subscribe"}
-            </button>
-          </form>
+          {/* 3. Resources & Contact */}
+          <div>
+            <h3 className="text-lg font-bold text-white mb-6 border-b border-gray-800 pb-2 inline-block">Resources</h3>
+            <ul className="space-y-3">
+              {[
+                {label: "Resources", path: "/resources"},
+                { label: "Church Departments", path: "/departments" },
+                { label: "Announcements", path: "/announcements" },
+                { label: "Offering / Tithe", path: "/contributions" },
+                { label: "Contact Support", path: "/contact" },
+              ].map((link, i) => (
+                <li key={i}>
+                  <a
+                    href={link.path}
+                    className="group flex items-center text-gray-400 hover:text-yellow-400 transition-colors text-sm"
+                  >
+                    <ChevronRight className="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* 4. Newsletter & Socials */}
+          <div className="space-y-6">
+            <div>
+                <h3 className="text-lg font-bold text-white mb-2">Stay Connected</h3>
+                <p className="text-xs text-gray-500 mb-4">
+                    Subscribe to receive latest news and updates.
+                </p>
+                <form onSubmit={handleSubscribe} className="relative">
+                    <input
+                        type="email"
+                        value={email}
+                        required
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Email address"
+                        className="w-full bg-gray-900 border border-gray-800 text-white text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all placeholder:text-gray-600"
+                    />
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="absolute right-1 top-1 bg-yellow-500 hover:bg-yellow-400 text-black text-xs font-bold px-4 py-2.5 rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                        {loading ? "..." : "Join"}
+                    </button>
+                </form>
+            </div>
+
+            <div>
+                <h4 className="text-sm font-semibold text-gray-400 mb-3">Follow Us</h4>
+                <div className="flex flex-wrap gap-3">
+                    {socialLinks.map((social, idx) => (
+                        <a
+                            key={idx}
+                            href={social.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-gray-900 hover:bg-yellow-500 hover:text-black text-gray-400 p-2.5 rounded-full transition-all duration-300 transform hover:-translate-y-1 shadow-lg border border-gray-800 hover:border-yellow-500"
+                        >
+                            <social.icon className="w-4 h-4" />
+                        </a>
+                    ))}
+                </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Bottom Copyright */}
-      <div className="text-center text-xs text-gray-500 mt-10 pt-6 border-t border-gray-700">
-        © {new Date().getFullYear()}{" "}
-        <span className="text-white font-medium">EUSDA</span>. All rights
-        reserved.
+        {/* Bottom Bar */}
+        <div className="border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+          <p>
+            © {new Date().getFullYear()} <span className="text-gray-300 font-medium">EUSDA</span>. All rights reserved.
+          </p>
+          <p className="italic flex items-center gap-1">
+            Made with <Heart className="w-3 h-3 text-red-500 fill-red-500" /> for the Glory of God.
+          </p>
+        </div>
       </div>
     </footer>
   );

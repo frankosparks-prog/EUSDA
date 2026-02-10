@@ -188,6 +188,8 @@ app.use("/api/payments", require('./routes/payment-success'));
 app.use("/api/pledges", require('./routes/PledgeRoute')); // Pledge routes
 app.use("/api/mpesa", require('./routes/mpesaRoute')); // <-- Ensure this uses `req.app.get("io")`
 app.use("/api/subscribe", require('./routes/SubscriptionRoutes')); // Subscription routes
+app.use("/api/discussions", require('./routes/DiscussioRoutes')); // Discussion routes
+app.use("/api/bs", require('./routes/BsRegRoute')); // Bible Study Registration routes
 
 // SOCKET.IO
 // let liveTotal = 0;

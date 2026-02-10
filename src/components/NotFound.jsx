@@ -4,7 +4,7 @@ import { AlertTriangle } from "lucide-react";
 
 function NotFound() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-green-50 to-green-100 text-center px-6 md:mt-32 mt-2 mb-[-2rem]">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-green-50 to-green-100 text-center px-6 mt-[-4rem] md:mt-[-2rem]">
       {/* Icon */}
       <AlertTriangle className="w-20 h-20 text-yellow-500 mb-6 animate-bounce" />
 
