@@ -8,7 +8,6 @@ import {
   Timer,
   Info,
   ArrowLeft,
-  Clock,
   Share2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";

@@ -1,6 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { Pencil, Trash2, PlusCircle, Loader, CheckCircle, Clock, Heart, MessageCircle } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  PlusCircle,
+  Loader,
+  CheckCircle,
+  Clock,
+  Heart,
+  MessageCircle,
+} from "lucide-react";
 import Toast from "../Toast";
 import BlogFormModal from "./BlogFormModal";
 
@@ -12,31 +21,31 @@ const ManageBlogs = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editBlog, setEditBlog] = useState(null);
   const [toast, setToast] = useState(null);
-  
+
   const [activeTab, setActiveTab] = useState("live");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
 
-  const fetchBlogs = async () => {
+  const fetchBlogs = useCallback(async () => {
     try {
       setLoading(true);
       const endpoint = activeTab === "live" ? "/api/blog" : "/api/blog/pending";
       const res = await axios.get(`${SERVER_URL}${endpoint}`);
       setBlogs(res.data);
-      setCurrentPage(1); 
+      setCurrentPage(1);
     } catch (err) {
       console.error("Error fetching blogs:", err);
       setToast({ type: "error", message: "Failed to fetch blogs" });
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab]);
 
   const handleApprove = async (id) => {
     try {
       await axios.put(`${SERVER_URL}/api/blog/${id}/approve`);
       setToast({ type: "success", message: "Blog approved and published!" });
-      fetchBlogs(); 
+      fetchBlogs();
     } catch (err) {
       console.error(err);
       setToast({ type: "error", message: "Failed to approve blog" });
@@ -67,12 +76,12 @@ const ManageBlogs = () => {
 
   useEffect(() => {
     fetchBlogs();
-  }, [activeTab]);
+  }, [fetchBlogs]);
 
   const totalPages = Math.ceil(blogs.length / itemsPerPage);
   const paginatedBlogs = blogs.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   return (
@@ -87,7 +96,7 @@ const ManageBlogs = () => {
 
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-3xl font-bold text-green-800">Manage Blog Posts</h1>
-        
+
         <button
           onClick={handleAdd}
           className="flex items-center gap-2 bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 shadow-md"
@@ -125,9 +134,11 @@ const ManageBlogs = () => {
         </div>
       ) : blogs.length === 0 ? (
         <div className="bg-white p-8 rounded-lg shadow text-center">
-            <p className="text-gray-500 font-semibold text-lg">
-                {activeTab === "live" ? "No live blog posts yet." : "No pending submissions."}
-            </p>
+          <p className="text-gray-500 font-semibold text-lg">
+            {activeTab === "live"
+              ? "No live blog posts yet."
+              : "No pending submissions."}
+          </p>
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -143,42 +154,52 @@ const ManageBlogs = () => {
                 alt={blog.role}
                 className="w-full h-40 object-cover rounded mb-3 bg-gray-100"
               />
-              
+
               <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-800">{blog.name}</h3>
-                    <p className="text-green-600 text-xs font-bold uppercase tracking-wider mb-2">{blog.role}</p>
-                  </div>
-                  <span className={`text-[10px] px-2 py-1 rounded font-bold ${
-                      activeTab === "live" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
-                  }`}>
-                      {activeTab === "live" ? "LIVE" : "PENDING"}
-                  </span>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">
+                    {blog.name}
+                  </h3>
+                  <p className="text-green-600 text-xs font-bold uppercase tracking-wider mb-2">
+                    {blog.role}
+                  </p>
+                </div>
+                <span
+                  className={`text-[10px] px-2 py-1 rounded font-bold ${
+                    activeTab === "live"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-yellow-100 text-yellow-800"
+                  }`}
+                >
+                  {activeTab === "live" ? "LIVE" : "PENDING"}
+                </span>
               </div>
-              
-              <p className="text-sm text-gray-600 line-clamp-3 mb-4 italic">"{blog.quote}"</p>
+
+              <p className="text-sm text-gray-600 line-clamp-3 mb-4 italic">
+                "{blog.quote}"
+              </p>
 
               {/* ✅ Likes & Comments Stats */}
               <div className="flex items-center gap-4 mb-4 text-gray-500 text-sm border-t border-gray-100 pt-2">
-                 <div className="flex items-center gap-1">
-                    <Heart size={16} className="text-red-500" />
-                    <span>{blog.likes || 0} Likes</span>
-                 </div>
-                 <div className="flex items-center gap-1">
-                    <MessageCircle size={16} className="text-blue-500" />
-                    <span>{blog.comments?.length || 0} Comments</span>
-                 </div>
+                <div className="flex items-center gap-1">
+                  <Heart size={16} className="text-red-500" />
+                  <span>{blog.likes || 0} Likes</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <MessageCircle size={16} className="text-blue-500" />
+                  <span>{blog.comments?.length || 0} Comments</span>
+                </div>
               </div>
 
               <div className="flex justify-end gap-3 mt-auto pt-2 border-t border-gray-100">
                 {activeTab === "pending" && (
-                    <button
-                        onClick={() => handleApprove(blog._id)}
-                        className="flex items-center gap-1 text-sm bg-green-100 text-green-700 px-3 py-1 rounded hover:bg-green-200 font-semibold"
-                        title="Approve & Publish"
-                    >
-                        <CheckCircle size={16} /> Approve
-                    </button>
+                  <button
+                    onClick={() => handleApprove(blog._id)}
+                    className="flex items-center gap-1 text-sm bg-green-100 text-green-700 px-3 py-1 rounded hover:bg-green-200 font-semibold"
+                    title="Approve & Publish"
+                  >
+                    <CheckCircle size={16} /> Approve
+                  </button>
                 )}
 
                 <button
@@ -203,21 +224,23 @@ const ManageBlogs = () => {
 
       {totalPages > 1 && (
         <div className="flex justify-center items-center space-x-4 mt-8">
-            <button
+          <button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((p) => p - 1)}
             className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:opacity-50"
-            >
+          >
             Prev
-            </button>
-            <span className="text-gray-600 font-medium">Page {currentPage} of {totalPages}</span>
-            <button
+          </button>
+          <span className="text-gray-600 font-medium">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage((p) => p + 1)}
             className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:opacity-50"
-            >
+          >
             Next
-            </button>
+          </button>
         </div>
       )}
 

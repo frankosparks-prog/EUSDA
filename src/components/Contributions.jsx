@@ -374,16 +374,21 @@
 
 // export default Contributions;
 
-
 import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import Toast from "./Toast";
 import SuccessModal from "./SuccessModal";
 import PledgeModal from "./PledgeModal";
-import { 
-  Smartphone, CreditCard, Banknote, MessageCircle, 
-  Copy, Check, Heart, ShieldCheck 
+import {
+  Smartphone,
+  CreditCard,
+  Banknote,
+  MessageCircle,
+  Copy,
+  Check,
+  Heart,
+  ShieldCheck,
 } from "lucide-react";
 
 function Contributions() {
@@ -425,7 +430,6 @@ function Contributions() {
     setToast(null);
 
     const { phone, amount, purpose, paymentMethod } = formData;
-    const finalPurpose = formData.purpose === "Other" ? customPurpose : formData.purpose;
 
     // Validation Logic
     if (paymentMethod === "mpesa" && !phone.match(/^0(7|1)\d{8}$/)) {
@@ -435,13 +439,19 @@ function Contributions() {
     }
 
     if (!purpose || !amount) {
-      setToast({ message: "Please fill in all required fields.", type: "warning" });
+      setToast({
+        message: "Please fill in all required fields.",
+        type: "warning",
+      });
       setLoading(false);
       return;
     }
 
     if (paymentMethod === "mpesa" && !phone) {
-      setToast({ message: "Phone number is required for M-Pesa payments.", type: "warning" });
+      setToast({
+        message: "Phone number is required for M-Pesa payments.",
+        type: "warning",
+      });
       setLoading(false);
       return;
     }
@@ -490,7 +500,6 @@ function Contributions() {
       )}
 
       <div className="min-h-screen bg-gray-50 pt-24 pb-20 px-4 md:px-6 mt-[-8rem] md:mt-[-4rem] overflow-x-hidden">
-        
         {/* Header Section */}
         <div className="text-center mb-12" data-aos="fade-down">
           <span className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
@@ -500,15 +509,16 @@ function Contributions() {
             Make a <span className="text-green-700">Contribution</span>
           </h1>
           <p className="text-gray-600 max-w-xl mx-auto">
-            "Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver."
+            "Each of you should give what you have decided in your heart to
+            give, not reluctantly or under compulsion, for God loves a cheerful
+            giver."
           </p>
         </div>
 
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-start">
-          
           {/* Left Column: Payment Form */}
-          <div 
-            className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100" 
+          <div
+            className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100"
             data-aos="fade-right"
           >
             <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
@@ -516,35 +526,42 @@ function Contributions() {
                 <CreditCard size={24} />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-800">Online Giving</h2>
+                <h2 className="text-xl font-bold text-gray-800">
+                  Online Giving
+                </h2>
                 <p className="text-sm text-gray-500">Secure instant payment</p>
               </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              
               {/* Payment Method */}
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Select Method</label>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Select Method
+                </label>
                 <div className="grid grid-cols-2 gap-4">
-                  <label className={`cursor-pointer border-2 rounded-xl p-3 flex items-center justify-center gap-2 transition-all ${formData.paymentMethod === 'mpesa' ? 'border-green-500 bg-green-50 text-green-700' : 'border-gray-200 hover:border-green-200'}`}>
-                    <input 
-                      type="radio" 
-                      name="paymentMethod" 
-                      value="mpesa" 
-                      checked={formData.paymentMethod === "mpesa"} 
-                      onChange={handleChange} 
+                  <label
+                    className={`cursor-pointer border-2 rounded-xl p-3 flex items-center justify-center gap-2 transition-all ${formData.paymentMethod === "mpesa" ? "border-green-500 bg-green-50 text-green-700" : "border-gray-200 hover:border-green-200"}`}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="mpesa"
+                      checked={formData.paymentMethod === "mpesa"}
+                      onChange={handleChange}
                       className="hidden"
                     />
                     <Smartphone size={20} /> M-Pesa
                   </label>
-                  <label className={`cursor-pointer border-2 rounded-xl p-3 flex items-center justify-center gap-2 transition-all ${formData.paymentMethod === 'card' ? 'border-green-500 bg-green-50 text-green-700' : 'border-gray-200 hover:border-green-200'}`}>
-                    <input 
-                      type="radio" 
-                      name="paymentMethod" 
-                      value="card" 
-                      checked={formData.paymentMethod === "card"} 
-                      onChange={handleChange} 
+                  <label
+                    className={`cursor-pointer border-2 rounded-xl p-3 flex items-center justify-center gap-2 transition-all ${formData.paymentMethod === "card" ? "border-green-500 bg-green-50 text-green-700" : "border-gray-200 hover:border-green-200"}`}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="card"
+                      checked={formData.paymentMethod === "card"}
+                      onChange={handleChange}
                       className="hidden"
                     />
                     <CreditCard size={20} /> Card
@@ -555,9 +572,14 @@ function Contributions() {
               {/* Phone Number */}
               {formData.paymentMethod === "mpesa" && (
                 <div className="animate-in fade-in slide-in-from-top-2">
-                  <label className="block text-sm font-bold text-gray-700 mb-2">M-Pesa Number</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    M-Pesa Number
+                  </label>
                   <div className="relative">
-                    <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                    <Smartphone
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                      size={20}
+                    />
                     <input
                       type="tel"
                       name="phone"
@@ -573,9 +595,14 @@ function Contributions() {
 
               {/* Purpose Selection */}
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Contribution For</label>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Contribution For
+                </label>
                 <div className="relative">
-                  <MessageCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <MessageCircle
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    size={20}
+                  />
                   <select
                     name="purpose"
                     value={formData.purpose}
@@ -592,7 +619,7 @@ function Contributions() {
                     <option value="Other">Other</option>
                   </select>
                 </div>
-                
+
                 {formData.purpose === "Other" && (
                   <input
                     type="text"
@@ -607,9 +634,14 @@ function Contributions() {
 
               {/* Amount */}
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Amount (KES)</label>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Amount (KES)
+                </label>
                 <div className="relative">
-                  <Banknote className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <Banknote
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    size={20}
+                  />
                   <input
                     type="number"
                     name="amount"
@@ -627,10 +659,14 @@ function Contributions() {
                 disabled={loading}
                 className="w-full bg-green-700 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-green-800 hover:shadow-green-900/20 transform transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
               >
-                {loading ? "Processing..." : (
+                {loading ? (
+                  "Processing..."
+                ) : (
                   <>
-                    <ShieldCheck size={20} /> 
-                    {formData.paymentMethod === "mpesa" ? "Pay via M-Pesa" : "Proceed to Card"}
+                    <ShieldCheck size={20} />
+                    {formData.paymentMethod === "mpesa"
+                      ? "Pay via M-Pesa"
+                      : "Proceed to Card"}
                   </>
                 )}
               </button>
@@ -639,7 +675,6 @@ function Contributions() {
 
           {/* Right Column: Manual Paybill Info */}
           <div className="space-y-6" data-aos="fade-left">
-            
             {/* Paybill Card */}
             <div className="bg-gradient-to-br from-green-800 to-green-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
               {/* Decorative Circles */}
@@ -652,29 +687,45 @@ function Contributions() {
 
               <div className="space-y-6 relative z-10">
                 <div>
-                  <p className="text-green-200 text-sm mb-1 uppercase tracking-wider">Paybill Number</p>
+                  <p className="text-green-200 text-sm mb-1 uppercase tracking-wider">
+                    Paybill Number
+                  </p>
                   <div className="flex items-center gap-3">
-                    <span className="text-4xl font-mono font-bold tracking-widest text-white">4072615</span>
-                    <button 
+                    <span className="text-4xl font-mono font-bold tracking-widest text-white">
+                      4072615
+                    </span>
+                    <button
                       onClick={handleCopyPaybill}
                       className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
                       title="Copy Paybill"
                     >
-                      {copied ? <Check size={20} className="text-green-300"/> : <Copy size={20} />}
+                      {copied ? (
+                        <Check size={20} className="text-green-300" />
+                      ) : (
+                        <Copy size={20} />
+                      )}
                     </button>
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-green-200 text-sm mb-1 uppercase tracking-wider">Account Name</p>
-                  <p className="font-semibold text-lg">SEVENTH DAY ADVENTIST EGERTON</p>
+                  <p className="text-green-200 text-sm mb-1 uppercase tracking-wider">
+                    Account Name
+                  </p>
+                  <p className="font-semibold text-lg">
+                    SEVENTH DAY ADVENTIST EGERTON
+                  </p>
                 </div>
 
                 <div className="bg-white/10 p-4 rounded-xl border border-white/10">
-                  <p className="text-green-200 text-sm mb-1">Account No. (Purpose)</p>
+                  <p className="text-green-200 text-sm mb-1">
+                    Account No. (Purpose)
+                  </p>
                   <p className="text-white text-sm">
-                    Enter the purpose as the account number: <br/>
-                    <span className="font-mono text-green-300">Tithe, Offering, CDC, etc.</span>
+                    Enter the purpose as the account number: <br />
+                    <span className="font-mono text-green-300">
+                      Tithe, Offering, CDC, etc.
+                    </span>
                   </p>
                 </div>
               </div>
@@ -692,7 +743,6 @@ function Contributions() {
               </button>
             </div> 
             */}
-
           </div>
         </div>
 
