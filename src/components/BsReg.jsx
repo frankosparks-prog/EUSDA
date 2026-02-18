@@ -121,7 +121,7 @@ function BsReg() {
     const nameTrim = formData.fullName.trim();
     const phone = formData.phoneNumber.trim();
     const nameValid = /^[A-Za-z\s]+$/.test(nameTrim) && nameTrim.length > 1;
-    const phoneValid = /^\d{7,15}$/.test(phone);
+    const phoneValid = /^\d{10}$/.test(phone);
 
     if (!nameValid) {
       setToast({
@@ -137,7 +137,7 @@ function BsReg() {
     if (!phoneValid) {
       setToast({
         visible: true,
-        message: "Phone number must be digits only (7-15 digits).",
+        message: "Phone number must be digits only (10 digits).",
         type: "error",
         duration: 3500,
       });
@@ -261,6 +261,8 @@ function BsReg() {
                       placeholder="Phone Number"
                       value={formData.phoneNumber}
                       onChange={handleChange}
+                      minLength={10}
+                      maxLength={10}
                       required
                       className="w-full pl-10 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-white transition-all"
                     />

@@ -172,7 +172,7 @@ export default function Events() {
                     <div className="md:w-1/2 relative overflow-hidden h-64 md:h-auto">
                       <div className="absolute inset-0 bg-green-900/10 group-hover:bg-transparent transition-colors z-10"></div>
                       <img
-                        src={ev.image}
+                        src={ev.image || "https://eusda.co.ke/eusda-logo.png"}
                         alt={`${ev.title} event poster`}
                         className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
                       />

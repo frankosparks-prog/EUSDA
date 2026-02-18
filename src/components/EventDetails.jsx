@@ -199,7 +199,7 @@ export default function EventDetails() {
         {/* Blurred Background */}
         <div
           className="absolute inset-0 bg-cover bg-center blur-sm scale-110 opacity-50"
-          style={{ backgroundImage: `url(${event.image})` }}
+          style={{ backgroundImage: `url(${event.image || "https://eusda.co.ke/eusda-logo.png"})` }}
         ></div>
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent"></div>
 
@@ -219,7 +219,7 @@ export default function EventDetails() {
             <div className="flex flex-col md:flex-row md:items-end gap-6">
               {/* Main Event Image (Thumbnail) */}
               <img
-                src={event.image}
+                src={event.image || "https://eusda.co.ke/eusda-logo.png"}
                 alt={event.title}
                 className="w-32 h-32 md:w-48 md:h-48 object-cover rounded-2xl border-4 border-white shadow-2xl hidden md:block"
               />
