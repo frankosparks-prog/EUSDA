@@ -18,7 +18,7 @@ export default function Events() {
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState(null);
-  
+
   const navigate = useNavigate(); // ✅ Hook for SPA navigation
 
   /* ─── boot ─── */
@@ -83,11 +83,9 @@ export default function Events() {
     }
   };
 
-  /* ─── go Details ─── */
   const openDetails = evObj => {
-    // Logic maintained: Save to LS then navigate
     localStorage.setItem("selectedEvent", JSON.stringify(evObj));
-    navigate("/events/event-details"); // ✅ SPA Navigation
+    navigate(`/events/${evObj._id}`); // ✅ SPA Navigation
   };
 
   /* ─── structured data (Event list) ─── */
@@ -119,8 +117,8 @@ export default function Events() {
     return (
       <div className="min-h-screen flex justify-center items-center bg-gray-50">
         <div className="text-center">
-           <CircularProgress color="success" size={50} thickness={4} />
-           <p className="mt-4 text-gray-500 font-medium animate-pulse">Loading Events...</p>
+          <CircularProgress color="success" size={50} thickness={4} />
+          <p className="mt-4 text-gray-500 font-medium animate-pulse">Loading Events...</p>
         </div>
       </div>
     );
@@ -141,7 +139,7 @@ export default function Events() {
 
       {/* Main Container - Fixed Padding */}
       <div className="min-h-screen bg-gray-50 pt-24 pb-20 px-4 md:px-6 mt-[-8rem] md:mt-[-4rem]">
-        
+
         <div className="text-center mb-12" data-aos="fade-down">
           <span className="text-green-600 font-semibold tracking-wider uppercase text-sm">Join the Fellowship</span>
           <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mt-2">
@@ -188,7 +186,7 @@ export default function Events() {
                       <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 leading-tight">
                         {ev.title}
                       </h3>
-                      
+
                       <p className="text-gray-600 mb-6 line-clamp-2 leading-relaxed">
                         {ev.description}
                       </p>
@@ -207,8 +205,8 @@ export default function Events() {
                           onClick={() => toggleRSVP(ev._id, ev.isRegistered)}
                           disabled={busyId === ev._id}
                           className={`flex-1 py-3 px-6 rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2
-                            ${ev.isRegistered 
-                              ? "bg-white text-green-700 border-2 border-green-600 hover:bg-green-50" 
+                            ${ev.isRegistered
+                              ? "bg-white text-green-700 border-2 border-green-600 hover:bg-green-50"
                               : "bg-green-700 text-white hover:bg-green-800 border-2 border-transparent hover:-translate-y-0.5"
                             }
                             ${busyId === ev._id ? "opacity-50 cursor-wait" : ""}`}
@@ -249,7 +247,7 @@ export default function Events() {
 const Meta = ({ icon: Icon, label }) => (
   <div className="flex items-center gap-2.5">
     <div className="w-8 h-8 rounded-full bg-white border border-gray-100 flex items-center justify-center shadow-sm shrink-0">
-       <Icon className="text-green-600 w-4 h-4" />
+      <Icon className="text-green-600 w-4 h-4" />
     </div>
     <span className="truncate font-medium">{label}</span>
   </div>
