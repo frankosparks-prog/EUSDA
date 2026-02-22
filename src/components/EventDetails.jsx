@@ -10,7 +10,7 @@ import {
   ArrowLeft,
   Share2,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
@@ -28,32 +28,49 @@ export default function EventDetails() {
   });
 
   const nav = useNavigate();
+  const { eventId } = useParams();
 
   /* ─── load event & local RSVP flag ─── */
   useEffect(() => {
     const picked = JSON.parse(localStorage.getItem("selectedEvent"));
     const saved = JSON.parse(localStorage.getItem("registeredEvents")) || [];
 
-    // Logic maintenance: If no event in LS, redirect back
-    if (!picked) {
-      nav("/events");
-      return;
-    }
-
-    (async () => {
+    const fetchEvent = async (id) => {
       try {
-        const res = await fetch(`${SERVER_URL}/api/events/${picked._id}`);
+        const res = await fetch(`${SERVER_URL}/api/events/${id}`);
         if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
         setEvent(data);
         setRegistered(saved.includes(data._id));
       } catch (err) {
         console.error(err);
-        setToast({ message: "Could not refresh event data.", type: "error" });
-        setEvent(picked); // Fallback to LS data
+        setToast({ message: "Could not fetch event data.", type: "error" });
+        if (picked && picked._id === id) {
+          setEvent(picked); // Fallback to LS data
+          setRegistered(saved.includes(picked._id));
+        } else {
+          // If no LS fallback and fetch failed, go back
+          nav("/events");
+        }
       }
-    })();
-  }, [nav]);
+    };
+
+    if (picked && picked._id === eventId) {
+      setEvent(picked);
+      setRegistered(saved.includes(picked._id));
+      // Still refresh from server
+      fetchEvent(eventId);
+    } else if (eventId) {
+      fetchEvent(eventId);
+    } else if (picked) {
+      // Fallback for cases where ID might not be in URL but picked is in LS
+      setEvent(picked);
+      setRegistered(saved.includes(picked._id));
+      fetchEvent(picked._id);
+    } else {
+      nav("/events");
+    }
+  }, [nav, eventId]);
 
   /* ─── countdown ─── */
   useEffect(() => {
@@ -306,11 +323,10 @@ export default function EventDetails() {
                 onClick={toggle}
                 disabled={busy}
                 className={`w-full py-4 px-6 rounded-2xl font-bold text-lg shadow-lg transform transition-all active:scale-95
-                        ${
-                          registered
-                            ? "bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
-                            : "bg-green-600 text-white hover:bg-green-700 hover:shadow-green-500/30"
-                        } ${busy ? "opacity-70 cursor-wait" : ""}`}
+                        ${registered
+                    ? "bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
+                    : "bg-green-600 text-white hover:bg-green-700 hover:shadow-green-500/30"
+                  } ${busy ? "opacity-70 cursor-wait" : ""}`}
               >
                 {busy
                   ? "Updating..."
