@@ -66,25 +66,25 @@ function AppRoutes() {
   return (
     <Routes>
       <Route exact path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/announcements" element={<Announcements />} />
-        <Route path="/events" element={<Events />} />
-        <Route path="/contributions" element={<Contributions />} />
-        <Route path="/departments" element={<Departments />} />
-        <Route path="/ministries" element={<Ministries />} />
-        <Route path="/profiles" element={<Profile />} />
-        <Route path="/gallery" element={<Gallary />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/bible-study" element={<BsReg />} />
-        <Route path="/resources" element={<Resources />} />
-        <Route path="/departments/join" element={<DeptJoinForm />} />
-        <Route path="/ministries/join/:ministryName" element={<MinistryJoinForm />} />
-        <Route path="/ministries/revelation-of-love" element={<RevelationOfLove />} />
-        <Route path="/ministries/heavenly-voyagers" element={<HeavenlyVoyagers />} />
-        <Route path="/ministries/calvary-ministers" element={<CalvaryMinisters />} />
-        <Route path="/events/event-details" element={<EventDetails />} />
-        <Route path="*" element={<NotFound />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/announcements" element={<Announcements />} />
+      <Route path="/events" element={<Events />} />
+      <Route path="/contributions" element={<Contributions />} />
+      <Route path="/departments" element={<Departments />} />
+      <Route path="/ministries" element={<Ministries />} />
+      <Route path="/profiles" element={<Profile />} />
+      <Route path="/gallery" element={<Gallary />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/blog" element={<Blog />} />
+      <Route path="/bible-study" element={<BsReg />} />
+      <Route path="/resources" element={<Resources />} />
+      <Route path="/departments/join" element={<DeptJoinForm />} />
+      <Route path="/ministries/join/:ministryName" element={<MinistryJoinForm />} />
+      <Route path="/ministries/revelation-of-love" element={<RevelationOfLove />} />
+      <Route path="/ministries/heavenly-voyagers" element={<HeavenlyVoyagers />} />
+      <Route path="/ministries/calvary-ministers" element={<CalvaryMinisters />} />
+      <Route path="/events/:eventId" element={<EventDetails />} />
+      <Route path="*" element={<NotFound />} />
 
       {/* Admin routes */}
       <Route path="/admin" element={<AdminLogin />} />
@@ -125,4 +125,3 @@ function App() {
 }
 
 export default App;
- 
