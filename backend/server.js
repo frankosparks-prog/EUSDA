@@ -190,6 +190,7 @@ app.use("/api/mpesa", require('./routes/mpesaRoute')); // <-- Ensure this uses `
 app.use("/api/subscribe", require('./routes/SubscriptionRoutes')); // Subscription routes
 app.use("/api/discussions", require('./routes/DiscussioRoutes')); // Discussion routes
 app.use("/api/bs", require('./routes/BsRegRoute')); // Bible Study Registration routes
+app.use("/api/register", require('./routes/RegistrationRoute')); // First-Year Registration routes
 
 // SOCKET.IO
 // let liveTotal = 0;
