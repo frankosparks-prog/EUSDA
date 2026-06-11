@@ -31,7 +31,7 @@ function Register() {
   });
 
   const isNameValid = formData.fullName.trim().length >= 2 && /^[A-Za-z\s]+$/.test(formData.fullName.trim());
-  const isPhoneValid = /^\d{10,15}$/.test(formData.phoneNumber.trim());
+  const isPhoneValid = /^0[17]\d{8}$/.test(formData.phoneNumber.trim());
   const isGenderSelected = formData.gender === "Male" || formData.gender === "Female";
   const isFormValid = isNameValid && isPhoneValid && isGenderSelected;
 
@@ -46,7 +46,7 @@ function Register() {
       }
 
       if (name === "phoneNumber") {
-        newData.phoneNumber = value.replace(/\D/g, "").slice(0, 15);
+        newData.phoneNumber = value.replace(/\D/g, "").slice(0, 10);
       }
 
       return newData;
@@ -71,7 +71,7 @@ function Register() {
     if (!isPhoneValid) {
       setToast({
         visible: true,
-        message: "Phone number must be 10-15 digits.",
+        message: "Phone number must be exactly 10 digits.",
         type: "error",
         duration: 3500,
       });
@@ -152,7 +152,7 @@ function Register() {
                 Welcome to EUSDA!
               </h3>
               <p className="text-gray-600 mt-2 max-w-sm mx-auto">
-                Your registration has been received successfully. We look forward to fellowshipping with you!
+                Member Registration Successfull!
               </p>
               <button
                 onClick={() => setSuccess(false)}
@@ -198,20 +198,34 @@ function Register() {
                   <input
                     type="tel"
                     name="phoneNumber"
-                    placeholder="Phone Number *"
+                    placeholder="Phone Number e.g. 07XX or 01XX XXX XXX *"
                     value={formData.phoneNumber}
                     onChange={handleChange}
-                    minLength={10}
-                    maxLength={15}
+                    maxLength={10}
                     required
                     className="w-full pl-10 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-white transition-all"
                   />
                   {formData.phoneNumber && !isPhoneValid && (
-                    <p className="text-red-500 text-xs mt-1 ml-1">Phone number must be 10-15 digits</p>
+                    <p className="text-red-500 text-xs mt-1 ml-1">Must be 10 digits</p>
                   )}
                 </div>
 
-                {/* Gender */}
+                {/* Email */}
+                <div className="relative">
+                  <Mail
+                    size={18}
+                    className="absolute left-3 top-3.5 text-gray-400"
+                  />
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Email Address (Optional)"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full pl-10 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-white transition-all"
+                  />
+                </div>
+
                 <div>
                   <label className="text-sm font-bold text-gray-500 mb-2 block">
                     Gender *
@@ -244,22 +258,6 @@ function Register() {
                       </span>
                     </label>
                   </div>
-                </div>
-
-                {/* Email*/}
-                <div className="relative">
-                  <Mail
-                    size={18}
-                    className="absolute left-3 top-3.5 text-gray-400"
-                  />
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Email (Optional)"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full pl-10 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-white transition-all"
-                  />
                 </div>
               </div>
 
