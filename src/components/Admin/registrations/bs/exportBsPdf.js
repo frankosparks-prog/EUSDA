@@ -18,8 +18,9 @@ export async function exportBsPdf(filters) {
     await exportRegistrationsPdf({
       title: "BS Registration List",
       meta: `Region: ${filters.region}    Generated: ${new Date().toLocaleDateString()}    Total: ${filteredData.length}`,
-      columns: ["Name", "Phone", "Gender", "Region", "Group", "Residence"],
-      rows: filteredData.map((reg) => [
+      columns: ["S/N", "Name", "Phone", "Gender", "Region", "Group", "Residence"],
+      rows: filteredData.map((reg, index) => [
+        index + 1,
         reg.fullName,
         reg.phoneNumber,
         reg.gender,
