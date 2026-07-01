@@ -22,8 +22,9 @@ export async function exportFirstYearPdf(filters) {
     await exportRegistrationsPdf({
       title: "First-Year Registration List",
       meta: `Gender: ${filters.gender}    Date: ${dateLabel}    Generated: ${new Date().toLocaleDateString()}    Total: ${filteredData.length}`,
-      columns: ["Name", "Phone", "Gender", "Date Registered", "Email"],
-      rows: filteredData.map((reg) => [
+      columns: ["S/N", "Name", "Phone", "Gender", "Date Registered", "Email"],
+      rows: filteredData.map((reg, index) => [
+        index + 1,
         reg.fullName,
         reg.phoneNumber,
         reg.gender,
