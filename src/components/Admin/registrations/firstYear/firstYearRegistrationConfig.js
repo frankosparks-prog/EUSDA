@@ -17,9 +17,10 @@ export function buildFirstYearQueryParams({ page, limit, filters, all = false })
 }
 
 export const FIRST_YEAR_PDF_COLUMN_STYLES = {
-  0: { cellWidth: 110 },
-  1: { cellWidth: 80 },
-  2: { cellWidth: 55 },
-  3: { cellWidth: 90 },
-  4: { cellWidth: 120 },
+  0: { cellWidth: 30 },
+  1: { cellWidth: 110 },
+  2: { cellWidth: 80 },
+  3: { cellWidth: 55 },
+  4: { cellWidth: 90 },
+  5: { cellWidth: 120 },
 };
