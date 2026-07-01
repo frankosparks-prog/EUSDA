@@ -19,10 +19,11 @@ export function buildBsQueryParams({ page, limit, filters, all = false }) {
 }
 
 export const BS_PDF_COLUMN_STYLES = {
-  0: { cellWidth: 120 },
-  1: { cellWidth: 80 },
-  2: { cellWidth: 50 },
-  3: { cellWidth: 80 },
-  4: { cellWidth: 100 },
+  0: { cellWidth: 30 },
+  1: { cellWidth: 120 },
+  2: { cellWidth: 80 },
+  3: { cellWidth: 50 },
+  4: { cellWidth: 80 },
   5: { cellWidth: 100 },
+  6: { cellWidth: 100 },
 };
