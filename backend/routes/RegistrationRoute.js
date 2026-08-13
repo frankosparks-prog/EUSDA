@@ -35,19 +35,35 @@ router.post("/", async (req, res) => {
       fullName: fullName.trim(),
       phoneNumber: phoneNumber.trim(),
       gender,
-      email: email ? email.trim() : "",
+      email: email?.trim() || undefined,
     });
 
     const saved = await newRegistration.save();
     res.status(201).json(saved);
   } catch (err) {
-    // Fallback: catch MongoDB duplicate key error (race condition safety net)
-    if (err.code === 11000) {
-      return res.status(409).json({ error: "This phone number is already registered." });
-    }
-    res.status(400).json({ error: err.message });
-  }
-});
+    //log errors correctly
+      if (err.code === 11000) {
+
+          if (err.keyPattern?.phoneNumber) {
+            return res.status(409).json({
+              error: "This phone number is already registered."
+            });
+          }
+
+          if (err.keyPattern?.email) {
+            return res.status(409).json({
+              error: "This email is already registered."
+            });
+          }
+
+          return res.status(409).json({
+            error: "A registration with these details already exists."
+          });
+        }
+
+        res.status(400).json({ error: err.message });
+      }
+    }); 
 
 router.get("/", async (req, res) => {
   try {
