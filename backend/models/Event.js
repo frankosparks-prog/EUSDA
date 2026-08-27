@@ -10,7 +10,9 @@ const eventSchema = new mongoose.Schema({
   description: { type: String },
   longDescription: { type: String },
   image: { type: String },
-  attendees: { type: Number, default: 0 }
+  attendees: { type: Number, default: 0 },
+  ticketed: { type: Boolean, default: false },
+  ticketPrice: { type: Number, default: 0 },
 }, { timestamps: true });
 
 module.exports = mongoose.model("Event", eventSchema);
