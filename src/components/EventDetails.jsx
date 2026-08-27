@@ -9,6 +9,7 @@ import {
   Info,
   ArrowLeft,
   Share2,
+  Ticket,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -318,6 +319,19 @@ export default function EventDetails() {
                 </div>
                 <p className="text-sm text-gray-400">people going</p>
               </div>
+
+              {/* Buy Ticket CTA : only shown for ticketed events */}
+              {event.ticketed && (
+                <button
+                  onClick={() => nav(`/events/${event._id}/ticket`)}
+                  className="w-full mb-3 py-4 px-6 rounded-2xl font-bold text-lg bg-green-600 text-white hover:bg-green-700 hover:shadow-green-500/30 shadow-lg transform transition-all active:scale-95 flex items-center justify-center gap-2"
+                >
+                  <Ticket size={20} />
+                  {event.ticketPrice > 0
+                    ? `Buy Ticket · KES ${event.ticketPrice.toLocaleString()}`
+                    : "Get Free Ticket"}
+                </button>
+              )}
 
               <button
                 onClick={toggle}
