@@ -38,6 +38,8 @@ import NotFound from "./components/NotFound";
 import BsReg from "./components/BsReg";
 import AdminBsReg from "./components/Admin/AdminBsReg";
 import Resources from "./components/Resources";
+import Register from "./components/Register";
+import AdminRegistrations from "./components/Admin/AdminRegistrations";
 
 // 👇 create a wrapper component to manage layout
 function AppLayout() {
@@ -77,6 +79,7 @@ function AppRoutes() {
       <Route path="/contact" element={<Contact />} />
       <Route path="/blog" element={<Blog />} />
       <Route path="/bible-study" element={<BsReg />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/resources" element={<Resources />} />
       <Route path="/departments/join" element={<DeptJoinForm />} />
       <Route path="/ministries/join/:ministryName" element={<MinistryJoinForm />} />
@@ -109,6 +112,7 @@ function AppRoutes() {
         <Route path="gallery" element={<ManageGallery />} />
         <Route path="subscribed" element={<Subscribed />} />
         <Route path="bs-details" element={<AdminBsReg />} />
+        <Route path="registrations" element={<AdminRegistrations />} />
         <Route path="*" element={<Navigate to="visitors" replace />} />
       </Route>
     </Routes>

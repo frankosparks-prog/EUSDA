@@ -13,11 +13,28 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// GET: Get all registrations (for Admin)
+// New feature: Get registrations (paginated for Admin, all when all=true for PDF export)
 router.get("/", async (req, res) => {
   try {
-    const registrations = await BibleStudy.find().sort({ createdAt: -1 });
-    res.status(200).json(registrations);
+    const page = Math.max(0, parseInt(req.query.page, 10) || 0);
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const fetchAll = req.query.all === "true";
+    const { region, group } = req.query;
+
+    const filter = {};
+    if (region && region !== "All") filter.region = region;
+    if (group) filter.groupName = { $regex: group, $options: "i" };
+
+    const total = await BibleStudy.countDocuments(filter);
+    const totalAll = await BibleStudy.countDocuments();
+
+    let query = BibleStudy.find(filter).sort({ createdAt: -1 });
+    if (!fetchAll) {
+      query = query.skip(page * limit).limit(limit);
+    }
+
+    const data = await query;
+    res.status(200).json({ data, total, totalAll });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -212,7 +212,8 @@ const Home = () => {
               />
             </Link>
 
-            <Link
+            {/* Upcoming Events button - commented out for Registration */}
+            {/* <Link
               to="/events"
               className="group w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2 hover:border-green-400/50"
             >
@@ -221,6 +222,16 @@ const Home = () => {
                 className="text-green-300 group-hover:text-white transition-colors"
               />
               Upcoming Events
+            </Link> */}
+            <Link
+              to="/register"
+              className="group w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2 hover:border-green-400/50"
+            >
+              <Calendar
+                size={20}
+                className="text-green-300 group-hover:text-white transition-colors"
+              />
+              Register
             </Link>
           </div>
         </div>

@@ -72,6 +72,7 @@ const AdminDashboard = () => {
               { to: "dept-members", label: "Department Members", icon: <Mic className="w-5 h-5" /> },
               { to: "ministry-members", label: "Ministry Members", icon: <BookOpen className="w-5 h-5" /> },
               { to: "bs-details", label: "Bible Study", icon: <BookOpen className="w-5 h-5" /> },
+              { to: "registrations", label: "Registrations", icon: <Users className="w-5 h-5" /> },
             ].map((item, i) => (
               <li key={i}>
                 <NavLink
