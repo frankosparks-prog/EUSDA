@@ -128,9 +128,10 @@ router.post("/:orderId/pay", async (req, res) => {
     // ── 6. Convert amount to KES subunit (cents: amount * 100) ──
     const amountInSubunits = Math.round(order.ticketPrice * 100);
 
+    const frontendBase = process.env.FRONTEND_URL || "http://localhost:3000";
     const callbackUrl =
       process.env.PAYSTACK_CALLBACK_URL ||
-      "https://eusda.co.ke/payment/callback";
+      `${frontendBase}/payment/callback`;
 
     // ── 7. Call Paystack Initialize Transaction API ──
     const paystackPayload = {
