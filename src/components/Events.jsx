@@ -5,9 +5,8 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules"; // Added Autoplay
-import { CalendarDays, Clock, MapPin, Mic, ArrowRight, CheckCircle2 } from "lucide-react";
+import { CalendarDays, Clock, MapPin, Mic, ArrowRight, CheckCircle2, Ticket } from "lucide-react";
 import Toast from "./Toast";
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -201,22 +200,34 @@ export default function Events() {
 
                       {/* Actions */}
                       <div className="flex flex-col sm:flex-row gap-3 mt-auto">
-                        <button
-                          onClick={() => toggleRSVP(ev._id, ev.isRegistered)}
-                          disabled={busyId === ev._id}
-                          className={`flex-1 py-3 px-6 rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2
-                            ${ev.isRegistered
-                              ? "bg-white text-green-700 border-2 border-green-600 hover:bg-green-50"
-                              : "bg-green-700 text-white hover:bg-green-800 border-2 border-transparent hover:-translate-y-0.5"
-                            }
-                            ${busyId === ev._id ? "opacity-50 cursor-wait" : ""}`}
-                        >
-                          {ev.isRegistered ? (
-                            <><CheckCircle2 size={18} /> Registered</>
-                          ) : (
-                            "RSVP Now"
-                          )}
-                        </button>
+                        {ev.ticketed ? (
+                          <button
+                            onClick={() => openDetails(ev)}
+                            className="flex-1 py-3 px-6 rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2 bg-green-700 text-white hover:bg-green-800 border-2 border-transparent hover:-translate-y-0.5"
+                          >
+                            <Ticket size={18} />
+                            {ev.ticketPrice > 0
+                              ? `Buy Ticket · KES ${ev.ticketPrice.toLocaleString()}`
+                              : "Get Ticket"}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => toggleRSVP(ev._id, ev.isRegistered)}
+                            disabled={busyId === ev._id}
+                            className={`flex-1 py-3 px-6 rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2
+                              ${ev.isRegistered
+                                ? "bg-white text-green-700 border-2 border-green-600 hover:bg-green-50"
+                                : "bg-green-700 text-white hover:bg-green-800 border-2 border-transparent hover:-translate-y-0.5"
+                              }
+                              ${busyId === ev._id ? "opacity-50 cursor-wait" : ""}`}
+                          >
+                            {ev.isRegistered ? (
+                              <><CheckCircle2 size={18} /> Registered</>
+                            ) : (
+                              "RSVP Now"
+                            )}
+                          </button>
+                        )}
 
                         <button
                           onClick={() => openDetails(ev)}
