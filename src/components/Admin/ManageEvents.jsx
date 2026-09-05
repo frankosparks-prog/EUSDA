@@ -26,6 +26,8 @@ const ManageEvents = () => {
     venue: "",
     description: "",
     longDescription: "",
+    ticketed: false,
+    ticketPrice: 0,
   });
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -71,8 +73,17 @@ const ManageEvents = () => {
           body: formData,
         }
       );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to save event");
+      
+      let data = {};
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error(text || `Server returned status ${res.status}`);
+      }
+
+      if (!res.ok) throw new Error(data.error || data.message || "Failed to save event");
 
       setToast({
         message: editingId ? "Event updated" : "Event added",
@@ -88,6 +99,8 @@ const ManageEvents = () => {
         venue: "",
         description: "",
         longDescription: "",
+        ticketed: false,
+        ticketPrice: 0,
       });
       setImage(null);
       setPreview(null);
@@ -101,28 +114,34 @@ const ManageEvents = () => {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`${SERVER_URL}/api/events/${id}`, { method: "DELETE" });
+      const res = await fetch(`${SERVER_URL}/api/events/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || `Failed with status ${res.status}`);
+      }
       setToast({ message: "Event deleted", type: "success" });
       fetchEvents();
     } catch (err) {
       console.error(err);
-      setToast({ message: "Error deleting event", type: "error" });
+      setToast({ message: err.message || "Error deleting event", type: "error" });
     }
   };
 
   const handleEdit = (event) => {
     setForm({
       title: event.title,
-      date: event.date.split("T")[0],
+      date: event.date ? event.date.split("T")[0] : "",
       day: event.day || "",
       time: event.time || "",
       speaker: event.speaker || "",
       venue: event.venue,
       description: event.description,
       longDescription: event.longDescription || "",
+      ticketed: event.ticketed || false,
+      ticketPrice: event.ticketPrice || 0,
     });
     setEditingId(event._id);
-    if (event.image) setPreview(`${SERVER_URL}/uploads/${event.image}`);
+    if (event.image) setPreview(event.image.startsWith("http") ? event.image : `${SERVER_URL}/uploads/${event.image}`);
   };
 
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -142,7 +161,7 @@ const ManageEvents = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input
             type="text"
-            placeholder="Title"
+            placeholder="Title *"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
             className="input border-green-500 p-2 rounded border"
@@ -178,7 +197,7 @@ const ManageEvents = () => {
           />
           <input
             type="text"
-            placeholder="Venue"
+            placeholder="Venue *"
             value={form.venue}
             onChange={(e) => setForm({ ...form, venue: e.target.value })}
             className="input border-green-500 p-2 rounded border"
@@ -190,13 +209,50 @@ const ManageEvents = () => {
             className="input border-green-500 p-2 rounded border"
             accept="image/*"
           />
+
+          {/* Ticketing Options */}
+          <div className="bg-white p-3 rounded border border-green-300 flex items-center justify-between gap-4">
+            <label className="flex items-center gap-2 text-sm font-semibold text-green-900 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.ticketed}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    ticketed: e.target.checked,
+                    ticketPrice: e.target.checked ? form.ticketPrice || 100 : 0,
+                  })
+                }
+                className="w-4 h-4 text-green-600 rounded"
+              />
+              <span>Enable Paid Ticketing</span>
+            </label>
+
+            {form.ticketed && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-500 font-bold">Price (KES):</span>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="Ticket Price"
+                  value={form.ticketPrice}
+                  onChange={(e) =>
+                    setForm({ ...form, ticketPrice: Number(e.target.value) })
+                  }
+                  className="w-24 p-1 border border-green-500 rounded text-sm"
+                  required={form.ticketed}
+                />
+              </div>
+            )}
+          </div>
+
           <textarea
-            placeholder="Short Description"
+            placeholder="Short Description *"
             value={form.description}
             onChange={(e) =>
               setForm({ ...form, description: e.target.value })
             }
-            className="input md:col-span-2 border-green-500 border"
+            className="input md:col-span-2 border-green-500 border p-2 rounded"
             required
           />
           <textarea
@@ -205,7 +261,7 @@ const ManageEvents = () => {
             onChange={(e) =>
               setForm({ ...form, longDescription: e.target.value })
             }
-            className="input md:col-span-2 border-green-500 border"
+            className="input md:col-span-2 border-green-500 border p-2 rounded"
           />
         </div>
 
