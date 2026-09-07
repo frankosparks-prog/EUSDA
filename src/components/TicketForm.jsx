@@ -76,8 +76,16 @@ export default function TicketForm({ event, isModal = false, onClose }) {
         email: formData.email.trim(),
         phone: formData.phone.trim(),
       });
-      setOrder(data);
-      showToast("Order placed! Proceed to Payment.", "success", 4000);
+
+      if (data.amount > 0 && data.orderId) {
+
+        setPaying(true);
+        setOrder(data);
+        await handleProceedToPayment(data.orderId);
+      } else {
+        setOrder(data);
+        showToast("Spot reserved successfully!", "success", 4000);
+      }
     } catch (err) {
       showToast(err.response?.data?.error || "Something went wrong. Please try again.", "error");
     } finally {
@@ -127,35 +135,37 @@ export default function TicketForm({ event, isModal = false, onClose }) {
 
       {order ? (
         /* Confirmation: attendee details come straight from form state — no extra fetch. */
-        <div className="tk-card p-6">
+        <div className="tk-card p-4 sm:p-6 overflow-hidden">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 text-white" style={{ background: "#1F6F4A" }}>
               <CheckCircle2 size={22} />
             </div>
-            <div>
-              <h2 className="tk-serif text-xl font-semibold tk-ink">
+            <div className="min-w-0 flex-1">
+              <h2 className="tk-serif text-lg sm:text-xl font-semibold tk-ink truncate">
                 {order.amount === 0 ? "You're on the list" : "Order created"}
               </h2>
-              <p className="text-sm tk-muted">Ref {String(order.orderId).slice(-8)} · {order.status}</p>
+              <p className="text-xs sm:text-sm tk-muted truncate">Ref {String(order.orderId).slice(-8)} · {order.status}</p>
             </div>
           </div>
 
-          <dl className="mt-5 space-y-2 text-sm border-t pt-4" style={{ borderColor: "#EAEDE6" }}>
-            <div className="flex items-center justify-between">
-              <dt className="tk-muted">Attendee</dt>
-              <dd className="font-medium tk-ink">{formData.fullName}</dd>
+          <dl className="mt-5 space-y-2.5 text-xs sm:text-sm border-t pt-4" style={{ borderColor: "#EAEDE6" }}>
+            <div className="flex items-start justify-between gap-3 min-w-0">
+              <dt className="tk-muted flex-shrink-0 pt-0.5">Attendee</dt>
+              <dd className="font-medium tk-ink text-right break-words min-w-0 max-w-[65%]">{formData.fullName}</dd>
             </div>
-            <div className="flex items-center justify-between">
-              <dt className="tk-muted">Email</dt>
-              <dd className="font-medium tk-ink">{formData.email}</dd>
+            <div className="flex items-start justify-between gap-3 min-w-0">
+              <dt className="tk-muted flex-shrink-0 pt-0.5">Email</dt>
+              <dd className="font-medium tk-ink text-right break-all min-w-0 max-w-[65%]">{formData.email}</dd>
             </div>
-            <div className="flex items-center justify-between">
-              <dt className="tk-muted">Phone</dt>
-              <dd className="font-medium tk-ink">{formData.phone}</dd>
+            <div className="flex items-center justify-between gap-3 min-w-0">
+              <dt className="tk-muted flex-shrink-0">Phone</dt>
+              <dd className="font-medium tk-ink text-right min-w-0">{formData.phone}</dd>
             </div>
-            <div className="flex items-center justify-between">
-              <dt className="tk-muted">Amount</dt>
-              <dd className="font-medium tk-ink">{order.amount === 0 ? "Free" : `KES ${order.amount.toLocaleString()}`}</dd>
+            <div className="flex items-center justify-between gap-3 min-w-0">
+              <dt className="tk-muted flex-shrink-0">Amount</dt>
+              <dd className="font-semibold tk-ink text-right" style={{ color: "#1F6F4A" }}>
+                {order.amount === 0 ? "Free" : `KES ${order.amount.toLocaleString()}`}
+              </dd>
             </div>
           </dl>
 
@@ -196,7 +206,7 @@ export default function TicketForm({ event, isModal = false, onClose }) {
             <div className="space-y-3">
               {fields.map(({ id, name, type, placeholder, icon: Icon, autoComplete, valid, error, maxLength }) => (
                 <div key={id}>
-                  <div className="tk-field relative">
+                  <div className="tk-field relative overflow-hidden">
                     <Icon size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "#9AA398" }} />
                     <input
                       id={`ticket-${id}`}
@@ -208,7 +218,8 @@ export default function TicketForm({ event, isModal = false, onClose }) {
                       required
                       autoComplete={autoComplete}
                       maxLength={maxLength}
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-transparent outline-none text-sm"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-transparent outline-none text-sm text-ellipsis"
+                      style={{ minWidth: 0 }}
                     />
                   </div>
                   {formData[name] && !valid && <p className="text-[11px] tk-err mt-1 ml-1">{error}</p>}
@@ -234,7 +245,7 @@ export default function TicketForm({ event, isModal = false, onClose }) {
               disabled={submitting || !isFormValid}
               className="tk-btn w-full mt-4 text-white py-3 rounded-xl font-semibold text-sm flex justify-center items-center gap-2"
             >
-              {submitting ? <><Loader2 size={17} className="animate-spin" /> Reserving…</> : <><Ticket size={16} /> {isFree ? "Reserve free spot" : `Reserve & pay ${priceLabel}`}</>}
+              {submitting ? <><Loader2 size={17} className="animate-spin" /> {isFree ? "Reserving…" : "Processing…"}</> : <><Ticket size={16} /> {isFree ? "Reserve free spot" : `Reserve & pay ${priceLabel}`}</>}
             </button>
           </div>
         </form>
