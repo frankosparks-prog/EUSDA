@@ -6,6 +6,10 @@ const BibleStudy = require("../models/BsReg");
 router.post("/register", async (req, res) => {
   try {
     const newRegistration = new BibleStudy(req.body);
+    const existing = await BibleStudy.findOne({ phoneNumber: newRegistration.phoneNumber.trim() });
+    if (existing) {
+      return res.status(409).json({ error: "This phone number is already registered." });
+    }
     const saved = await newRegistration.save();
     res.status(201).json(saved);
   } catch (err) {
