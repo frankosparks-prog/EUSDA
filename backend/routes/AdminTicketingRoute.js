@@ -120,7 +120,7 @@ router.get("/events", async (req, res) => {
   try {
     const events = await Event.find().sort({ date: -1 }).lean();
 
-    // Build per-event stats via aggregation
+    // Build per event stats via aggregation
     const stats = await TicketOrder.aggregate([
       {
         $group: {
@@ -274,10 +274,8 @@ router.get("/orders", async (req, res) => {
   }
 });
 
-// ─── POST /api/admin/ticketing/checkin ────────────────────────────────────────
-// Event-day QR check-in. ALL validations performed server-side.
-// Body: { ticketCode, eventId }
-// The frontend MUST NOT perform any validation or mutate status directly.
+// POST /api/admin/ticketing/checkin 
+// Event day QR checkin. ALL validations performed server-side.
 router.post("/checkin", async (req, res) => {
   try {
     const { ticketCode, eventId } = req.body;
@@ -341,7 +339,7 @@ router.post("/checkin", async (req, res) => {
       });
     }
 
-    // ── 4. Already checked in ──
+    // 4. Already checked in
     if (order.status === "CHECKED_IN") {
       return res.status(409).json({
         success: false,
@@ -353,8 +351,7 @@ router.post("/checkin", async (req, res) => {
       });
     }
 
-    // ── 5. Valid — perform check-in ──
-    // status must be TICKET_ISSUED at this point
+    // 5. Valid — perform checkin 
     const adminUsername = req.user?.username || req.user?.id || "admin";
     order.status = "CHECKED_IN";
     order.checkedInAt = new Date();
@@ -391,9 +388,7 @@ router.post("/checkin", async (req, res) => {
   }
 });
 
-// ─── POST /api/admin/ticketing/orders/:orderId/retry ─────────────────────────
-// Manually retry ticket issuance or missing secondary tasks (email / Cloudinary).
-// Idempotent: reuses existing ticketCode and only retries missing/failed tasks.
+// POST /api/admin/ticketing/orders/:orderId/retry 
 router.post("/orders/:orderId/retry", async (req, res) => {
   try {
     const { orderId } = req.params;
