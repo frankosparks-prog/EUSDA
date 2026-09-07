@@ -21,7 +21,7 @@ import {
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 const getToken = () => localStorage.getItem("adminToken");
 
-// ── Result display codes ─────────────────────────────────────────────────────
+
 const RESULT_STYLES = {
   CHECKED_IN: {
     bg: "bg-green-50 border-green-400",
@@ -88,15 +88,15 @@ const QrCheckin = () => {
   // Manual entry
   const [manualCode, setManualCode] = useState("");
 
-  // Check-in state
+  // Checkin state
   const [result, setResult] = useState(null);
   const [checking, setChecking] = useState(false);
   const lastScannedRef = useRef(""); // debounce repeated scans
 
-  // Scan history (last 10)
+  // Scan historu
   const [history, setHistory] = useState([]);
 
-  // ── Load ticketed events ──
+  // Load ticketed events
   useEffect(() => {
     (async () => {
       try {
@@ -116,7 +116,7 @@ const QrCheckin = () => {
     })();
   }, []);
 
-  // ── Check-in API call ──
+  // Checkin API call
   const performCheckin = useCallback(
     async (ticketCode) => {
       if (!ticketCode || !selectedEventId || checking) return;
@@ -136,7 +136,6 @@ const QrCheckin = () => {
         );
         const data = await res.json();
         setResult(data);
-        // Push to scan history
         setHistory((h) => [
           {
             ticketCode,
@@ -155,7 +154,7 @@ const QrCheckin = () => {
         });
       } finally {
         setChecking(false);
-        lastScannedRef.current = ""; // allow re-scan after result shown
+        lastScannedRef.current = "";
       }
     },
     [selectedEventId, checking]
@@ -239,9 +238,9 @@ const QrCheckin = () => {
     <div className="p-6 max-w-3xl mx-auto space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-extrabold text-gray-800">QR Check-in</h1>
+        <h1 className="text-2xl font-extrabold text-gray-800">QR Check in</h1>
         <p className="text-sm text-gray-400 mt-0.5">
-          Event-day attendee check-in — all validation done server-side
+          Event day attendee check in — all validation done server side
         </p>
       </div>
 
@@ -310,9 +309,8 @@ const QrCheckin = () => {
 
         {/* Video + hidden canvas */}
         <div
-          className={`relative bg-black rounded-xl overflow-hidden transition-all ${
-            cameraOn ? "h-64" : "h-0"
-          }`}
+          className={`relative bg-black rounded-xl overflow-hidden transition-all ${cameraOn ? "h-64" : "h-0"
+            }`}
         >
           <video
             ref={videoRef}
@@ -337,7 +335,7 @@ const QrCheckin = () => {
         {!cameraOn && !cameraError && (
           <div className="flex items-center justify-center h-20 text-gray-300 gap-3 text-sm">
             <QrCode className="w-8 h-8" />
-            Camera is off — press Start Camera or use manual entry
+            Camera is off, press Start Camera or use manual entry
           </div>
         )}
       </div>
