@@ -292,27 +292,29 @@ router.get("/verify/:reference", async (req, res) => {
       order.paystackChannel = data.channel || null;
       await order.save();
 
-      // ── Phase 3: Fire-and-forget ticket issuance ──────────────────────────
-      // Do not await — respond to the user immediately with PAID status.
-      // PaymentCallback.jsx can poll/retry to see TICKET_ISSUED once ready.
-      Event.findById(order.event)
-        .then((evt) => {
-          if (evt) return issueTicket(order, evt);
-        })
-        .catch((err) => {
-          console.error(
-            `[verify] Ticket issuance failed for order ${order._id}:`,
-            err.message
-          );
-        });
+      // ── Issue ticket on the critical path (in-memory QR/PDF + status update) ──
+      // Runs in ~25ms without waiting for email/Cloudinary secondary tasks.
+      try {
+        const evt = await Event.findById(order.event);
+        if (evt) {
+          await issueTicket(order, evt);
+        }
+      } catch (issueErr) {
+        console.error(
+          `[verify] Ticket issuance error for order ${order._id}:`,
+          issueErr.message
+        );
+      }
 
       await order.populate("event", "title date venue image ticketPrice time");
 
       return res.status(200).json({
-        status: "PAID",
+        status: order.status,
         order,
         message:
-          "Payment successfully verified. Your ticket is being prepared and will be emailed shortly.",
+          order.status === "TICKET_ISSUED"
+            ? "Payment verified and ticket issued successfully."
+            : "Payment successfully verified. Your ticket is being prepared.",
       });
     } else {
       // Payment not yet successful (abandoned, failed, pending M-Pesa)
