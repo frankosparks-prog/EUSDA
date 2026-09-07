@@ -87,6 +87,15 @@ export default function Events() {
     navigate(`/events/${evObj._id}`); // ✅ SPA Navigation
   };
 
+  const buyTicket = evObj => {
+    localStorage.setItem("selectedEvent", JSON.stringify(evObj));
+    if (window.innerWidth < 768) {
+      navigate(`/events/${evObj._id}?buy=true`);
+    } else {
+      navigate(`/events/${evObj._id}/ticket`);
+    }
+  };
+
   /* ─── structured data (Event list) ─── */
   const structuredData = {
     "@context": "https://schema.org",
@@ -202,7 +211,7 @@ export default function Events() {
                       <div className="flex flex-col sm:flex-row gap-3 mt-auto">
                         {ev.ticketed ? (
                           <button
-                            onClick={() => openDetails(ev)}
+                            onClick={() => buyTicket(ev)}
                             className="flex-1 py-3 px-6 rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2 bg-green-700 text-white hover:bg-green-800 border-2 border-transparent hover:-translate-y-0.5"
                           >
                             <Ticket size={18} />
