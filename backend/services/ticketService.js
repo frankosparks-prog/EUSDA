@@ -256,33 +256,192 @@ function generateTicketPDF(order, event, qrBuf) {
 
 
 
-// Lifecycle:
-//   PAID → ticketCode saved → QR uploaded → PDF uploaded → email sent → TICKET_ISSUED
-// If interrupted at any step, re-running resumes from where it left off
-// because each checkpoint is saved to the DB immediately.
+// In-flight tracker: ensures only ONE delivery process runs per order at any given time
+const inFlightDeliveries = new Map();
 
-async function issueTicket(order, event) {
+/**
+ * Secondary delivery/storage tasks:
+ *   - Cloudinary QR upload (only if !order.qrCodeUrl)
+ *   - Cloudinary PDF upload (only if !order.ticketPdfUrl)
+ *   - Email sending (only if order.emailStatus !== "SENT")
+ *
+ * Each task is strictly sequential:
+ *   load fresh doc → process QR → await save → process PDF → await save → process Email → await save
+ *
+ * Guaranteed:
+ *   1. No ParallelSaveError (saves never overlap on the same document)
+ *   2. No duplicate emails (in-flight map prevents concurrent runs)
+ *   3. Succeeded tasks are skipped; failed tasks are saved and retryable
+ */
+async function processSecondaryDeliveries(orderOrId, event, { qrBuffer, pdfBuffer } = {}) {
+  const TicketOrder = require("../models/TicketOrder");
+  const Event = require("../models/Event");
 
-  if (order.status === "TICKET_ISSUED") {
-    return order;
+  const orderId = String(orderOrId._id || orderOrId);
+
+  // If a delivery is already in progress for this order, join the active promise
+  if (inFlightDeliveries.has(orderId)) {
+    console.log(`[ticketService] Delivery already in progress for order ${orderId}, joining active task`);
+    return inFlightDeliveries.get(orderId);
   }
 
-  if (order.status !== "PAID") {
+  const deliveryPromise = (async () => {
+    try {
+      const order = await TicketOrder.findById(orderId);
+      if (!order) {
+        throw new Error(`Order ${orderId} not found`);
+      }
+
+      if (!event || !event.title) {
+        event = await Event.findById(order.event);
+        if (!event) {
+          throw new Error(`Event for order ${orderId} not found`);
+        }
+      }
+
+      // Ensure ticketCode exists (reuse existing, never regenerate)
+      if (!order.ticketCode) {
+        order.ticketCode = crypto.randomBytes(16).toString("hex");
+        await order.save();
+      }
+
+      // Ensure status is TICKET_ISSUED
+      if (order.status === "PAID") {
+        order.status = "TICKET_ISSUED";
+        order.ticketIssuedAt = order.ticketIssuedAt || new Date();
+        await order.save();
+      }
+
+      // ── Step A: Cloudinary QR upload (sequential) ──
+      if (!order.qrCodeUrl) {
+        try {
+          if (!qrBuffer) {
+            qrBuffer = await QRCode.toBuffer(order.ticketCode, {
+              errorCorrectionLevel: "H",
+              width: 400,
+              margin: 2,
+              color: { dark: "#166534", light: "#ffffff" },
+            });
+          }
+          const qrResult = await uploadBuffer(qrBuffer, {
+            folder: "EUSDA_tickets/qr",
+            public_id: `qr_${order.ticketCode}`,
+            resource_type: "image",
+            format: "png",
+            overwrite: false,
+          });
+          order.qrCodeUrl = qrResult.secure_url;
+          await order.save();
+          console.log(`[ticketService] QR uploaded to Cloudinary for order ${order._id}`);
+        } catch (cldErr) {
+          console.warn(`[ticketService] Cloudinary QR upload skipped/failed for order ${order._id} (${cldErr.message})`);
+        }
+      }
+
+      // ── Step B: Cloudinary PDF upload (sequential) ──
+      if (!order.ticketPdfUrl) {
+        try {
+          if (!pdfBuffer) {
+            if (!qrBuffer) {
+              qrBuffer = await QRCode.toBuffer(order.ticketCode, {
+                errorCorrectionLevel: "H",
+                width: 400,
+                margin: 2,
+                color: { dark: "#166534", light: "#ffffff" },
+              });
+            }
+            pdfBuffer = await generateTicketPDF(order, event, qrBuffer);
+          }
+          const pdfResult = await uploadBuffer(pdfBuffer, {
+            folder: "EUSDA_tickets/pdf",
+            public_id: `ticket_${order.ticketCode}`,
+            resource_type: "raw",
+            format: "pdf",
+            overwrite: false,
+          });
+          order.ticketPdfUrl = pdfResult.secure_url;
+          await order.save();
+          console.log(`[ticketService] PDF uploaded to Cloudinary for order ${order._id}`);
+        } catch (cldErr) {
+          console.warn(`[ticketService] Cloudinary PDF upload skipped/failed for order ${order._id} (${cldErr.message})`);
+        }
+      }
+
+      // ── Step C: Email delivery (sequential) ──
+      if (order.emailStatus !== "SENT") {
+        try {
+          if (!pdfBuffer) {
+            if (!qrBuffer) {
+              qrBuffer = await QRCode.toBuffer(order.ticketCode, {
+                errorCorrectionLevel: "H",
+                width: 400,
+                margin: 2,
+                color: { dark: "#166534", light: "#ffffff" },
+              });
+            }
+            pdfBuffer = await generateTicketPDF(order, event, qrBuffer);
+          }
+          await sendTicketEmail({ order, event, pdfBuffer });
+          order.emailStatus = "SENT";
+          await order.save();
+          console.log(`[ticketService] Ticket email sent successfully for order ${order._id}`);
+        } catch (emailErr) {
+          order.emailStatus = "FAILED";
+          await order.save();
+          console.error(`[ticketService] Ticket email failed for order ${order._id}:`, emailErr.message);
+        }
+      }
+
+      return order;
+    } finally {
+      inFlightDeliveries.delete(orderId);
+    }
+  })();
+
+  inFlightDeliveries.set(orderId, deliveryPromise);
+  return deliveryPromise;
+}
+
+/**
+ * Critical Path Ticket Issuance:
+ *   1. Ensure ticketCode exists (generate and save if missing; reuse if present)
+ *   2. Generate in-memory QR code
+ *   3. Generate in-memory PDF
+ *   4. Mark order as TICKET_ISSUED immediately & save to DB
+ *   5. Trigger secondary deliveries (Cloudinary / Email) in background
+ *   6. Return order immediately
+ */
+async function issueTicket(order, event) {
+  if (!order) {
+    throw new Error("[ticketService] Order is required to issue ticket.");
+  }
+
+  if (
+    order.status !== "PAID" &&
+    order.status !== "TICKET_ISSUED" &&
+    order.status !== "CHECKED_IN"
+  ) {
     throw new Error(
-      `[ticketService] Cannot issue ticket: order ${order._id} is in '${order.status}' status (must be PAID)`
+      `[ticketService] Cannot issue ticket: order ${order._id} is in '${order.status}' status (must be PAID, TICKET_ISSUED, or CHECKED_IN)`
     );
   }
 
-  // Step 1: Generate ticketCode
-  // Saved immediately so that even if later steps fail, a retry reuses the
-  // same code and never generates two different codes for one order.
+  if (!event || !event.title) {
+    const Event = require("../models/Event");
+    event = await Event.findById(order.event);
+    if (!event) {
+      throw new Error(`[ticketService] Event not found for order ${order._id}`);
+    }
+  }
+
+  // ── Step 1: Ensure ticketCode exists ──
+  // The ticket code is permanent and stable. It is reused across all retries.
   if (!order.ticketCode) {
     order.ticketCode = crypto.randomBytes(16).toString("hex");
     await order.save();
   }
 
-  // Step 2: Generate QR code PNG buffer 
-  // The QR encodes only the ticketCode .
+  // ── Step 2: Generate QR code PNG buffer in memory ──
   const qrBuffer = await QRCode.toBuffer(order.ticketCode, {
     errorCorrectionLevel: "H",
     width: 400,
@@ -290,67 +449,48 @@ async function issueTicket(order, event) {
     color: { dark: "#166534", light: "#ffffff" },
   });
 
-  // Step 3: Upload QR to Cloudinary (optional backup, non-blocking)
-  if (!order.qrCodeUrl) {
-    try {
-      const qrResult = await uploadBuffer(qrBuffer, {
-        folder: "EUSDA_tickets/qr",
-        public_id: `qr_${order.ticketCode}`,
-        resource_type: "image",
-        format: "png",
-        overwrite: false,
-      });
-      order.qrCodeUrl = qrResult.secure_url;
-      await order.save();
-      console.log(`[ticketService] QR uploaded for order ${order._id}`);
-    } catch (cldErr) {
-      console.warn(`[ticketService] Cloudinary QR upload skipped (${cldErr.message})`);
-    }
-  }
-
-  // Step 4: Generate PDF in memory
-  // Always generated fresh using the stored ticketCode + the QR buffer.
+  // ── Step 3: Generate ticket PDF buffer in memory ──
   const pdfBuffer = await generateTicketPDF(order, event, qrBuffer);
 
-  // Step 5: Upload PDF to Cloudinary (optional backup, non-blocking)
-  if (!order.ticketPdfUrl) {
-    try {
-      const pdfResult = await uploadBuffer(pdfBuffer, {
-        folder: "EUSDA_tickets/pdf",
-        public_id: `ticket_${order.ticketCode}`,
-        resource_type: "raw",
-        format: "pdf",
-        overwrite: false,
-      });
-      order.ticketPdfUrl = pdfResult.secure_url;
-      await order.save();
-      console.log(`[ticketService] PDF uploaded for order ${order._id}`);
-    } catch (cldErr) {
-      console.warn(`[ticketService] Cloudinary PDF upload skipped (${cldErr.message})`);
-    }
+  // ── Step 4: Mark status as TICKET_ISSUED immediately ──
+  // Critical checkpoint: ticket is now officially valid and downloadable BEFORE secondary tasks
+  if (order.status === "PAID") {
+    order.status = "TICKET_ISSUED";
+    order.ticketIssuedAt = order.ticketIssuedAt || new Date();
+    await order.save();
+    console.log(`[ticketService] Ticket status set to TICKET_ISSUED for order ${order._id}`);
   }
 
-  // Step 6: Send email
-  try {
-    await sendTicketEmail({ order, event, pdfBuffer });
-    order.emailStatus = "SENT";
-  } catch (emailErr) {
-    order.emailStatus = "FAILED";
-    console.error(
-      `[ticketService] Email failed for order ${order._id}:`,
-      emailErr.message
-    );
-  }
+  // ── Step 5: Secondary deliveries (Cloudinary & Email) ──
+  const needsQR = !order.qrCodeUrl;
+  const needsPDF = !order.ticketPdfUrl;
+  const needsEmail = order.emailStatus !== "SENT";
 
-  // Step 7: Mark status as TICKET_ISSUED
-  order.status = "TICKET_ISSUED";
-  order.ticketIssuedAt = new Date();
-  await order.save();
-  console.log(`[ticketService] Ticket issued successfully for order ${order._id}`);
+  if (needsQR || needsPDF || needsEmail) {
+    // Process secondary tasks in background using in-flight protected processor
+    processSecondaryDeliveries(order._id, event, { qrBuffer, pdfBuffer }).catch((err) => {
+      console.error(
+        `[ticketService] Secondary delivery background error for order ${order._id}:`,
+        err.message
+      );
+    });
+  }
 
   return order;
 }
 
+/**
+ * Manual/admin retry mechanism.
+ * Resumes from the point of failure for an order:
+ * - Reuses existing ticketCode (never creates duplicate code/ticket)
+ * - Skips already-successful deliveries
+ * - Retries only missing/failed secondary tasks (Cloudinary / Email)
+ * - Single-flight protected: avoids ParallelSaveError and duplicate email sends
+ * - Awaits completion so the caller receives immediate status
+ */
+async function retryTicketDeliveries(orderId) {
+  return await processSecondaryDeliveries(orderId);
+}
 
 // Generates the ticket PDF buffer ondemand for download.
 async function getTicketPDFBuffer(order, event) {
@@ -367,4 +507,10 @@ async function getTicketPDFBuffer(order, event) {
   return await generateTicketPDF(order, event, qrBuffer);
 }
 
-module.exports = { issueTicket, generateTicketPDF, getTicketPDFBuffer };
+module.exports = {
+  issueTicket,
+  generateTicketPDF,
+  getTicketPDFBuffer,
+  processSecondaryDeliveries,
+  retryTicketDeliveries,
+};
