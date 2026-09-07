@@ -11,7 +11,7 @@ import {
   Share2,
   Ticket,
 } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import TicketModal from "./TicketModal";
 
@@ -32,6 +32,16 @@ export default function EventDetails() {
 
   const nav = useNavigate();
   const { eventId } = useParams();
+  const [searchParams] = useSearchParams();
+
+  /* ─── auto-open modal if directed from Buy Ticket button ─── */
+  useEffect(() => {
+    if (searchParams.get("buy") === "true" && event?.ticketed) {
+      if (window.innerWidth < 768) {
+        setIsTicketModalOpen(true);
+      }
+    }
+  }, [searchParams, event]);
 
   /* ─── load event & local RSVP flag ─── */
   useEffect(() => {
