@@ -391,4 +391,41 @@ router.post("/checkin", async (req, res) => {
   }
 });
 
+// ─── POST /api/admin/ticketing/orders/:orderId/retry ─────────────────────────
+// Manually retry ticket issuance or missing secondary tasks (email / Cloudinary).
+// Idempotent: reuses existing ticketCode and only retries missing/failed tasks.
+router.post("/orders/:orderId/retry", async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+      return res.status(400).json({ error: "Invalid order ID." });
+    }
+
+    const order = await TicketOrder.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ error: "Order not found." });
+    }
+
+    if (order.status === "PENDING") {
+      return res.status(400).json({
+        error: "Cannot retry pending order: payment has not been confirmed.",
+      });
+    }
+
+    const { retryTicketDeliveries } = require("../services/ticketService");
+    const updatedOrder = await retryTicketDeliveries(order._id);
+    await updatedOrder.populate("event", "title date venue ticketPrice");
+
+    res.json({
+      success: true,
+      message: "Ticket deliveries processed successfully.",
+      order: updatedOrder,
+    });
+  } catch (err) {
+    console.error("Admin order retry error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
