@@ -48,15 +48,25 @@ async function sendTicketEmail({ order, event, pdfBuffer }) {
   });
 
   const firstName = order.fullName.split(" ")[0];
-  const priceDisplay = `${order.currency || "KES"} ${(
-    order.ticketPrice || 0
-  ).toLocaleString()}`;
+  const numericPrice = Number(order.ticketPrice || 0);
+  const formattedAmount = numericPrice.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  const priceDisplay = `${order.currency || "KES"} ${formattedAmount}`;
+
+  const rawPurchaseDate = order.paidAt || order.createdAt || Date.now();
+  const purchasedDate = new Date(rawPurchaseDate).toLocaleDateString("en-KE", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 
   const logoPath = getLogoPath();
   const logoImg = logoPath
     ? `<img src="cid:eusdalogo" alt="EUSDA Logo" style="height:52px;width:auto;display:block;margin:0 auto 6px;" />`
     : `<h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:800;letter-spacing:2px;">EUSDA</h1>
-       <p style="color:#bbf7d0;margin:4px 0 0;font-size:11px;text-transform:uppercase;letter-spacing:3px;">/24 SABBATH SCHOOL</p>`;
+       <p style="color:#bbf7d0;margin:4px 0 0;font-size:11px;text-transform:uppercase;letter-spacing:3px;">/ 24 SABBATH SCHOOL</p>`;
 
   const emailHtml = `
 <!DOCTYPE html>
@@ -86,7 +96,7 @@ async function sendTicketEmail({ order, event, pdfBuffer }) {
       <h3 style="margin:0 0 14px;font-size:16px;color:#166534;font-weight:800;">${event.title}</h3>
       <table style="width:100%;border-collapse:collapse;font-size:13px;">
         <tr>
-          <td style="padding:6px 0;color:#6b7280;white-space:nowrap;width:90px;">Date</td>
+          <td style="padding:6px 0;color:#6b7280;white-space:nowrap;width:120px;">Date</td>
           <td style="padding:6px 0;color:#111827;font-weight:600;">${formattedDate}</td>
         </tr>
         ${event.venue ? `
@@ -100,16 +110,20 @@ async function sendTicketEmail({ order, event, pdfBuffer }) {
           <td style="padding:6px 0;color:#111827;font-weight:600;">${event.time}</td>
         </tr>` : ""}
         <tr>
-          <td style="padding:6px 0;color:#6b7280;">Paid</td>
+          <td style="padding:6px 0;color:#6b7280;">Purchased Date</td>
+          <td style="padding:6px 0;color:#111827;font-weight:600;">${purchasedDate}</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;color:#6b7280;">Amount Paid</td>
           <td style="padding:6px 0;color:#166534;font-weight:700;">${priceDisplay}</td>
         </tr>
       </table>
     </div>
 
     <div style="margin:0 40px 24px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:22px 24px;">
-      <p style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1.5px;margin:0 0 6px;">Attendee</p>
+      <p style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1.5px;margin:0 0 6px;">Ticket Holder</p>
       <p style="font-size:17px;font-weight:800;color:#111827;margin:0 0 4px;">${order.fullName}</p>
-      <p style="font-size:13px;color:#6b7280;margin:0 0 20px;">${order.email} &middot; ${order.phone}</p>
+      <p style="font-size:13px;font-weight:700;color:#4b5563;margin:0 0 20px;">${order.email}</p>
 
       <p style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1.5px;margin:0 0 8px;">Ticket Code</p>
       <div style="background:#ffffff;border:1px solid #d1d5db;border-radius:8px;padding:12px 16px;font-family:monospace;font-size:13px;color:#166534;word-break:break-all;letter-spacing:1.5px;">
