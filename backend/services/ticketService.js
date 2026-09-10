@@ -21,10 +21,7 @@ function uploadBuffer(buffer, options) {
 
 function generateTicketPDF(order, event, qrBuf) {
   return new Promise((resolve, reject) => {
-    // ── Premium horizontal ticket slip ───────────────────────────────────────
-    // Correctly-proportioned like real ticket stock (not an oversized page),
-    // a serif/sans font pairing for a genuine print feel, and no data repeated
-    // between the main body and the tear-off stub.
+
     const PW = 620;
     const PH = 234;
     const doc = new PDFDocument({
@@ -42,7 +39,6 @@ function generateTicketPDF(order, event, qrBuf) {
     doc.on("end", () => resolve(Buffer.concat(chunks)));
     doc.on("error", reject);
 
-    // ── Palette — unchanged brand colors, one gold accent ───────────────────
     const GREEN = "#166534";
     const GREEN_DARK = "#0d3d20";
     const LGREEN = "#16a34a";
@@ -50,14 +46,13 @@ function generateTicketPDF(order, event, qrBuf) {
     const DARK = "#111827";
     const GRAY = "#6b7280";
     const GOLD = "#d4af37";
-    const CREAM = "#faf8f2"; // warm off-white — reads as premium stock, not printer paper
+    const WHITE = "#ffffff";
 
     const STUB_W = 168;
     const STUB_X = PW - STUB_W;
     const PERF_R = 10;
     const PAD = 26;
 
-    // Embed EUSDA logo if available (unchanged search logic)
     const logoCandidates = [
       path.resolve(__dirname, "../../public/eusda-logo.png"),
       path.resolve(__dirname, "../../public/eusda-logo-white.png"),
@@ -74,63 +69,76 @@ function generateTicketPDF(order, event, qrBuf) {
       }
     }
 
-    // ── Base ─────────────────────────────────────────────────────────────────
-    doc.rect(0, 0, PW, PH).fill(CREAM);
+    doc.rect(0, 0, PW, PH).fill(WHITE);
 
-    // Clip everything to the rounded outer shape so no fill pokes a square
-    // corner past the rounded card edge.
     doc.save();
     doc.roundedRect(0, 0, PW, PH, 5).clip();
 
-    // Faint gradient wash for subtle paper depth — a single gradient fill,
-    // not a dot-grid (which would be 1,000+ tiny vector ops for a barely
-    // visible effect and unnecessary render/file-size cost).
-    const paperWash = doc.linearGradient(0, 0, PW, PH);
-    paperWash.stop(0, "#ffffff", 0.5).stop(1, GREEN, 0.03);
-    doc.rect(0, 0, PW, PH).fill(paperWash);
+    doc.save();
+    // Concentric Guilloché security arcs 
+    doc.opacity(0.045).strokeColor(GOLD).lineWidth(0.75);
+    [35, 50, 65, 80, 95].forEach((r) => {
+      doc.circle(STUB_X - 10, 10, r).stroke();
+    });
 
-    // ── MAIN BODY (left) ────────────────────────────────────────────────────
+    //Faint geometric diamond security lattice 
+    doc.opacity(0.05).strokeColor(GREEN).lineWidth(0.6);
+    const drawDiamond = (cx, cy, size) => {
+      doc.moveTo(cx, cy - size)
+        .lineTo(cx + size, cy)
+        .lineTo(cx, cy + size)
+        .lineTo(cx - size, cy)
+        .closePath()
+        .stroke();
+    };
+    drawDiamond(180, 100, 150);
+    drawDiamond(180, 100, 120);
+    drawDiamond(320, 90, 150);
+    drawDiamond(320, 90, 100);
+    // drawDiamond(180, 100, 24);
+    // drawDiamond(180, 100, 16);
+    // drawDiamond(320, 90, 28);
+    // drawDiamond(320, 90, 18);
+    doc.restore();
+
     doc.rect(0, 0, STUB_X, 5).fill(GREEN);
     doc.rect(0, 5, STUB_X, 1).fill(GOLD);
 
+    const LOGO_SIZE = 28;
+    const LOGO_Y = 12;
     let bodyTextX = PAD;
     if (logoPath) {
       try {
-        doc.image(logoPath, PAD, 12, { fit: [26, 26], align: "center", valign: "center" });
-        bodyTextX = PAD + 34;
+        doc.image(logoPath, PAD, LOGO_Y, { fit: [LOGO_SIZE, LOGO_SIZE], align: "center", valign: "center" });
+        bodyTextX = PAD + LOGO_SIZE + 8;
       } catch (imgErr) {
         console.warn("[ticketService] Could not embed logo image in PDF:", imgErr.message);
       }
     }
-
-    let y = 18;
-    doc.font("Helvetica-Bold").fontSize(8).fillColor(GREEN)
-      .text("EUSDA / 24 SABBATH SCHOOL", bodyTextX, y, { characterSpacing: 1.2 });
+    const textMidY = LOGO_Y + LOGO_SIZE / 2 - 4.5;
+    doc.font("Helvetica-Bold").fontSize(8.5).fillColor(GREEN)
+      .text("EUSDA / 24 SABBATH SCHOOL", bodyTextX, textMidY, { characterSpacing: 1.2 });
     doc.font("Helvetica-Bold").fontSize(7.5).fillColor(GRAY)
-      .text("CONCERT TICKET", 0, y, { width: STUB_X - PAD, align: "right", characterSpacing: 1.2 });
-    y += 20;
+      .text("CONCERT TICKET", 0, textMidY, { width: STUB_X - PAD, align: "right", characterSpacing: 1.2 });
 
-    // Event title in Times-Bold — a serif display face reads as premium
-    // print in a way Helvetica-Bold never does. Auto-shrinks to stay on ONE
-    // line rather than wrapping, so a long title can never eat into the
-    // vertical space the rows below it depend on.
+    let y = LOGO_Y + LOGO_SIZE + 10; // y ≈ 50
+
+    // Event title in Times-Bold — serif display face
     const TITLE_W = STUB_X - PAD * 2;
-    let titleSize = 25;
+    let titleSize = 24;
     doc.font("Times-Bold");
     while (titleSize > 14 && doc.fontSize(titleSize).widthOfString(event.title) > TITLE_W) {
       titleSize -= 1;
     }
     doc.fontSize(titleSize).fillColor(DARK)
       .text(event.title, PAD, y, { width: TITLE_W, height: titleSize * 1.2, ellipsis: true, lineBreak: false });
-    y += titleSize * 1.2 + 10;
+    y += titleSize * 1.2 + 6;
 
-    // Ornamental rule under the title — a short accent line, not a full
-    // divider, so it reads as a graphic flourish rather than a section break.
+    // Ornamental rule under the title
     doc.moveTo(PAD, y).lineTo(PAD + 46, y).lineWidth(2).strokeColor(GOLD).stroke();
-    y += 14;
+    y += 10;
 
-    // Date / venue / time — letter-spaced small labels, Times-Italic values,
-    // laid out side by side like a boarding pass.
+    // Date / venue / time
     const formattedDate = new Date(event.date).toLocaleDateString("en-KE", {
       weekday: "long",
       year: "numeric",
@@ -141,71 +149,97 @@ function generateTicketPDF(order, event, qrBuf) {
     if (event.venue) metaCols.push({ label: "VENUE", value: event.venue });
     if (event.time) metaCols.push({ label: "TIME", value: event.time });
 
-    const colGap = 22;
+    const colGap = 20;
     const availW = STUB_X - PAD * 2;
     const colW = (availW - colGap * (metaCols.length - 1)) / metaCols.length;
-    const metaH = 10.5 * 1.2; // single line, clamped below — keeps total height fixed
+    const metaH = 10.5 * 1.2;
     metaCols.forEach((col, i) => {
       const cx = PAD + i * (colW + colGap);
       doc.font("Helvetica-Bold").fontSize(6.5).fillColor(LGREEN)
         .text(col.label, cx, y, { characterSpacing: 1.3 });
       doc.font("Times-Italic").fontSize(10.5).fillColor(DARK)
-        .text(col.value, cx, y + 11, { width: colW, height: metaH, ellipsis: true, lineBreak: false });
+        .text(col.value, cx, y + 10, { width: colW, height: metaH, ellipsis: true, lineBreak: false });
     });
-    y += 11 + metaH + 14;
+    y += 10 + metaH + 10;
 
     // Dotted divider
     doc.save().dash(2, { space: 2 }).moveTo(PAD, y).lineTo(STUB_X - PAD, y)
-      .strokeColor("#d6cfc0").lineWidth(0.8).stroke().restore();
-    y += 14;
+      .strokeColor("#e5e7eb").lineWidth(0.8).stroke().restore();
+    y += 10;
 
-    // Attendee (left) + Price (right) — the ONLY place name/email/phone
-    // appear; the stub does not repeat any of this.
-    const attendeeW = availW * 0.56;
-    const rightColX = PAD + attendeeW + 22;
-    const rightColW = availW - attendeeW - 22;
+    //Bottom Section: Premium Serif Typography 
+    doc.font("Helvetica-Bold").fontSize(6).fillColor(LGREEN)
+      .text("TICKET HOLDER", PAD, y, { characterSpacing: 1.5 });
+    doc.font("Times-Italic").fontSize(10).fillColor(DARK)
+      .text(order.fullName, PAD, y + 10, { width: 200, ellipsis: true });
+    // Emai
+    doc.save().opacity(0.4);
+    doc.font("Helvetica").fontSize(7).fillColor(GRAY)
+      .text(order.email, PAD, y + 27, { width: 200, ellipsis: true });
+    doc.restore();
 
-    doc.font("Helvetica-Bold").fontSize(6.5).fillColor(GRAY).text("ATTENDEE", PAD, y, { characterSpacing: 1.3 });
-    doc.font("Times-Bold").fontSize(13).fillColor(DARK)
-      .text(order.fullName, PAD, y + 11, { width: attendeeW, ellipsis: true });
-    doc.font("Helvetica").fontSize(8).fillColor(GRAY)
-      .text(order.email, PAD, y + 27, { width: attendeeW, ellipsis: true });
-    doc.font("Helvetica").fontSize(8).fillColor(GRAY)
-      .text(order.phone, PAD, y + 38, { width: attendeeW, ellipsis: true });
+    // PURCHASED DATE 
+    const rawPurchaseDate = order.paidAt || order.createdAt || Date.now();
+    const purchasedDate = new Date(rawPurchaseDate).toLocaleDateString("en-KE", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+    const dateY = y + 42;
+    doc.font("Helvetica-Bold").fontSize(6).fillColor(LGREEN)
+      .text("PURCHASED", PAD, dateY, { characterSpacing: 1.5 });
+    doc.font("Times-Italic").fontSize(11).fillColor(DARK)
+      .text(purchasedDate, PAD, dateY + 10);
 
-    doc.font("Helvetica-Bold").fontSize(6.5).fillColor(GRAY).text("PRICE", rightColX, y, { characterSpacing: 1.3 });
-    doc.font("Times-Bold").fontSize(13).fillColor(LGREEN)
-      .text(
-        `${order.currency || "KES"} ${(order.ticketPrice || 0).toLocaleString()}`,
-        rightColX,
-        y + 11,
-        { width: rightColW }
-      );
+    //AMOUNT PAID 
+    const numericPrice = Number(order.ticketPrice || 0);
+    const formattedAmount = numericPrice.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+    const currencyStr = order.currency || "KES";
+    const amountPaidDisplay = `${currencyStr} ${formattedAmount}`;
 
-    doc.font("Helvetica").fontSize(6.5).fillColor("#9ca3af")
+    const badgeW = 148;
+    const badgeX = STUB_X - PAD - badgeW;
+    const badgeY2 = y + 2;
+    const badgeH = 54;
+
+    // Badge background & border
+    doc.save();
+    doc.roundedRect(badgeX, badgeY2, badgeW, badgeH, 7)
+      .fillAndStroke("#fafbfc", "#e2e8f0");
+    // Gold left accent stripe
+    doc.roundedRect(badgeX, badgeY2 + 8, 3.5, badgeH - 16, 2).fill(GOLD);
+
+    doc.font("Helvetica-Bold").fontSize(6).fillColor(GRAY)
+      .text("AMOUNT PAID", badgeX + 14, badgeY2 + 12, { width: badgeW - 20, characterSpacing: 1.5 });
+    doc.font("Times-Bold").fontSize(15).fillColor(GREEN)
+      .text(amountPaidDisplay, badgeX + 14, badgeY2 + 26, { width: badgeW - 20 });
+    doc.restore();
+
+    // Footer disclaimer
+    doc.font("Helvetica").fontSize(6).fillColor("#c0c5cc")
       .text(
         "Non-transferable  ·  Valid for one person only  ·  Present QR at entrance",
-        PAD,
-        PH - 16,
+        PAD, PH - 14,
         { width: STUB_X - PAD * 2 }
       );
 
-    // ── PERFORATION between body and stub ───────────────────────────────────
     doc.save();
-    doc.circle(STUB_X, 0, PERF_R).fill(CREAM);
-    doc.circle(STUB_X, PH, PERF_R).fill(CREAM);
+    doc.circle(STUB_X, 0, PERF_R).fill(WHITE);
+    doc.circle(STUB_X, PH, PERF_R).fill(WHITE);
     doc.restore();
     doc.save().dash(3, { space: 3 }).moveTo(STUB_X, PERF_R).lineTo(STUB_X, PH - PERF_R)
-      .strokeColor("#b0a894").lineWidth(1).stroke().restore();
+      .strokeColor("#d1d5db").lineWidth(1).stroke().restore();
 
-    // ── STUB (right) — QR + short code ONLY, nothing repeated from the body ─
+    //STUB
     const stubGrad = doc.linearGradient(STUB_X, 0, STUB_X, PH);
     stubGrad.stop(0, GREEN_DARK).stop(0.5, GREEN).stop(1, GREEN_DARK);
     doc.rect(STUB_X, 0, STUB_W, PH).fill(stubGrad);
     doc.rect(STUB_X, 0, 1.4, PH).fill(GOLD);
 
-    // Faint concentric-ring motif — a small graphic detail like an embossed
-    // seal, instead of another flat block of color.
+    // Faint concentric ring motif
     doc.save();
     doc.rect(STUB_X, 0, STUB_W, PH).clip();
     doc.strokeColor("#ffffff").opacity(0.06).lineWidth(1);
@@ -215,22 +249,19 @@ function generateTicketPDF(order, event, qrBuf) {
 
     const stubCX = STUB_X + STUB_W / 2;
 
-    doc.font("Helvetica-Bold").fontSize(7).fillColor(MINT)
-      .text("SCAN TO ENTER", STUB_X, 20, { width: STUB_W, align: "center", characterSpacing: 1.2 });
+    doc.font("Helvetica-Bold").fontSize(6.5).fillColor(MINT)
+      .text("PRESENT QR AT ENTRANCE", STUB_X, 20, { width: STUB_W, align: "center", characterSpacing: 1.1 });
 
-    // QR on a cream card so it reads crisply against the green
+    // QR on a crisp white card 
     const QR_SIZE = 108;
     const QR_X = stubCX - QR_SIZE / 2;
     const QR_Y = 38;
     const QR_PAD = 9;
-    doc.roundedRect(QR_X - QR_PAD, QR_Y - QR_PAD, QR_SIZE + QR_PAD * 2, QR_SIZE + QR_PAD * 2, 7).fill(CREAM);
+    doc.roundedRect(QR_X - QR_PAD, QR_Y - QR_PAD, QR_SIZE + QR_PAD * 2, QR_SIZE + QR_PAD * 2, 7).fill(WHITE);
     doc.image(qrBuf, QR_X, QR_Y, { width: QR_SIZE, height: QR_SIZE });
 
     let sy = QR_Y + QR_SIZE + QR_PAD + 16;
 
-    // Short human-readable code only (first 8 chars) — the full code is
-    // already encoded in the QR, so there's no need to print all 32 hex
-    // characters a second time.
     const shortCode = order.ticketCode.slice(0, 8).toUpperCase();
     doc.font("Helvetica-Bold").fontSize(6.5).fillColor(MINT)
       .text("TICKET CODE", STUB_X, sy, { width: STUB_W, align: "center", characterSpacing: 1.2 });
@@ -243,12 +274,10 @@ function generateTicketPDF(order, event, qrBuf) {
       .text(`Ref ${ref.slice(-10)}`, STUB_X, PH - 15, { width: STUB_W, align: "center" });
     doc.opacity(1);
 
-    doc.restore(); // end rounded-corner clip
+    doc.restore();
 
-    // Crisp outer border drawn last, on top of the clip, so the rounded edge
-    // itself reads as one clean printed line
     doc.save().roundedRect(0.75, 0.75, PW - 1.5, PH - 1.5, 5)
-      .lineWidth(0.75).strokeColor("#e2dccb").stroke().restore();
+      .lineWidth(0.75).strokeColor("#e5e7eb").stroke().restore();
 
     doc.end();
   });
