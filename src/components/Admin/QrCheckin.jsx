@@ -1,9 +1,4 @@
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-} from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import jsQR from "jsqr";
 import {
   Camera,
@@ -14,70 +9,109 @@ import {
   CheckCircle2,
   XCircle,
   AlertTriangle,
-  ClipboardList,
   Send,
+  ClipboardList,
+  Calendar,
+  MapPin,
+  Clock,
+  Sparkles,
+  X,
 } from "lucide-react";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 const getToken = () => localStorage.getItem("adminToken");
 
-
+/* ─── Result style map (for attendee success & duplicate check-ins) ─── */
 const RESULT_STYLES = {
   CHECKED_IN: {
-    bg: "bg-green-50 border-green-400",
-    text: "text-green-800",
-    icon: <CheckCircle2 className="w-8 h-8 text-green-500" />,
+    bg: "bg-emerald-600",
+    border: "border-emerald-500",
+    text: "text-white",
+    subtext: "text-emerald-100",
+    icon: <CheckCircle2 className="w-12 h-12 text-white" />,
   },
   ALREADY_CHECKED_IN: {
-    bg: "bg-amber-50 border-amber-400",
-    text: "text-amber-800",
-    icon: <AlertTriangle className="w-8 h-8 text-amber-500" />,
-  },
-  WRONG_EVENT: {
-    bg: "bg-red-50 border-red-400",
-    text: "text-red-800",
-    icon: <XCircle className="w-8 h-8 text-red-500" />,
-  },
-  NOT_FOUND: {
-    bg: "bg-red-50 border-red-400",
-    text: "text-red-800",
-    icon: <XCircle className="w-8 h-8 text-red-500" />,
-  },
-  PAYMENT_PENDING: {
-    bg: "bg-red-50 border-red-400",
-    text: "text-red-800",
-    icon: <XCircle className="w-8 h-8 text-red-500" />,
-  },
-  TICKET_NOT_ISSUED: {
-    bg: "bg-red-50 border-red-400",
-    text: "text-red-800",
-    icon: <XCircle className="w-8 h-8 text-red-500" />,
-  },
-  SERVER_ERROR: {
-    bg: "bg-gray-50 border-gray-400",
-    text: "text-gray-800",
-    icon: <XCircle className="w-8 h-8 text-gray-500" />,
+    bg: "bg-amber-500",
+    border: "border-amber-400",
+    text: "text-white",
+    subtext: "text-amber-100",
+    icon: <AlertTriangle className="w-12 h-12 text-white" />,
   },
 };
 
+/* History badge — solid status badges matching the design system */
 const HistoryBadge = ({ code }) => {
-  const s = RESULT_STYLES[code] || RESULT_STYLES.SERVER_ERROR;
+  const colorMap = {
+    CHECKED_IN: "bg-emerald-600 text-white",
+    ALREADY_CHECKED_IN: "bg-amber-500 text-white",
+    SERVER_ERROR: "bg-slate-600 text-white",
+  };
+  const cls = colorMap[code] || "bg-red-600 text-white";
+  const labels = {
+    CHECKED_IN: "Checked In",
+    ALREADY_CHECKED_IN: "Duplicate",
+    WRONG_EVENT: "Wrong Event",
+    NOT_FOUND: "Not Found",
+    PAYMENT_PENDING: "Unpaid",
+    TICKET_NOT_ISSUED: "Not Issued",
+    SERVER_ERROR: "Error",
+  };
   return (
-    <span
-      className={`text-xs font-bold px-2 py-0.5 rounded-full border ${s.bg} ${s.text}`}
-    >
-      {code.replace(/_/g, " ")}
+    <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-md whitespace-nowrap shadow-sm ${cls}`}>
+      {labels[code] || code}
     </span>
   );
 };
 
+/* Dashed "stub" chip */
+const StubChip = ({ children }) => (
+  <span className="font-mono text-[11px] tracking-tight text-[#161B33] bg-[#F2F3F7] border border-dashed border-[#B8860B]/50 px-2 py-0.5 rounded">
+    {children}
+  </span>
+);
+
+/* ─── Snackbar / Toast component for error & feedback notifications ─── */
+const Snackbar = ({ toast, onClose }) => {
+  if (!toast) return null;
+  const cfg =
+    toast.type === "error"
+      ? "bg-red-50 border-red-200 text-red-800"
+      : toast.type === "warn"
+      ? "bg-amber-50 border-amber-200 text-amber-800"
+      : "bg-emerald-50 border-emerald-200 text-emerald-800";
+
+  return (
+    <div
+      className={`flex items-start gap-3 p-4 rounded-xl border shadow-lg transition-all transform animate-in fade-in slide-in-from-top-2 ${cfg}`}
+      role="alert"
+    >
+      {toast.type === "error" ? (
+        <XCircle className="w-5 h-5 shrink-0 text-red-600 mt-0.5" />
+      ) : toast.type === "warn" ? (
+        <AlertTriangle className="w-5 h-5 shrink-0 text-amber-600 mt-0.5" />
+      ) : (
+        <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-600 mt-0.5" />
+      )}
+      <div className="flex-1 text-sm font-medium leading-snug">{toast.msg}</div>
+      <button
+        onClick={onClose}
+        className="shrink-0 p-1 text-slate-400 hover:text-slate-700 transition-colors rounded-lg"
+        title="Dismiss"
+      >
+        <X className="w-4 h-4" />
+      </button>
+    </div>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
 const QrCheckin = () => {
-  // Event selection
+  /* event selection */
   const [events, setEvents] = useState([]);
   const [selectedEventId, setSelectedEventId] = useState("");
   const [eventsLoading, setEventsLoading] = useState(true);
 
-  // Camera scanner
+  /* camera */
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
@@ -85,18 +119,28 @@ const QrCheckin = () => {
   const [cameraOn, setCameraOn] = useState(false);
   const [cameraError, setCameraError] = useState(null);
 
-  // Manual entry
+  /* manual entry */
   const [manualCode, setManualCode] = useState("");
 
-  // Checkin state
-  const [result, setResult] = useState(null);
+  /* check-in success state & snackbar toast */
+  const [successResult, setSuccessResult] = useState(null);
+  const [toast, setToast] = useState(null);
   const [checking, setChecking] = useState(false);
-  const lastScannedRef = useRef(""); // debounce repeated scans
+  const lastScannedRef = useRef("");
+  const toastTimeoutRef = useRef(null);
 
-  // Scan historu
+  /* scan history */
   const [history, setHistory] = useState([]);
 
-  // Load ticketed events
+  const showToast = useCallback((msg, type = "error") => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setToast({ msg, type });
+    toastTimeoutRef.current = setTimeout(() => {
+      setToast(null);
+    }, 4500);
+  }, []);
+
+  /* load ticketed events */
   useEffect(() => {
     (async () => {
       try {
@@ -116,26 +160,23 @@ const QrCheckin = () => {
     })();
   }, []);
 
-  // Checkin API call
+  /* check-in API */
   const performCheckin = useCallback(
     async (ticketCode) => {
       if (!ticketCode || !selectedEventId || checking) return;
       setChecking(true);
-      setResult(null);
       try {
-        const res = await fetch(
-          `${SERVER_URL}/api/admin/ticketing/checkin`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${getToken()}`,
-            },
-            body: JSON.stringify({ ticketCode, eventId: selectedEventId }),
-          }
-        );
+        const res = await fetch(`${SERVER_URL}/api/admin/ticketing/checkin`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getToken()}`,
+          },
+          body: JSON.stringify({ ticketCode, eventId: selectedEventId }),
+        });
         const data = await res.json();
-        setResult(data);
+
+        // Update history feed
         setHistory((h) => [
           {
             ticketCode,
@@ -146,62 +187,78 @@ const QrCheckin = () => {
           },
           ...h.slice(0, 9),
         ]);
+
+        if (data.code === "CHECKED_IN" || data.code === "ALREADY_CHECKED_IN") {
+          // Success/warning: Show attendee card banner
+          setSuccessResult(data);
+          setToast(null);
+        } else {
+          // Errors (Not found, unpaid, wrong event, server error): Show Snackbar without blocking scanner
+          setSuccessResult(null);
+          showToast(data.message || "Invalid ticket — validation failed", "error");
+        }
       } catch (e) {
-        setResult({
-          success: false,
-          code: "SERVER_ERROR",
-          message: "Network error — could not reach server.",
-        });
+        showToast("Network error — could not reach check-in server.", "error");
       } finally {
         setChecking(false);
-        lastScannedRef.current = "";
+        // Allow re-scanning next ticket after a short debounce
+        setTimeout(() => {
+          lastScannedRef.current = "";
+        }, 2000);
       }
     },
-    [selectedEventId, checking]
+    [selectedEventId, checking, showToast]
   );
 
-  // ── Camera QR scanning loop ──
+  /* scan loop */
   const scanFrame = useCallback(() => {
-    if (!videoRef.current || !canvasRef.current) return;
+    if (!videoRef.current) return;
     const video = videoRef.current;
-    const canvas = canvasRef.current;
-    if (video.readyState !== video.HAVE_ENOUGH_DATA) {
-      rafRef.current = requestAnimationFrame(scanFrame);
-      return;
+
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      if (!canvasRef.current) {
+        canvasRef.current = document.createElement("canvas");
+      }
+      const canvas = canvasRef.current;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+          inversionAttempts: "dontInvert",
+        });
+        if (code && code.data && code.data.trim() && code.data.trim() !== lastScannedRef.current) {
+          lastScannedRef.current = code.data.trim();
+          performCheckin(code.data.trim());
+        }
+      }
     }
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imageData.data, imageData.width, imageData.height, {
-      inversionAttempts: "dontInvert",
-    });
-    if (code && code.data && code.data !== lastScannedRef.current) {
-      lastScannedRef.current = code.data;
-      performCheckin(code.data.trim());
-    } else {
-      rafRef.current = requestAnimationFrame(scanFrame);
-    }
+
+    rafRef.current = requestAnimationFrame(scanFrame);
   }, [performCheckin]);
 
   const startCamera = useCallback(async () => {
     setCameraError(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
+        video: {
+          facingMode: "environment",
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
       });
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
+        videoRef.current.setAttribute("playsinline", "true");
+        await videoRef.current.play();
       }
       setCameraOn(true);
       rafRef.current = requestAnimationFrame(scanFrame);
     } catch (e) {
-      setCameraError(
-        "Camera access denied or unavailable. Use manual entry below."
-      );
+      setCameraError(e.message || "Camera access denied or unavailable.");
     }
   }, [scanFrame]);
 
@@ -214,255 +271,289 @@ const QrCheckin = () => {
     setCameraOn(false);
   }, []);
 
-  // Restart scan loop after check-in completes
-  useEffect(() => {
-    if (!checking && cameraOn && !result) {
-      rafRef.current = requestAnimationFrame(scanFrame);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checking]);
-
-  // Stop camera on unmount
   useEffect(() => () => stopCamera(), [stopCamera]);
 
-  // Re-start scan loop after result is dismissed
   const dismissResult = () => {
-    setResult(null);
-    if (cameraOn) rafRef.current = requestAnimationFrame(scanFrame);
+    setSuccessResult(null);
+    lastScannedRef.current = "";
   };
 
-  const currentStyle =
-    result ? RESULT_STYLES[result.code] || RESULT_STYLES.SERVER_ERROR : null;
+  const selectedEvent = events.find((e) => e._id === selectedEventId);
+  const currentSuccessStyle = successResult ? RESULT_STYLES[successResult.code] : null;
 
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-extrabold text-gray-800">QR Check in</h1>
-        <p className="text-sm text-gray-400 mt-0.5">
-          Event day attendee check in — all validation done server side
-        </p>
-      </div>
-
-      {/* Event selector */}
-      <div className="bg-white rounded-2xl shadow-sm p-5 space-y-3">
-        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-          Select Event
-        </label>
-        <div className="relative">
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-          <select
-            value={selectedEventId}
-            onChange={(e) => {
-              setSelectedEventId(e.target.value);
-              setResult(null);
-              lastScannedRef.current = "";
-            }}
-            disabled={eventsLoading}
-            className="w-full appearance-none border border-gray-200 rounded-xl px-4 py-3 pr-9 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-green-400"
-          >
-            {eventsLoading ? (
-              <option>Loading events…</option>
-            ) : events.length === 0 ? (
-              <option>No ticketed events available</option>
-            ) : (
-              events.map((ev) => (
-                <option key={ev._id} value={ev._id}>
-                  {ev.title} —{" "}
-                  {new Date(ev.date).toLocaleDateString("en-KE")}
-                </option>
-              ))
-            )}
-          </select>
-        </div>
-      </div>
-
-      {/* Camera scanner */}
-      <div className="bg-white rounded-2xl shadow-sm p-5 space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-            <Camera className="w-4 h-4" /> Camera Scanner
-          </p>
-          {cameraOn ? (
-            <button
-              onClick={stopCamera}
-              className="flex items-center gap-1.5 text-sm px-3 py-1.5 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
-            >
-              <CameraOff className="w-4 h-4" /> Stop Camera
-            </button>
-          ) : (
-            <button
-              onClick={startCamera}
-              disabled={!selectedEventId}
-              className="flex items-center gap-1.5 text-sm px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
-            >
-              <Camera className="w-4 h-4" /> Start Camera
-            </button>
-          )}
-        </div>
-
-        {cameraError && (
-          <p className="text-sm text-red-600 bg-red-50 px-4 py-2 rounded-lg">
-            {cameraError}
-          </p>
-        )}
-
-        {/* Video + hidden canvas */}
-        <div
-          className={`relative bg-black rounded-xl overflow-hidden transition-all ${cameraOn ? "h-64" : "h-0"
-            }`}
-        >
-          <video
-            ref={videoRef}
-            className="w-full h-full object-cover"
-            muted
-            playsInline
-          />
-          {/* Scan frame overlay */}
-          {cameraOn && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-48 h-48 border-4 border-green-400 rounded-2xl opacity-70" />
-            </div>
-          )}
-          {checking && (
-            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-              <RefreshCw className="w-10 h-10 text-white animate-spin" />
-            </div>
-          )}
-        </div>
+    <div className="min-h-screen bg-[#F2F3F7]">
+      <div className="p-4 sm:p-6 max-w-xl mx-auto space-y-5">
+        {/* Invisible canvas for video frame extraction */}
         <canvas ref={canvasRef} className="hidden" />
 
-        {!cameraOn && !cameraError && (
-          <div className="flex items-center justify-center h-20 text-gray-300 gap-3 text-sm">
-            <QrCode className="w-8 h-8" />
-            Camera is off, press Start Camera or use manual entry
+        {/* Header — Ink Navy surface with brass accent icon */}
+        <div className="bg-[#161B33] rounded-2xl px-5 py-4 flex items-center justify-between gap-4">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-white">QR Check-In</h1>
+            <p className="text-sm text-white/50 mt-0.5">Real-time attendee ticket verification</p>
+          </div>
+          <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#B8860B] shrink-0">
+            <QrCode className="w-5 h-5" />
+          </div>
+        </div>
+
+        {/* Floating/Inline Snackbar for error & non-blocking notices */}
+        {toast && (
+          <Snackbar toast={toast} onClose={() => setToast(null)} />
+        )}
+
+        {/* Event selector */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 space-y-2.5">
+          <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Select Event</label>
+          <div className="relative">
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+            <select
+              value={selectedEventId}
+              onChange={(e) => {
+                setSelectedEventId(e.target.value);
+                setSuccessResult(null);
+                setToast(null);
+                lastScannedRef.current = "";
+              }}
+              disabled={eventsLoading}
+              className="w-full appearance-none border border-slate-200 rounded-xl px-4 py-3 pr-9 text-sm font-semibold text-[#161B33] focus:outline-none focus:ring-2 focus:ring-[#B8860B]/50 focus:border-[#B8860B] bg-white"
+            >
+              {eventsLoading ? (
+                <option>Loading events...</option>
+              ) : events.length === 0 ? (
+                <option>No ticketed events</option>
+              ) : (
+                events.map((ev) => (
+                  <option key={ev._id} value={ev._id}>
+                    {ev.title} &mdash; {new Date(ev.date).toLocaleDateString("en-KE")}
+                  </option>
+                ))
+              )}
+            </select>
+          </div>
+          {selectedEvent && (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-xs text-slate-500">
+              <span className="flex items-center gap-1">
+                <Calendar className="w-3.5 h-3.5 text-[#B8860B]" />
+                {new Date(selectedEvent.date).toLocaleDateString("en-KE", { weekday: "short", month: "short", day: "numeric" })}
+              </span>
+              {selectedEvent.venue && (
+                <span className="flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5 text-[#B8860B]" />
+                  {selectedEvent.venue}
+                </span>
+              )}
+              {selectedEvent.time && (
+                <span className="flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5 text-[#B8860B]" />
+                  {selectedEvent.time}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Success / Duplicate Attendee confirmation banner */}
+        {successResult && currentSuccessStyle && (
+          <div className={`rounded-2xl p-6 text-center space-y-3.5 shadow-md border ${currentSuccessStyle.bg} ${currentSuccessStyle.border}`}>
+            <div className="flex justify-center">{currentSuccessStyle.icon}</div>
+            <p className={`text-lg font-bold leading-snug ${currentSuccessStyle.text}`}>
+              {successResult.message}
+            </p>
+
+            {successResult.code === "CHECKED_IN" && successResult.attendee && (
+              <div className="bg-black/15 backdrop-blur-sm rounded-xl p-3.5 space-y-1 text-sm text-white">
+                <p className="font-bold text-base">{successResult.attendee.name}</p>
+                <p className="text-white/80 text-xs">{successResult.attendee.email}</p>
+                {successResult.event?.title && (
+                  <p className="text-xs text-emerald-200 font-medium pt-0.5">{successResult.event.title}</p>
+                )}
+              </div>
+            )}
+
+            {successResult.code === "ALREADY_CHECKED_IN" && (
+              <div className="bg-black/15 backdrop-blur-sm rounded-xl p-3.5 space-y-1 text-sm text-white">
+                <p className="font-bold text-base">{successResult.attendee}</p>
+                {successResult.checkedInAt && (
+                  <p className="text-xs text-amber-100">
+                    Checked in: {new Date(successResult.checkedInAt).toLocaleTimeString("en-KE", { hour: "2-digit", minute: "2-digit" })}
+                  </p>
+                )}
+                {successResult.checkedInBy && (
+                  <p className="text-xs text-amber-100">By: {successResult.checkedInBy}</p>
+                )}
+              </div>
+            )}
+
+            <button
+              onClick={dismissResult}
+              className="mt-2 px-6 py-2.5 bg-white text-[#161B33] hover:bg-slate-100 rounded-xl text-sm font-bold transition-all shadow-sm active:scale-95"
+            >
+              Scan Next Ticket
+            </button>
+          </div>
+        )}
+
+        {/* Camera scanner */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <Camera className="w-3.5 h-3.5 text-[#B8860B]" /> Scanner Camera
+            </p>
+            {cameraOn ? (
+              <button
+                onClick={stopCamera}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-red-50 text-red-600 border border-red-200 rounded-xl hover:bg-red-100 transition-colors font-semibold"
+              >
+                <CameraOff className="w-3.5 h-3.5" /> Stop Camera
+              </button>
+            ) : (
+              <button
+                onClick={startCamera}
+                disabled={!selectedEventId}
+                className="flex items-center gap-1.5 text-xs px-4 py-2 bg-[#B8860B] text-white rounded-xl hover:bg-[#a3760a] transition-colors disabled:opacity-40 font-semibold shadow-sm"
+              >
+                <Camera className="w-3.5 h-3.5" /> Start Camera
+              </button>
+            )}
+          </div>
+
+          {cameraError && (
+            <p className="text-xs text-red-700 bg-red-50 border border-red-200 px-3.5 py-2.5 rounded-xl font-medium">
+              {cameraError}
+            </p>
+          )}
+
+          {/* Video viewport */}
+          <div className={`relative bg-[#161B33] rounded-xl overflow-hidden transition-all duration-300 ${cameraOn ? "h-72" : "h-0"}`}>
+            <video
+              ref={videoRef}
+              className="w-full h-full object-cover"
+              muted
+              playsInline
+              autoPlay
+            />
+
+            {/* Animated scan frame overlay */}
+            {cameraOn && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="relative w-52 h-52">
+                  {/* Corner brackets */}
+                  {[
+                    "top-0 left-0 border-t-4 border-l-4 rounded-tl-xl",
+                    "top-0 right-0 border-t-4 border-r-4 rounded-tr-xl",
+                    "bottom-0 left-0 border-b-4 border-l-4 rounded-bl-xl",
+                    "bottom-0 right-0 border-b-4 border-r-4 rounded-br-xl",
+                  ].map((cls, i) => (
+                    <div key={i} className={`absolute w-8 h-8 border-[#B8860B] ${cls}`} />
+                  ))}
+                  {/* Scan line */}
+                  <div
+                    className="absolute left-2 right-2 h-0.5 bg-[#B8860B] opacity-80 rounded-full shadow-[0_0_8px_#B8860B]"
+                    style={{ animation: "scanline 2s ease-in-out infinite" }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Processing overlay */}
+            {checking && (
+              <div className="absolute inset-0 bg-[#161B33]/70 backdrop-blur-sm flex items-center justify-center">
+                <RefreshCw className="w-10 h-10 text-[#B8860B] animate-spin" />
+              </div>
+            )}
+          </div>
+
+          {!cameraOn && !cameraError && (
+            <div className="flex flex-col items-center justify-center h-24 text-slate-400 gap-2 border border-slate-100 rounded-xl bg-slate-50/50">
+              <QrCode className="w-7 h-7 text-[#B8860B]/60" />
+              <p className="text-xs font-medium text-slate-500">Click &quot;Start Camera&quot; to scan attendee QR codes</p>
+            </div>
+          )}
+        </div>
+
+        {/* Scan line animation */}
+        <style>{`
+          @keyframes scanline {
+            0% { top: 8px; opacity: 0.6; }
+            50% { top: calc(100% - 8px); opacity: 0.9; }
+            100% { top: 8px; opacity: 0.6; }
+          }
+        `}</style>
+
+        {/* Manual entry — signature dashed ticket stub border */}
+        <div className="bg-white rounded-2xl border-2 border-dashed border-[#B8860B]/40 shadow-sm p-4 space-y-3">
+          <p className="text-sm font-semibold text-[#161B33] flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-[#B8860B]" /> Manual Check-In by Ticket Code
+          </p>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Paste or type ticket code (e.g. EU-12345)..."
+              value={manualCode}
+              onChange={(e) => setManualCode(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && manualCode.trim()) {
+                  performCheckin(manualCode.trim());
+                  setManualCode("");
+                }
+              }}
+              className="flex-1 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-mono text-[#161B33] focus:outline-none focus:ring-2 focus:ring-[#B8860B]/50 focus:border-[#B8860B]"
+            />
+            <button
+              disabled={!manualCode.trim() || checking || !selectedEventId}
+              onClick={() => {
+                performCheckin(manualCode.trim());
+                setManualCode("");
+              }}
+              className="flex items-center gap-1.5 px-4 py-2.5 bg-[#161B33] text-white rounded-xl text-sm font-semibold hover:bg-[#232a52] transition-colors disabled:opacity-40 shrink-0"
+            >
+              {checking ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+              <span className="hidden sm:inline">Check In</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Scan history */}
+        {history.length > 0 && (
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="px-4 py-3 bg-[#161B33] text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ClipboardList className="w-4 h-4 text-[#B8860B]" />
+                <p className="text-xs font-semibold uppercase tracking-wider text-white">
+                  Recent Scans ({history.length})
+                </p>
+              </div>
+            </div>
+            <ul className="divide-y divide-slate-100">
+              {history.map((h, i) => (
+                <li key={i} className="px-4 py-3 flex items-center justify-between gap-3 hover:bg-[#F2F3F7] transition-colors">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-[#161B33] truncate">
+                      {h.name || "Attendee"}
+                    </p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <StubChip>{h.ticketCode.length > 14 ? `${h.ticketCode.slice(0, 14)}...` : h.ticketCode}</StubChip>
+                      <span className="text-xs text-slate-400">
+                        {h.ts.toLocaleTimeString("en-KE", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                  <HistoryBadge code={h.code} />
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
-
-      {/* Manual entry */}
-      <div className="bg-white rounded-2xl shadow-sm p-5 space-y-3">
-        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-          Manual Ticket Code Entry
-        </p>
-        <div className="flex gap-3">
-          <input
-            type="text"
-            placeholder="Paste or type ticket code…"
-            value={manualCode}
-            onChange={(e) => setManualCode(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && manualCode.trim()) {
-                performCheckin(manualCode.trim());
-                setManualCode("");
-              }
-            }}
-            className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-400"
-          />
-          <button
-            disabled={!manualCode.trim() || checking || !selectedEventId}
-            onClick={() => {
-              performCheckin(manualCode.trim());
-              setManualCode("");
-            }}
-            className="flex items-center gap-1.5 px-5 py-2.5 bg-green-600 text-white rounded-xl text-sm font-semibold hover:bg-green-700 transition-colors disabled:opacity-50"
-          >
-            {checking ? (
-              <RefreshCw className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
-            Check In
-          </button>
-        </div>
-      </div>
-
-      {/* Result display */}
-      {result && currentStyle && (
-        <div
-          className={`rounded-2xl border-2 p-6 flex flex-col items-center text-center gap-3 ${currentStyle.bg}`}
-        >
-          {currentStyle.icon}
-          <p className={`text-lg font-extrabold ${currentStyle.text}`}>
-            {result.message}
-          </p>
-
-          {/* Attendee details on success */}
-          {result.code === "CHECKED_IN" && result.attendee && (
-            <div className="mt-2 space-y-1">
-              <p className="text-sm font-semibold text-green-700">
-                {result.attendee.name}
-              </p>
-              <p className="text-xs text-green-600">{result.attendee.email}</p>
-              <p className="text-xs text-gray-500">
-                Ticket: {result.ticketCode}
-              </p>
-              <p className="text-xs text-gray-500">
-                Event: {result.event?.title}
-              </p>
-            </div>
-          )}
-
-          {/* Already checked in details */}
-          {result.code === "ALREADY_CHECKED_IN" && (
-            <div className="space-y-1 text-sm text-amber-700">
-              <p className="font-semibold">{result.attendee}</p>
-              {result.checkedInAt && (
-                <p className="text-xs">
-                  Originally checked in:{" "}
-                  {new Date(result.checkedInAt).toLocaleString("en-KE")}
-                </p>
-              )}
-              {result.checkedInBy && (
-                <p className="text-xs">By: {result.checkedInBy}</p>
-              )}
-            </div>
-          )}
-
-          <button
-            onClick={dismissResult}
-            className="mt-2 px-5 py-2 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
-          >
-            Scan Next
-          </button>
-        </div>
-      )}
-
-      {/* Scan history */}
-      {history.length > 0 && (
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
-            <ClipboardList className="w-4 h-4 text-gray-400" />
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Recent Scans (this session)
-            </p>
-          </div>
-          <ul className="divide-y divide-gray-50">
-            {history.map((h, i) => (
-              <li
-                key={i}
-                className="px-5 py-3 flex items-center justify-between gap-3 text-sm"
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-800 truncate">
-                    {h.name || h.ticketCode.slice(0, 16) + "…"}
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    {h.ts.toLocaleTimeString("en-KE", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                    })}
-                  </p>
-                </div>
-                <HistoryBadge code={h.code} />
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 };
 
 export default QrCheckin;
+
