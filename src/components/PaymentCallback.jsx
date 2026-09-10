@@ -326,28 +326,38 @@ export default function PaymentCallback() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                       <div>
                         <span className="text-xs tk-muted block font-medium">
-                          Attendee
+                          Ticket Holder
                         </span>
-                        <span className="font-medium tk-ink">
+                        <span className="font-bold tk-ink block">
                           {paymentState.order.fullName}
                         </span>
-                      </div>
-
-                      <div>
-                        <span className="text-xs tk-muted block font-medium">
-                          Email
-                        </span>
-                        <span className="font-medium tk-ink break-words block">
+                        <span className="text-xs font-bold text-gray-600 break-words block mt-0.5">
                           {paymentState.order.email}
                         </span>
                       </div>
 
                       <div>
                         <span className="text-xs tk-muted block font-medium">
-                          Amount paid
+                          Purchased Date
                         </span>
-                        <span className="font-semibold" style={{ color: "#1F6F4A" }}>
-                          KES {paymentState.order.ticketPrice?.toLocaleString()}
+                        <span className="font-bold tk-ink block">
+                          {new Date(paymentState.order.createdAt || Date.now()).toLocaleDateString("en-KE", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </span>
+                      </div>
+
+                      <div>
+                        <span className="text-xs tk-muted block font-medium">
+                          Amount Paid
+                        </span>
+                        <span className="font-bold" style={{ color: "#1F6F4A" }}>
+                          KES {Number(paymentState.order.ticketPrice || 0).toLocaleString("en-US", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
                         </span>
                       </div>
 
