@@ -128,9 +128,8 @@ const Home = () => {
           galleryImages.map((img, index) => (
             <div
               key={index}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                index === currentSlide ? "opacity-100" : "opacity-0"
-              }`}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlide ? "opacity-100" : "opacity-0"
+                }`}
             >
               <img
                 src={img.url}
@@ -213,7 +212,7 @@ const Home = () => {
             </Link>
 
             {/* Upcoming Events button - commented out for Registration */}
-            {/* <Link
+            <Link
               to="/events"
               className="group w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2 hover:border-green-400/50"
             >
@@ -222,8 +221,8 @@ const Home = () => {
                 className="text-green-300 group-hover:text-white transition-colors"
               />
               Upcoming Events
-            </Link> */}
-            <Link
+            </Link>
+            {/* <Link
               to="/register"
               className="group w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2 hover:border-green-400/50"
             >
@@ -232,7 +231,7 @@ const Home = () => {
                 className="text-green-300 group-hover:text-white transition-colors"
               />
               Register
-            </Link>
+            </Link> */}
           </div>
         </div>
 
@@ -387,11 +386,10 @@ const Home = () => {
               galleryImages.slice(0, 8).map((img, index) => (
                 <div
                   key={img._id || index}
-                  className={`relative rounded-xl overflow-hidden shadow-md group ${
-                    index === 0 || index === 7
+                  className={`relative rounded-xl overflow-hidden shadow-md group ${index === 0 || index === 7
                       ? "col-span-2 row-span-2"
                       : "col-span-1 row-span-1"
-                  }`}
+                    }`}
                   data-aos="fade-up"
                   data-aos-delay={index * 50}
                 >

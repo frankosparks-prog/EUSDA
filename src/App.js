@@ -15,6 +15,8 @@ import ScrollToTop from './components/scrollTop';
 import DeptJoinForm from './components/DeptJoinForm';
 import MinistryJoinForm from './components/MinistryJoinForm';
 import EventDetails from './components/EventDetails';
+import EventTicket from './components/EventTicket';
+import PaymentCallback from './components/PaymentCallback';
 import ProtectedRoute from "./components/Admin/ProtectedRoute";
 import AdminDashboard from "./components/Admin/AdminDashboard";
 import AdminLogin from "./components/Admin/AdminLogin";
@@ -40,6 +42,10 @@ import AdminBsReg from "./components/Admin/AdminBsReg";
 import Resources from "./components/Resources";
 import Register from "./components/Register";
 import AdminRegistrations from "./components/Admin/AdminRegistrations";
+import TicketDashboard from "./components/Admin/TicketDashboard";
+import TicketOrders from "./components/Admin/TicketOrders";
+import EventTicketView from "./components/Admin/EventTicketView";
+import QrCheckin from "./components/Admin/QrCheckin";
 
 // 👇 create a wrapper component to manage layout
 function AppLayout() {
@@ -86,7 +92,9 @@ function AppRoutes() {
       <Route path="/ministries/revelation-of-love" element={<RevelationOfLove />} />
       <Route path="/ministries/heavenly-voyagers" element={<HeavenlyVoyagers />} />
       <Route path="/ministries/calvary-ministers" element={<CalvaryMinisters />} />
+      <Route path="/events/:eventId/ticket" element={<EventTicket />} />
       <Route path="/events/:eventId" element={<EventDetails />} />
+      <Route path="/payment/callback" element={<PaymentCallback />} />
       <Route path="*" element={<NotFound />} />
 
       {/* Admin routes */}
@@ -113,6 +121,11 @@ function AppRoutes() {
         <Route path="subscribed" element={<Subscribed />} />
         <Route path="bs-details" element={<AdminBsReg />} />
         <Route path="registrations" element={<AdminRegistrations />} />
+        {/* Phase 4: Ticketing */}
+        <Route path="ticket-dashboard" element={<TicketDashboard />} />
+        <Route path="ticket-orders" element={<TicketOrders />} />
+        <Route path="ticket-events" element={<EventTicketView />} />
+        <Route path="qr-checkin" element={<QrCheckin />} />
         <Route path="*" element={<Navigate to="visitors" replace />} />
       </Route>
     </Routes>

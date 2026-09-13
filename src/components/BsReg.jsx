@@ -166,9 +166,13 @@ function BsReg() {
         groupName: "",
       });
     } catch (err) {
+      const message =
+        err.response?.data?.error ||
+        "Registration failed. Please try again.";
+
       setToast({
         visible: true,
-        message: "Registration failed. Please try again.",
+        message,
         type: "error",
         duration: 4000,
       });

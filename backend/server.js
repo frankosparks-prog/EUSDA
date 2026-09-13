@@ -142,6 +142,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
   "http://192.168.101.234:3000",
+  "https://rainbow-sable-9cb080.netlify.app",
   "https://eusda-1.onrender.com", // Added Render production URL 
   "https://eusda.co.ke", // Production URL
 ];
@@ -158,6 +159,11 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', '*'],
   credentials: true,
 }));
+
+// Paystack Webhook route
+const paystackWebhook = require('./routes/PaystackWebhookRoute');
+app.use('/api/paystack/webhook', express.raw({ type: 'application/json' }), paystackWebhook);
+app.use('/api/payments/webhook', express.raw({ type: 'application/json' }), paystackWebhook);
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
@@ -191,6 +197,27 @@ app.use("/api/subscribe", require('./routes/SubscriptionRoutes')); // Subscripti
 app.use("/api/discussions", require('./routes/DiscussioRoutes')); // Discussion routes
 app.use("/api/bs", require('./routes/BsRegRoute')); // Bible Study Registration routes
 app.use("/api/register", require('./routes/RegistrationRoute')); // First-Year Registration routes
+app.use("/api/ticket-orders", require('./routes/TicketOrderRoute')); // Event Ticket Orders (Phase 1+)
+app.use("/api/admin/ticketing", require('./routes/AdminTicketingRoute')); // Admin Ticketing Dashboard (Phase 4)
+
+// Browser redirect for Paystack callback during local dev / ngrok proxy
+app.get("/payment/callback", (req, res) => {
+  const reference = req.query.reference || req.query.trxref || "";
+  const frontendBase = process.env.FRONTEND_URL || "http://localhost:3000";
+  res.redirect(`${frontendBase}/payment/callback?reference=${encodeURIComponent(reference)}`);
+});
+
+// Global error handling middleware (ensures all unhandled errors return JSON instead of HTML)
+app.use((err, req, res, next) => {
+  console.error("Global Error Handler:", err);
+  const status = err.status || err.statusCode || (err.name === "MulterError" ? 400 : 500);
+  const errorMessage =
+    err.message ||
+    err.error?.message ||
+    (typeof err === "object" ? JSON.stringify(err) : String(err)) ||
+    "An unexpected server error occurred.";
+  res.status(status).json({ error: errorMessage, message: errorMessage });
+});
 
 // SOCKET.IO
 // let liveTotal = 0;

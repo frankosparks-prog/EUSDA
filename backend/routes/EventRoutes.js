@@ -25,88 +25,141 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST create a new event with image
-router.post("/", parser.single("image"), async (req, res) => {
-  try {
-    const {
-      title,
-      date,
-      day,
-      time,
-      speaker,
-      venue,
-      description,
-      longDescription
-    } = req.body;
-
-    const image = req.file ? req.file.path : null;
-
-    const newEvent = new Event({
-      title,
-      date,
-      day,
-      time,
-      speaker,
-      venue,
-      description,
-      longDescription,
-      image
+router.post(
+  "/",
+  (req, res, next) => {
+    parser.single("image")(req, res, (err) => {
+      if (err) {
+        console.error("Event image upload error:", err);
+        const errMsg =
+          err.message ||
+          err.error?.message ||
+          (typeof err === "object" ? JSON.stringify(err) : String(err)) ||
+          "Image upload failed.";
+        return res.status(400).json({ error: `Image upload error: ${errMsg}` });
+      }
+      next();
     });
+  },
+  async (req, res) => {
+    try {
+      const {
+        title,
+        date,
+        day,
+        time,
+        speaker,
+        venue,
+        description,
+        longDescription,
+        ticketed,
+        ticketPrice,
+      } = req.body;
 
-    const saved = await newEvent.save();
-    res.status(201).json(saved);
-  } catch (err) {
-    console.error("Event creation error:", err);
-    res.status(400).json({ error: err.message });
-  }
-});
+      if (!title || !date || !venue || !description) {
+        return res.status(400).json({
+          error: "Title, Date, Venue, and Description are required.",
+        });
+      }
 
-router.put("/:id", parser.single("image"), async (req, res) => {
-  try {
-    const {
-      title,
-      date,
-      day,
-      time,
-      speaker,
-      venue,
-      description,
-      longDescription,
-    } = req.body;
+      const image = req.file ? req.file.path : null;
 
-    // Prepare update object
-    const updates = {
-      title,
-      date,
-      day,
-      time,
-      speaker,
-      venue,
-      description,
-      longDescription,
-    };
+      const newEvent = new Event({
+        title,
+        date,
+        day,
+        time,
+        speaker,
+        venue,
+        description,
+        longDescription,
+        ticketed: ticketed === "true" || ticketed === true,
+        ticketPrice: Number(ticketPrice) || 0,
+        image,
+      });
 
-    // If a new image was uploaded, include it in the update
-    if (req.file) {
-      updates.image = req.file.path;
+      const saved = await newEvent.save();
+      res.status(201).json(saved);
+    } catch (err) {
+      console.error("Event creation error:", err);
+      res.status(400).json({ error: err.message });
     }
+  }
+);
 
-    // Update the event in the database
-    const updated = await Event.findByIdAndUpdate(req.params.id, updates, {
-      new: true, // return the updated document
+router.put(
+  "/:id",
+  (req, res, next) => {
+    parser.single("image")(req, res, (err) => {
+      if (err) {
+        console.error("Event image update error:", err);
+        const errMsg =
+          err.message ||
+          err.error?.message ||
+          (typeof err === "object" ? JSON.stringify(err) : String(err)) ||
+          "Image upload failed.";
+        return res.status(400).json({ error: `Image upload error: ${errMsg}` });
+      }
+      next();
     });
+  },
+  async (req, res) => {
+    try {
+      const {
+        title,
+        date,
+        day,
+        time,
+        speaker,
+        venue,
+        description,
+        longDescription,
+        ticketed,
+        ticketPrice,
+      } = req.body;
 
-    // Handle case when event is not found
-    if (!updated) {
-      return res.status(404).json({ error: "Event not found" });
+      // Prepare update object
+      const updates = {
+        title,
+        date,
+        day,
+        time,
+        speaker,
+        venue,
+        description,
+        longDescription,
+      };
+
+      if (ticketed !== undefined) {
+        updates.ticketed = ticketed === "true" || ticketed === true;
+      }
+      if (ticketPrice !== undefined) {
+        updates.ticketPrice = Number(ticketPrice) || 0;
+      }
+
+      // If a new image was uploaded, include it in the update
+      if (req.file) {
+        updates.image = req.file.path;
+      }
+
+      // Update the event in the database
+      const updated = await Event.findByIdAndUpdate(req.params.id, updates, {
+        new: true, // return the updated document
+      });
+
+      // Handle case when event is not found
+      if (!updated) {
+        return res.status(404).json({ error: "Event not found" });
+      }
+
+      // Respond with updated event
+      res.json(updated);
+    } catch (err) {
+      console.error("Event update error:", err);
+      res.status(400).json({ error: err.message });
     }
-
-    // Respond with updated event
-    res.json(updated);
-  } catch (err) {
-    console.error("Event update error:", err);
-    res.status(400).json({ error: err.message });
   }
-});
+);
 
 // DELETE event
 router.delete("/:id", async (req, res) => {
