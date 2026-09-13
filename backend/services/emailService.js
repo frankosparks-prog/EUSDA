@@ -4,9 +4,9 @@ const fs = require("fs");
 
 function createTransporter() {
   return nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || "smtp.gmail.com",
-    port: parseInt(process.env.EMAIL_PORT || "587", 10),
-    secure: false,
+    host: process.env.EMAIL_HOST,
+    port: parseInt(process.env.EMAIL_PORT || "465", 10),
+    secure: true,
     auth: {
       user: process.env.EMAIL_HOST_USER,
       pass: process.env.EMAIL_HOST_PASSWORD,
