@@ -14,6 +14,10 @@ import {
   LogOut,
   Menu,
   X,
+  BarChart2,
+  Ticket,
+  CalendarCheck,
+  QrCode,
 } from "lucide-react";
 
 const AdminDashboard = () => {
@@ -72,6 +76,12 @@ const AdminDashboard = () => {
               { to: "dept-members", label: "Department Members", icon: <Mic className="w-5 h-5" /> },
               { to: "ministry-members", label: "Ministry Members", icon: <BookOpen className="w-5 h-5" /> },
               { to: "bs-details", label: "Bible Study", icon: <BookOpen className="w-5 h-5" /> },
+              { to: "registrations", label: "Registrations", icon: <Users className="w-5 h-5" /> },
+              // Phase 4: Ticketing 
+              { to: "ticket-dashboard", label: "Ticket Dashboard", icon: <BarChart2 className="w-5 h-5" /> },
+              { to: "ticket-orders", label: "All Ticket Orders", icon: <Ticket className="w-5 h-5" /> },
+              { to: "ticket-events", label: "Event Ticket View", icon: <CalendarCheck className="w-5 h-5" /> },
+              { to: "qr-checkin", label: "QR Check-in", icon: <QrCode className="w-5 h-5" /> },
             ].map((item, i) => (
               <li key={i}>
                 <NavLink

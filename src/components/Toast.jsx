@@ -7,7 +7,7 @@ const Toast = ({ message, duration = 3000, onClose, type = "success" }) => {
   // Trigger entry animation
   useEffect(() => {
     requestAnimationFrame(() => setIsVisible(true));
-    
+
     const timer = setTimeout(() => {
       setIsVisible(false); // Trigger exit animation
       setTimeout(onClose, 300); // Wait for animation to finish before unmounting
@@ -52,28 +52,29 @@ const Toast = ({ message, duration = 3000, onClose, type = "success" }) => {
 
   return (
     <div
-      className={`fixed top-24 right-5 z-50 flex flex-col w-full max-w-sm transform transition-all duration-500 ease-out 
-        ${isVisible ? "translate-x-0 opacity-100 scale-100" : "translate-x-10 opacity-0 scale-95"}`}
+      className={`fixed top-20 sm:top-24 right-4 sm:right-5 z-50 flex flex-col transform transition-all duration-500 ease-out 
+        ${isVisible ? "translate-y-0 opacity-100 scale-100" : "-translate-y-4 opacity-0 scale-95"}`}
+      style={{ left: 'clamp(1rem, 4vw, auto)', maxWidth: 'min(28rem, calc(100vw - 2rem))' }}
       role="alert"
     >
-      <div 
-        className={`relative overflow-hidden rounded-xl bg-gray-900/90 backdrop-blur-xl border ${currentStyle.border} ${currentStyle.shadow} p-4 pr-10`}
+      <div
+        className={`relative overflow-hidden rounded-xl bg-gray-900/95 backdrop-blur-xl border ${currentStyle.border} ${currentStyle.shadow} p-4 pr-10 shadow-2xl`}
       >
         {/* Background Gradient Mesh (Subtle) */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
 
-        <div className="flex items-start gap-4 relative z-10">
+        <div className="flex items-start gap-3 sm:gap-4 relative z-10 min-w-0">
           {/* Icon */}
-          <div className={`${currentStyle.iconColor} p-1 rounded-full bg-white/5`}>
-            <Icon size={24} />
+          <div className={`${currentStyle.iconColor} p-1 rounded-full bg-white/5 flex-shrink-0`}>
+            <Icon size={22} />
           </div>
 
           {/* Content */}
-          <div className="flex-1 pt-0.5">
-            <h4 className={`text-sm font-bold uppercase tracking-wider mb-1 ${currentStyle.iconColor}`}>
+          <div className="flex-1 pt-0.5 min-w-0">
+            <h4 className={`text-xs sm:text-sm font-bold uppercase tracking-wider mb-0.5 ${currentStyle.iconColor}`}>
               {type}
             </h4>
-            <p className="text-gray-200 text-sm font-medium leading-snug">
+            <p className="text-gray-200 text-xs sm:text-sm font-medium leading-snug break-words">
               {message}
             </p>
           </div>
