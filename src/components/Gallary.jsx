@@ -206,6 +206,8 @@ import {
   ChevronRight,
   ZoomIn,
   Image as ImageIcon,
+  ExternalLink,
+  Camera,
 } from "lucide-react";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
@@ -330,7 +332,7 @@ function Gallery() {
 
       <div className="min-h-screen bg-gray-50 py-24 px-4 sm:px-6 mt-[-8rem] md:mt-[-4rem]">
         {/* Header */}
-        <div className="text-center mb-16" data-aos="fade-down">
+        <div className="text-center mb-12" data-aos="fade-down">
           <span className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
             <ImageIcon size={16} /> Our Memories
           </span>
@@ -341,6 +343,50 @@ function Gallery() {
             Capturing the spirit of worship, fellowship, and service. Browse
             through our cherished moments.
           </p>
+        </div>
+
+        {/* Featured Google Photos Albums Banner */}
+        <div className="max-w-5xl mx-auto mb-14 px-2" data-aos="fade-up">
+          <div className="bg-gradient-to-br from-green-900 via-emerald-800 to-green-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden border border-green-700/50">
+            {/* Background ambient lighting */}
+            <div className="absolute top-0 right-0 w-72 h-72 bg-emerald-400/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-60 h-60 bg-green-400/10 rounded-full blur-2xl -ml-20 -mb-20 pointer-events-none"></div>
+
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+              <div className="max-w-xl">
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                  Event Photo Collections
+                </h2>
+                <p className="text-green-100/90 text-sm sm:text-base mt-2 leading-relaxed">
+                  Explore and download our full collections in original high resolution directly on Google Photos.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                <a
+                  href="https://photos.app.goo.gl/8ZvhyA1DX3d7uGFY8"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-white text-green-900 font-bold rounded-2xl shadow-lg hover:bg-green-50 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 group text-sm sm:text-base"
+                >
+                  <Camera size={18} className="text-green-700 group-hover:scale-110 transition-transform" />
+                  <span>View Album 1</span>
+                  <ExternalLink size={16} className="text-green-600 opacity-70 group-hover:opacity-100 transition-opacity" />
+                </a>
+
+                <a
+                  href="https://photos.app.goo.gl/mzNGwSdKEZWsE9ZWA"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-emerald-700/80 hover:bg-emerald-600 text-white font-bold rounded-2xl border border-emerald-400/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 group text-sm sm:text-base backdrop-blur-sm"
+                >
+                  <Camera size={18} className="text-emerald-300 group-hover:scale-110 transition-transform" />
+                  <span>View Album 2</span>
+                  <ExternalLink size={16} className="text-emerald-200 opacity-70 group-hover:opacity-100 transition-opacity" />
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Loading & Error States */}
