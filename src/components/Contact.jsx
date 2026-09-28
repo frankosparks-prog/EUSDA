@@ -108,7 +108,7 @@ function Contact() {
             image: "https://eusda.co.ke/eusda-logo.png",
             url: "https://eusda.co.ke",
             telephone: "+254740925164",
-            email: "eusdachurch@gmail.com",
+            email: "info@eusda.co.ke",
             address: {
               "@type": "PostalAddress",
               streetAddress: "B1 Class, Egerton University",

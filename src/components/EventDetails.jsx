@@ -335,16 +335,36 @@ export default function EventDetails() {
           {/* Right Col: Sidebar Action */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl md:rounded-3xl shadow-lg p-4 md:p-6 border border-gray-100 md:sticky md:top-24">
-              <div className="text-center mb-4 md:mb-6">
-                <p className="text-xs md:text-sm text-gray-500 uppercase font-bold tracking-wider mb-1">
-                  Attendance
-                </p>
-                <div className="flex items-center justify-center gap-2 text-2xl md:text-3xl font-black text-gray-900">
-                  <Users className="text-green-600" size={24} />
-                  {event.attendees}
+              {/* Header Badge: Admission for ticketed events, Attendance for RSVP events */}
+              {event.ticketed ? (
+                <div className="text-center mb-4 md:mb-6">
+                  <p className="text-xs md:text-sm text-gray-500 uppercase font-bold tracking-wider mb-1">
+                    Admission
+                  </p>
+                  <div className="flex items-center justify-center gap-1.5 text-2xl md:text-3xl font-black text-gray-900">
+                    {event.ticketPrice > 0 ? (
+                      <>
+                        <span className="text-sm font-semibold text-gray-500 mt-1">KES</span>
+                        <span>{event.ticketPrice.toLocaleString()}</span>
+                      </>
+                    ) : (
+                      <span className="text-green-600">Free Entry</span>
+                    )}
+                  </div>
+                  <p className="text-xs md:text-sm text-gray-400">Official digital pass per attendee</p>
                 </div>
-                <p className="text-xs md:text-sm text-gray-400">people going</p>
-              </div>
+              ) : (
+                <div className="text-center mb-4 md:mb-6">
+                  <p className="text-xs md:text-sm text-gray-500 uppercase font-bold tracking-wider mb-1">
+                    Attendance
+                  </p>
+                  <div className="flex items-center justify-center gap-2 text-2xl md:text-3xl font-black text-gray-900">
+                    <Users className="text-green-600" size={24} />
+                    {event.attendees}
+                  </div>
+                  <p className="text-xs md:text-sm text-gray-400">people going</p>
+                </div>
+              )}
 
               {/* Actions */}
               {event.ticketed ? (

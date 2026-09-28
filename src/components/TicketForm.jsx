@@ -73,7 +73,7 @@ export default function TicketForm({ event, isModal = false, onClose }) {
       const { data } = await axios.post(`${SERVER_URL}/api/ticket-orders`, {
         eventId: event._id,
         fullName: formData.fullName.trim(),
-        email: formData.email.trim(),
+        email: formData.email.trim().toLowerCase(),
         phone: formData.phone.trim(),
       });
 
